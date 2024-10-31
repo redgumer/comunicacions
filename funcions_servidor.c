@@ -1,3 +1,13 @@
+/*
+ ================================ PROJECTE XARXES ================================
+ | Fitxer     : funcions_servidor.c                                              |
+ | Autors     : Programador 1, Programador 2, Programador 3                      |
+ | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
+ | Universitat: Universitat Rovira i Virgili                                     |
+ | Descripció : Breu descripció del fitxer o mòdul                               |
+ =================================================================================
+*/
+
 //Llibreries bàsiques
 #include <stdio.h>
 #include <stdlib.h>

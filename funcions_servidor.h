@@ -1,3 +1,13 @@
+/*
+ ================================ PROJECTE XARXES ================================
+ | Fitxer     : funcions_servidor.h                                              |
+ | Autors     : Programador 1, Programador 2, Programador 3                      |
+ | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
+ | Universitat: Universitat Rovira i Virgili                                     |
+ | Descripció : Breu descripció del fitxer o mòdul                               |
+ =================================================================================
+*/
+
 #ifndef FUNCIONS_SERVIDOR_H
 #define FUNCIONS_SERVIDOR_H
 #include <netinet/in.h>
