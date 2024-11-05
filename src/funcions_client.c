@@ -11,7 +11,7 @@
 #include "../include/funcions_client.h"
 #include <stdio.h>
 
-void demana_credencials(char *nom, char *contrasenya, int max_length)
+void demana_credencials(char *nom, char *contrasenya)
 {
     printf("Introdueix el teu nom: ");
     scanf("%s", nom);

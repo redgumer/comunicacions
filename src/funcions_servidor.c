@@ -82,7 +82,7 @@ const char *veure_perfil(const usuari_t *usuari)
              usuari->nom, usuari->sexe, usuari->estat_civil, usuari->edat, usuari->ciutat, usuari->descripcio);
 
     // Registro de actividad para la visualización del perfil
-    registre_activitat(usuari->nom, "Consulta de perfil d'usuari", "Visualización del perfil de usuario");
+    registre_activitat(usuari->nom, "Consulta de perfil d'usuari", "Visualización del perfil");
 
     return resposta;
 }
@@ -96,7 +96,7 @@ const char *veure_amics(const char *nom)
     usuari_t usuario_info = get_user_info(nom);
     if (usuario_info.nom[0] == '\0')
     { // Verificar si el usuario fue encontrado
-        registre_activitat(usuario_info.nom, "Error", "Usuario no encontrado en la función veure_amics");
+        registre_activitat(usuario_info.nom, "Error", "Usuario no encontrado en veure_amics");
         return "Error: Usuario no encontrado.\n";
     }
 
@@ -236,8 +236,8 @@ usuari_t get_user_info(const char *nom)
     if (!file)
     {
         perror("Error al abrir el archivo de usuarios");
-        registre_activitat(nom, "Error al abrir el archivo de usuarios", "null"); // Registro de error
-        return usuari; // Retorna el usuario no encontrado (con campos vacíos)
+        registre_activitat(nom, "Error al abrir el archivo de usuarios", " "); // Registro de error
+        return usuari;                                                         // Retorna el usuario no encontrado (con campos vacíos)
     }
 
     while (fscanf(file, "%s %s %s %s %d %s %[^\n]",
@@ -248,14 +248,14 @@ usuari_t get_user_info(const char *nom)
         if (strcmp(usuari.nom, nom) == 0)
         {
             fclose(file);
-            registre_activitat(nom, "Consulta de información del usuario exitosa", "null"); // Registro de éxito
+            registre_activitat(nom, "Consulta de información del usuario exitosa", " "); // Registro de éxito
             return usuari;
         }
     }
 
     fclose(file);
-    registre_activitat(nom, "Usuario no encontrado en el archivo de usuarios", "null"); // Registro de no encontrado
-    usuari.nom[0] = '\0'; // Aseguramos el indicador de usuario no encontrado
+    registre_activitat(nom, "Usuario no encontrado en el archivo de usuarios", " "); // Registro de no encontrado
+    usuari.nom[0] = '\0';                                                            // Aseguramos el indicador de usuario no encontrado
     return usuari;
 }
 
@@ -275,16 +275,19 @@ const char *processa_opcio(int opcio, const char *nom, int *continuar)
     case 3: // Afegir amics nous
         resposta = afegir_amic(nom, "nou_amic");
         break;
-    case 4: // Tancar el programa
-        resposta = veure_activitat();
-        *continuar = 0;
+    case 4: // Consultar l'activitat de l'usuari
+        resposta = veure_activitat(nom);
         break;
-    case 5: // Consultar l'activitat de l'usuari
+    case 5: // Tancar el programa
         resposta = "Sortint del programa...";
+        registre_activitat(nom, "Sortida", "Usuari ha tancat el programa");
+        *continuar = 0; // Señalar que el programa debe cerrarse
         break;
     default:
         resposta = "Opció invàlida.";
+        break;
     }
+    
     return resposta;
 }
 
@@ -356,7 +359,7 @@ typedef struct
 } Activitat;
 
 // Función para registrar la actividad de un usuario
-void registre_activitat(const char* usuari, const char* accio, const char* detall)
+void registre_activitat(const char *usuari, const char *accio, const char *detall)
 {
     Activitat nova_activitat;
     strncpy(nova_activitat.tipus_activitat, accio, sizeof(nova_activitat.tipus_activitat) - 1);
@@ -382,8 +385,14 @@ void registre_activitat(const char* usuari, const char* accio, const char* detal
     printf("Activitat registrada: %s - %s\n", nova_activitat.tipus_activitat, nova_activitat.detalls);
 }
 
-char *veure_activitat()
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *veure_activitat(const char *nom)
 {
+    // Registrar entrada en veure_activitat
+    registre_activitat(nom, "Acceso a veure_activitat", "Consulta de actividades");
     FILE *file = fopen("data/activitats.log", "r");
     if (file == NULL)
     {
@@ -391,34 +400,68 @@ char *veure_activitat()
         return strdup("Error: no es pot obrir el fitxer d'activitats.");
     }
 
-    size_t buffer_size = 1024;
-    char *buffer = malloc(buffer_size);
-    if (buffer == NULL)
+    // Array dinámico de punteros para almacenar las líneas
+    size_t max_lines = 100;
+    size_t line_count = 0;
+    char **lines = malloc(max_lines * sizeof(char *));
+    if (lines == NULL)
     {
         fclose(file);
         return strdup("Error: no hi ha prou memòria.");
     }
-    buffer[0] = '\0'; // Inicializamos el buffer como una cadena vacía
 
+    // Leer líneas del archivo y almacenarlas en el array
     char linea[256];
     while (fgets(linea, sizeof(linea), file) != NULL)
     {
-        size_t new_length = strlen(buffer) + strlen(linea) + 1;
-        if (new_length > buffer_size)
+        if (line_count >= max_lines)
         {
-            buffer_size = new_length + 512; // Aumentamos el buffer por adelantado
-            char *temp = realloc(buffer, buffer_size);
+            max_lines += 50; // Expandimos el array dinámico si es necesario
+            char **temp = realloc(lines, max_lines * sizeof(char *));
             if (temp == NULL)
             {
-                free(buffer);
+                for (size_t i = 0; i < line_count; i++) free(lines[i]);
+                free(lines);
                 fclose(file);
                 return strdup("Error: no hi ha prou memòria per carregar l'activitat.");
             }
-            buffer = temp;
+            lines = temp;
         }
-        strcat(buffer, linea); // Concatenamos la línea actual al buffer
+        lines[line_count] = strdup(linea);
+        if (lines[line_count] == NULL)
+        {
+            for (size_t i = 0; i < line_count; i++) free(lines[i]);
+            free(lines);
+            fclose(file);
+            return strdup("Error: no hi ha prou memòria per carregar l'activitat.");
+        }
+        line_count++;
+    }
+    fclose(file);
+
+    // Calcular el tamaño del buffer final
+    size_t buffer_size = 1;
+    for (size_t i = 0; i < line_count; i++) buffer_size += strlen(lines[i]);
+
+    char *buffer = malloc(buffer_size);
+    if (buffer == NULL)
+    {
+        for (size_t i = 0; i < line_count; i++) free(lines[i]);
+        free(lines);
+        return strdup("Error: no hi ha prou memòria.");
+    }
+    buffer[0] = '\0';
+
+    // Concatenar las líneas en orden inverso
+    for (size_t i = line_count; i > 0; i--)
+    {
+        strcat(buffer, lines[i - 1]);
     }
 
-    fclose(file);
-    return buffer; // Devolvemos el contenido del archivo como una cadena
+    // Liberar memoria utilizada
+    for (size_t i = 0; i < line_count; i++) free(lines[i]);
+    free(lines);
+
+    return buffer;
 }
+

@@ -5,3 +5,16 @@ Usuari: user1 | Activitat: Inici de sessió | Detalls: Usuari autenticat correct
 Usuari: user1 | Activitat: Inici de sessió | Detalls: Usuari autenticat correctament | Temps: Tue Nov  5 19:50:17 2024
 Usuari: user1 | Activitat: Inici de sessió | Detalls: Usuari autenticat correctament | Temps: Tue Nov  5 19:51:06 2024
 Usuari: user1 | Activitat: Inici de sessió | Detalls: Usuari autenticat correctament | Temps: Tue Nov  5 19:52:52 2024
+Usuari: user1 | Activitat: Inici de sessió | Detalls: autenticat correctament | Temps: Tue Nov  5 21:34:17 2024
+Usuari: user1 | Activitat: Consulta de información del  | Detalls: null | Temps: Tue Nov  5 21:34:26 2024
+Usuari: user1 | Activitat: Consulta de perfil d'usuari | Detalls: Visualización del perfil de usuario | Temps: Tue Nov  5 21:34:26 2024
+Usuari: user1 | Activitat: Consulta de información del  | Detalls: null | Temps: Tue Nov  5 21:34:48 2024
+Usuari: user1 | Activitat: Consulta | Detalls: Consulta de lista de amigos completada | Temps: Tue Nov  5 21:34:48 2024
+Usuari: user1 | Activitat: Inici de sessió | Detalls: autenticat correctament | Temps: Tue Nov  5 21:53:27 2024
+Usuari: user1 | Activitat: Consulta de información del  | Detalls:   | Temps: Tue Nov  5 21:53:32 2024
+Usuari: user1 | Activitat: Consulta de perfil d'usuari | Detalls: Visualización del perfil | Temps: Tue Nov  5 21:53:32 2024
+Usuari: user1 | Activitat: Consulta de información del  | Detalls:   | Temps: Tue Nov  5 21:53:36 2024
+Usuari: user1 | Activitat: Consulta | Detalls: Consulta de lista de amigos completada | Temps: Tue Nov  5 21:53:36 2024
+Usuari: user1 | Activitat: Consulta de información del  | Detalls:   | Temps: Tue Nov  5 21:53:46 2024
+Usuari: user1 | Activitat: Amistad | Detalls: Intento de amistad fallido, ya existe la relación | Temps: Tue Nov  5 21:53:46 2024
+Usuari: user1 | Activitat: Acceso a veure_activitat | Detalls: Consulta de actividades | Temps: Tue Nov  5 21:54:13 2024

@@ -18,7 +18,7 @@
  * @param contrasenya Punter a char per emmagatzemar la contrasenya de l'usuari
  
  */
-void demana_credencials(char *nom, char *contrasenya, int max_length);
+void demana_credencials(char *nom, char *contrasenya);
 
 
 /**

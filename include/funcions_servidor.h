@@ -28,7 +28,7 @@ const char *processa_opcio(int opcio, const char *nom, int *continuar);
 void gestiona_client(int s, struct sockaddr_in contacte_client);
 int configura_socket(int port);
 void registre_activitat(const char* usuari, const char* accio, const char* detall);
-char *veure_activitat();
+char *veure_activitat(const char *nom);
 usuari_t get_user_info(const char *nom);
 
 #endif // FUNCIONS_SERVIDOR_H

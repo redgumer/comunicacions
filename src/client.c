@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
         // Demana les credencials de l'usuari
         char nom[MAX_USUARI], contrasenya[MAX_CONTRASENYA];
-        demana_credencials(nom, contrasenya, MAX_USUARI);
+        demana_credencials(nom, contrasenya);
 
         // Envia les credencials al servidor per a verificació
         sprintf(paquet, "%s %s", nom, contrasenya);
