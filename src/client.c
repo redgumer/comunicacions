@@ -18,8 +18,6 @@
 #include <unistd.h>
 #include "../include/funcions_client.h"
 
-
-
 #define MIDA_PAQUET 1500
 #define MAX_USUARI 30
 #define MAX_CONTRASENYA 30
@@ -54,11 +52,20 @@ int main(int argc, char **argv)
         demana_credencials(nom, contrasenya);
 
         // Envia les credencials al servidor per a verificació
-        sprintf(paquet, "%s %s", nom, contrasenya);
-        sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor));
+        snprintf(paquet, MIDA_PAQUET, "%s %s", nom, contrasenya);
+        if (sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor)) == -1)
+        {
+            perror("Error enviant les credencials al servidor");
+            return 1;
+        }
 
         // Rep la resposta de verificació del servidor
-        recvfrom(s, paquet, MIDA_PAQUET, 0, NULL, NULL);
+        if (recvfrom(s, paquet, MIDA_PAQUET, 0, NULL, NULL) == -1)
+        {
+            perror("Error rebent la resposta de verificació del servidor");
+            return 1;
+        }
+
         printf("Resposta del servidor: %s\n", paquet);
 
         // Si la verificació és correcta, mostra el menú d'opcions
@@ -69,15 +76,28 @@ int main(int argc, char **argv)
             {
                 // Mostra el menú i envia l'opció seleccionada al servidor
                 opcio = mostra_menu();
-                sprintf(paquet, "%d %s", opcio, nom);
-                sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor));
+                snprintf(paquet, MIDA_PAQUET, "%d %s", opcio, nom);
+                if (sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor)) == -1)
+                {
+                    perror("Error enviant l'opció al servidor");
+                    return 1;
+                }
 
                 // Rep la resposta del servidor per cada opció seleccionada
-                recvfrom(s, paquet, MIDA_PAQUET, 0, NULL, NULL);
+                if (recvfrom(s, paquet, MIDA_PAQUET, 0, NULL, NULL) == -1)
+                {
+                    perror("Error rebent la resposta del servidor");
+                    return 1;
+                }
                 printf("Resposta del servidor:\n%s\n", paquet);
 
-            } while (opcio != 5);  // Repeteix fins que l'usuari decideixi sortir
+            } while (opcio != 5); // Repeteix fins que l'usuari decideixi sortir
         }
+        else
+        {
+            printf("Credencials incorrectes o usuari no trobat.\n");
+        }
+
+        return 0;
     }
-    return 0;
 }

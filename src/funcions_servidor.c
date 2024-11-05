@@ -22,57 +22,156 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-
 // Fitxer de funcions del servidor
 #include "../include/funcions_servidor.h"
 
 #define MAX_SUGGERIMENTS 5 // Máximo de sugerencias a mostrar
 #define MIDA_PAQUET 1500
 
-int verifica_usuari(const char *nom, const char *contrasenya) {
+int verifica_usuari(const char *nom, const char *contrasenya)
+{
     // Cargar el archivo JSON de usuarios
     cJSON *usuarios_json = cargar_json("users.json");
-    if (!usuarios_json) {
+    if (!usuarios_json)
+    {
         return -1; // Error al abrir el archivo
     }
 
     // Buscar el usuario en el JSON
     cJSON *usuario = cJSON_GetObjectItem(usuarios_json, nom);
-    if (!usuario) {
+    if (!usuario)
+    {
         cJSON_Delete(usuarios_json);
-        return 0; // Usuario no encontrado
+        printf("Usuari no trobat. Vols registrar-te? (s/n): ");
+        char resposta;
+        scanf(" %c", &resposta);
+
+        if (resposta == 's' || resposta == 'S')
+        {
+            char sexe[10], estat_civil[15], ciutat[30], descripcio[100];
+            int edat;
+
+            printf("Introdueix el teu sexe: ");
+            scanf("%9s", sexe);
+            printf("Introdueix el teu estat civil: ");
+            scanf("%14s", estat_civil);
+            printf("Introdueix la teva edat: ");
+            scanf("%d", &edat);
+            printf("Introdueix la teva ciutat: ");
+            scanf("%29s", ciutat);
+            printf("Descripció personal: ");
+            scanf(" %99[^\n]", descripcio); // Leer línea completa
+
+            int resultat = registra_usuari(nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+            if (resultat == 1)
+            {
+                printf("Usuari registrat amb èxit!\n");
+            }
+            else
+            {
+                printf("Error en el registre de l'usuari.\n");
+            }
+            return resultat; // Retorna el resultat del registre
+        }
+        else
+        {
+            printf("Registre cancel·lat.\n");
+            return 0; // Indica que el usuari no ha estat validat ni registrat
+        }
     }
 
-    // Obtener la contraseña almacenada
+    // Verificar la contraseña
     const char *password_json = cJSON_GetObjectItem(usuario, "contrasenya")->valuestring;
-    if (strcmp(password_json, contrasenya) == 0) {
-        // Registrar actividad de autenticación
+    if (strcmp(password_json, contrasenya) == 0)
+    {
         registre_activitat(nom, "Inici de sessió", "autenticat correctament");
-
         cJSON_Delete(usuarios_json);
         return 1; // Usuario autenticado correctamente
     }
 
+    // Contraseña incorrecta
     cJSON_Delete(usuarios_json);
-    return 0; // Contraseña incorrecta
-}
+    printf("Contrasenya incorrecta. Vols registrar-te amb una nova contrasenya? (s/n): ");
+    char resposta;
+    scanf(" %c", &resposta);
 
+    if (resposta == 's' || resposta == 'S')
+    {
+        // Solicitar los demás datos para el registro
+        char sexe[10], estat_civil[15], ciutat[30], descripcio[100];
+        int edat;
+
+        printf("Introdueix el teu sexe: ");
+        scanf("%9s", sexe);
+        printf("Introdueix el teu estat civil: ");
+        scanf("%14s", estat_civil);
+        printf("Introdueix la teva edat: ");
+        scanf("%d", &edat);
+        printf("Introdueix la teva ciutat: ");
+        scanf("%29s", ciutat);
+        printf("Descripció personal: ");
+        scanf(" %99[^\n]", descripcio);
+
+        int resultat = registra_usuari(nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+        if (resultat == 1)
+        {
+            printf("Usuari registrat amb èxit!\n");
+        }
+        else
+        {
+            printf("Error en el registre de l'usuari.\n");
+        }
+        return resultat;
+    }
+
+    printf("Registre cancel·lat.\n");
+    return 0; // Contraseña incorrecta, registro cancelado
+}
 
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio)
 {
-    FILE *file = fopen(USER_FILE, "a");
-    if (!file)
-        return -1;
+    // Cargar el archivo JSON de usuarios
+    cJSON *usuarios_json = cargar_json("users.json");
+    if (!usuarios_json)
+    {
+        return -1; // Error al abrir el archivo
+    }
 
-    fprintf(file, "%s %s %s %s %d %s %s\n", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
-    fclose(file);
+    // Verificar si el usuario ya existe
+    if (cJSON_GetObjectItem(usuarios_json, nom) != NULL)
+    {
+        cJSON_Delete(usuarios_json);
+        return 0; // Usuario ya registrado
+    }
 
-    // Registra l'activitat de registre d'un nou usuari
-    usuari_t nou_usuari; // Assumeix que s'ha inicialitzat amb els valors corresponents si cal
-    strncpy(nou_usuari.nom, nom, sizeof(nou_usuari.nom) - 1);
-    registre_activitat(nou_usuari.nom, "Registre d'usuari", "Nou usuari registrat");
+    // Crear un nuevo objeto JSON para el usuario
+    cJSON *nuevo_usuario = cJSON_CreateObject();
+    cJSON_AddStringToObject(nuevo_usuario, "contrasenya", contrasenya);
+    cJSON_AddStringToObject(nuevo_usuario, "sexe", sexe);
+    cJSON_AddStringToObject(nuevo_usuario, "estat_civil", estat_civil);
+    cJSON_AddNumberToObject(nuevo_usuario, "edat", edat);
+    cJSON_AddStringToObject(nuevo_usuario, "ciutat", ciutat);
+    cJSON_AddStringToObject(nuevo_usuario, "descripcio", descripcio);
 
-    return 1;
+    // Añadir el nuevo usuario al JSON de usuarios
+    cJSON_AddItemToObject(usuarios_json, nom, nuevo_usuario);
+
+    // Guardar los cambios en el archivo JSON
+    if (guardar_json("users.json", usuarios_json))
+    {
+        // Registrar actividad de creación del usuario
+        usuari_t nou_usuari;
+        strncpy(nou_usuari.nom, nom, sizeof(nou_usuari.nom) - 1);
+        registre_activitat(nou_usuari.nom, "Registre d'usuari", "Nou usuari registrat");
+
+        cJSON_Delete(usuarios_json); // Liberar memoria
+        return 1;                    // Usuario registrado correctamente
+    }
+    else
+    {
+        cJSON_Delete(usuarios_json); // Liberar memoria en caso de error
+        return -1;                   // Error al guardar el archivo
+    }
 }
 
 const char *veure_perfil(const usuari_t *usuari)
@@ -119,7 +218,8 @@ int guardar_json(const char *filename, cJSON *json)
     return 1;
 }
 
-const char *afegir_amic(const char *nom, const char *nou_amic){
+const char *afegir_amic(const char *nom, const char *nou_amic)
+{
     static char resposta[100];
 
     // Obtener la información completa del usuario
@@ -235,30 +335,47 @@ usuari_t get_user_info(const char *nom)
 
 const char *processa_opcio(int opcio, const char *nom, int *continuar)
 {
-    const char *resposta;
+    static char resposta[200];
     usuari_t user;
+
     switch (opcio)
     {
     case 1: // Veure perfil
         user = get_user_info(nom);
-        resposta = (user.nom[0] != '\0') ? veure_perfil(&user) : "Usuari no trobat\n";
+        if (user.nom[0] != '\0')
+        {
+            resposta[0] = '\0';
+            strncpy(resposta, veure_perfil(&user), sizeof(resposta) - 1);
+        }
+        else
+        {
+            snprintf(resposta, sizeof(resposta), "Usuari no trobat\n");
+        }
         break;
+
     case 2: // Veure els meus amics
-        resposta = veure_amics(nom);
+        strncpy(resposta, veure_amics(nom), sizeof(resposta) - 1);
         break;
+
     case 3: // Afegir amics nous
-        resposta = afegir_amic(nom, "nou_amic");
+        printf("Introdueix el nom de l'amic a afegir: ");
+        char nou_amic[MAX_USUARI];
+        scanf("%s", nou_amic);
+        strncpy(resposta, afegir_amic(nom, nou_amic), sizeof(resposta) - 1);
         break;
+
     case 4: // Consultar l'activitat de l'usuari
-        resposta = veure_activitat(nom);
+        strncpy(resposta, veure_activitat(nom), sizeof(resposta) - 1);
         break;
+
     case 5: // Tancar el programa
-        resposta = "Sortint del programa...";
+        snprintf(resposta, sizeof(resposta), "Sortint del programa...");
         registre_activitat(nom, "Sortida", "Usuari ha tancat el programa");
         *continuar = 0; // Señalar que el programa debe cerrarse
         break;
+
     default:
-        resposta = "Opció invàlida.";
+        snprintf(resposta, sizeof(resposta), "Opció invàlida.");
         break;
     }
 
@@ -562,7 +679,8 @@ const char *suggerir_amics(const char *nom)
     return resposta;
 }
 
-const char *veure_amics(const char *nom){
+const char *veure_amics(const char *nom)
+{
     static char resposta[500];
     resposta[0] = '\0';
 
