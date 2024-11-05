@@ -20,7 +20,7 @@
 
 
 
-#define MIDA_PAQUET 100
+#define MIDA_PAQUET 1500
 #define MAX_USUARI 30
 #define MAX_CONTRASENYA 30
 
@@ -74,9 +74,9 @@ int main(int argc, char **argv)
 
                 // Rep la resposta del servidor per cada opció seleccionada
                 recvfrom(s, paquet, MIDA_PAQUET, 0, NULL, NULL);
-                printf("Resposta del servidor: %s\n", paquet);
+                printf("Resposta del servidor:\n%s\n", paquet);
 
-            } while (opcio != 4);  // Repeteix fins que l'usuari decideixi sortir
+            } while (opcio != 5);  // Repeteix fins que l'usuari decideixi sortir
         }
     }
     return 0;
