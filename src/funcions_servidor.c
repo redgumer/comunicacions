@@ -42,7 +42,7 @@ int verifica_usuari(const char *nom, const char *contrasenya)
             fclose(file);
 
             // Registra activitat de verificació (login)
-            registre_activitat(&u, "Inici de sessió", "autenticat correctament");
+            registre_activitat(u.nom, "Inici de sessió", "autenticat correctament");
 
             return 1;
         }
@@ -63,14 +63,14 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
     // Registra l'activitat de registre d'un nou usuari
     usuari_t nou_usuari; // Assumeix que s'ha inicialitzat amb els valors corresponents si cal
     strncpy(nou_usuari.nom, nom, sizeof(nou_usuari.nom) - 1);
-    registre_activitat(&nou_usuari, "Registre d'usuari", "Nou usuari registrat");
+    registre_activitat(nou_usuari.nom, "Registre d'usuari", "Nou usuari registrat");
 
     return 1;
 }
 
 const char *veure_perfil(const usuari_t *usuari)
 {
-    static char resposta[300];
+    static char resposta[600];
     snprintf(resposta, sizeof(resposta),
              "Perfil de l'usuari:\n"
              "Nom: %s\n"
@@ -80,6 +80,10 @@ const char *veure_perfil(const usuari_t *usuari)
              "Ciutat: %s\n"
              "Descripció: %s\n",
              usuari->nom, usuari->sexe, usuari->estat_civil, usuari->edat, usuari->ciutat, usuari->descripcio);
+
+    // Registro de actividad para la visualización del perfil
+    registre_activitat(usuari->nom, "Consulta de perfil d'usuari", "Visualización del perfil de usuario");
+
     return resposta;
 }
 
@@ -88,29 +92,28 @@ const char *veure_amics(const char *nom)
     static char resposta[500];
     resposta[0] = '\0';
 
+    // Obtener la información completa del usuario
+    usuari_t usuario_info = get_user_info(nom);
+    if (usuario_info.nom[0] == '\0')
+    { // Verificar si el usuario fue encontrado
+        registre_activitat(usuario_info.nom, "Error", "Usuario no encontrado en la función veure_amics");
+        return "Error: Usuario no encontrado.\n";
+    }
+
     FILE *friend_file = fopen(FRIEND_FILE, "r");
     if (!friend_file)
     {
-        snprintf(resposta, sizeof(resposta), "Error: No es pot obrir el fitxer de relacions d'amistat.\n");
-        registre_activitat(nom, "Error al obrir el fitxer de relacions d'amistat"); // Registro de error
+        registre_activitat(usuario_info.nom, "Error", "Error al abrir el archivo de relaciones de amistad");
+        snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de relaciones de amistad.\n");
         return resposta;
     }
 
-    FILE *user_file = fopen(USER_FILE, "r");
-    if (!user_file)
-    {
-        snprintf(resposta, sizeof(resposta), "Error: No es pot obrir el fitxer d'usuaris.\n");
-        fclose(friend_file);
-        registre_activitat(nom, "Error al obrir el fitxer d'usuaris"); // Registro de error
-        return resposta;
-    }
-
+    FILE *user_file;
     char friend_name[MAX_USUARI];
     char line[100];
-    usuari_t friend;
     int amigos_encontrados = 0;
 
-    // Lee el archivo de amistades
+    // Leer el archivo de amistades
     while (fgets(line, sizeof(line), friend_file))
     {
         char user1[MAX_USUARI], user2[MAX_USUARI];
@@ -120,16 +123,21 @@ const char *veure_amics(const char *nom)
         {
             strcpy(friend_name, (strcmp(nom, user1) == 0) ? user2 : user1);
 
-            // Volvemos al inicio de USER_FILE para buscar cada amigo
-            rewind(user_file);
+            // Volver al inicio de USER_FILE para buscar cada amigo
+            user_file = fopen(USER_FILE, "r");
+            if (!user_file)
+            {
+                registre_activitat(usuario_info.nom, "Error", "Error al abrir el archivo de usuarios");
+                fclose(friend_file);
+                snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de usuarios.\n");
+                return resposta;
+            }
 
-            while (fscanf(user_file, "%s %s %s %s %d %s %[^\n]",
-                          friend.nom, friend.contrasenya, friend.sexe, friend.estat_civil,
-                          &friend.edat, friend.ciutat, friend.descripcio) == 7)
+            usuari_t friend;
+            while (fscanf(user_file, "%s %s %s %s %d %s %[^\n]", friend.nom, friend.contrasenya, friend.sexe, friend.estat_civil, &friend.edat, friend.ciutat, friend.descripcio) == 7)
             {
                 if (strcmp(friend.nom, friend_name) == 0)
                 {
-                    // Añadimos información del amigo a la respuesta
                     snprintf(resposta + strlen(resposta), sizeof(resposta) - strlen(resposta),
                              "Amic: %s\nSexe: %s\nEstat Civil: %s\nEdat: %d\nCiutat: %s\nDescripció: %s\n\n",
                              friend.nom, friend.sexe, friend.estat_civil, friend.edat, friend.ciutat, friend.descripcio);
@@ -137,20 +145,20 @@ const char *veure_amics(const char *nom)
                     break;
                 }
             }
+            fclose(user_file);
         }
     }
 
     fclose(friend_file);
-    fclose(user_file);
 
-    // Registro de la actividad, dependiendo de si hay amigos o no
+    // Registrar la actividad según el resultado
     if (amigos_encontrados > 0)
     {
-        registre_activitat(nom, "Consulta de lista de amigos completada");
+        registre_activitat(usuario_info.nom, "Consulta", "Consulta de lista de amigos completada");
     }
     else
     {
-        registre_activitat(nom, "No se encontraron amigos para el usuario");
+        registre_activitat(usuario_info.nom, "Consulta", "No se encontraron amigos para el usuario");
     }
 
     return resposta[0] ? resposta : "No tens amics registrats.\n";
@@ -159,19 +167,26 @@ const char *veure_amics(const char *nom)
 const char *afegir_amic(const char *nom, const char *nou_amic)
 {
     static char resposta[100];
-    FILE *file = fopen(FRIEND_FILE, "a+"); // Abrimos el archivo para agregar y lectura
+
+    // Obtener la información completa del usuario
+    usuari_t usuario_info = get_user_info(nom);
+    if (usuario_info.nom[0] == '\0')
+    { // Verificar si el usuario fue encontrado
+        registre_activitat(usuario_info.nom, "Error", "Usuario no encontrado en la función afegir_amic");
+        return "Error: Usuario no encontrado.\n";
+    }
+
+    FILE *file = fopen(FRIEND_FILE, "a+"); // Abrir el archivo para agregar y lectura
     if (!file)
     {
+        registre_activitat(usuario_info.nom, "Error", "Error al abrir el archivo de relaciones de amistad");
         snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de relaciones de amistad.\n");
-        registre_activitat(nom, "Error al abrir el archivo de relaciones de amistad");
         return resposta;
     }
 
+    rewind(file); // Volver al inicio del archivo para buscar duplicados
     char line[100];
     int exists = 0;
-
-    // Rewind para leer desde el inicio
-    rewind(file);
 
     // Comprobar si la amistad ya existe en cualquier dirección
     while (fgets(line, sizeof(line), file))
@@ -192,18 +207,17 @@ const char *afegir_amic(const char *nom, const char *nou_amic)
         fprintf(file, "%s %s\n", nom, nou_amic);
         fprintf(file, "%s %s\n", nou_amic, nom);
         snprintf(resposta, sizeof(resposta), "Amistad creada entre %s y %s\n", nom, nou_amic);
-        registre_activitat(nom, "Amistad creada exitosamente con el usuario especificado");
+        registre_activitat(usuario_info.nom, "Amistad", "Amistad creada exitosamente con el usuario especificado");
     }
     else
     {
         snprintf(resposta, sizeof(resposta), "La relación de amistad ya existe entre %s y %s\n", nom, nou_amic);
-        registre_activitat(nom, "Intento de amistad fallido, ya existe la relación");
+        registre_activitat(usuario_info.nom, "Amistad", "Intento de amistad fallido, ya existe la relación");
     }
 
     fclose(file);
     return resposta;
 }
-
 
 usuari_t get_user_info(const char *nom)
 {
@@ -222,7 +236,7 @@ usuari_t get_user_info(const char *nom)
     if (!file)
     {
         perror("Error al abrir el archivo de usuarios");
-        registre_activitat(nom, "Error al abrir el archivo de usuarios"); // Registro de error
+        registre_activitat(nom, "Error al abrir el archivo de usuarios", "null"); // Registro de error
         return usuari; // Retorna el usuario no encontrado (con campos vacíos)
     }
 
@@ -234,17 +248,16 @@ usuari_t get_user_info(const char *nom)
         if (strcmp(usuari.nom, nom) == 0)
         {
             fclose(file);
-            registre_activitat(nom, "Consulta de información del usuario exitosa"); // Registro de éxito
+            registre_activitat(nom, "Consulta de información del usuario exitosa", "null"); // Registro de éxito
             return usuari;
         }
     }
 
     fclose(file);
-    registre_activitat(nom, "Usuario no encontrado en el archivo de usuarios"); // Registro de no encontrado
+    registre_activitat(nom, "Usuario no encontrado en el archivo de usuarios", "null"); // Registro de no encontrado
     usuari.nom[0] = '\0'; // Aseguramos el indicador de usuario no encontrado
     return usuari;
 }
-
 
 const char *processa_opcio(int opcio, const char *nom, int *continuar)
 {
@@ -273,7 +286,7 @@ const char *processa_opcio(int opcio, const char *nom, int *continuar)
         resposta = "Opció invàlida.";
     }
     return resposta;
-}Ç
+}
 
 // ============================= GESTIONA CONECCIÓ =============================
 
@@ -343,11 +356,15 @@ typedef struct
 } Activitat;
 
 // Función para registrar la actividad de un usuario
-void registre_activitat(usuari_t *usuari, const char *tipus, const char *detalls)
+void registre_activitat(const char* usuari, const char* accio, const char* detall)
 {
     Activitat nova_activitat;
-    strncpy(nova_activitat.tipus_activitat, tipus, sizeof(nova_activitat.tipus_activitat) - 1);
-    strncpy(nova_activitat.detalls, detalls, sizeof(nova_activitat.detalls) - 1);
+    strncpy(nova_activitat.tipus_activitat, accio, sizeof(nova_activitat.tipus_activitat) - 1);
+    nova_activitat.tipus_activitat[sizeof(nova_activitat.tipus_activitat) - 1] = '\0';
+
+    strncpy(nova_activitat.detalls, detall, sizeof(nova_activitat.detalls) - 1);
+    nova_activitat.detalls[sizeof(nova_activitat.detalls) - 1] = '\0';
+
     nova_activitat.timestamp = time(NULL);
 
     FILE *file = fopen("data/activitats.log", "a"); // Modo append para agregar actividades
@@ -359,7 +376,7 @@ void registre_activitat(usuari_t *usuari, const char *tipus, const char *detalls
 
     // Formato de registro: "tipo actividad - detalles - timestamp"
     fprintf(file, "Usuari: %s | Activitat: %s | Detalls: %s | Temps: %s",
-            usuari->nom, nova_activitat.tipus_activitat, nova_activitat.detalls, ctime(&nova_activitat.timestamp));
+            usuari, nova_activitat.tipus_activitat, nova_activitat.detalls, ctime(&nova_activitat.timestamp));
 
     fclose(file);
     printf("Activitat registrada: %s - %s\n", nova_activitat.tipus_activitat, nova_activitat.detalls);
