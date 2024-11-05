@@ -116,4 +116,9 @@ void gestiona_client(int s, struct sockaddr_in contacte_client);
  */
 int configura_socket(int port);
 
+
+
+void registre_activitat(usuari_t *usuari, const char *tipus, const char *detalls);
+
+char* veure_activitat(); 
 #endif

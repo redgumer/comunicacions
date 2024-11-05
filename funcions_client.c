@@ -19,14 +19,14 @@ void demana_credencials(char *nom, char *contrasenya, int max_length)
     scanf("%s", contrasenya);
 }
 
-int mostra_menu()
-{
+int mostra_menu() {
     int opcio;
     printf("\nMenu d'usuari:\n");
     printf("1. Veure perfil\n");
     printf("2. Veure els meus amics\n");
     printf("3. Afegir amics nous\n");
-    printf("4. Tancar el programa\n");
+    printf("4. Consultar l'activitat de l'usuari\n");
+    printf("5. Tancar el programa\n");
     printf("Selecciona una opció: \n");
     scanf("%d", &opcio);
     return opcio;

@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 //Llibreries de xarxa
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -25,18 +27,18 @@
 #define USER_FILE "usuaris.txt"
 #define FRIEND_FILE "amistats.txt"
 
-int verifica_usuari(const char *nom, const char *contrasenya)
-{
+int verifica_usuari(const char *nom, const char *contrasenya) {
     FILE *file = fopen(USER_FILE, "r");
-    if (!file)
-        return -1;
+    if (!file) return -1;
 
     usuari_t u;
-    while (fscanf(file, "%s %s", u.nom, u.contrasenya) == 2)
-    {
-        if (strcmp(u.nom, nom) == 0 && strcmp(u.contrasenya, contrasenya) == 0)
-        {
+    while (fscanf(file, "%s %s", u.nom, u.contrasenya) == 2) {
+        if (strcmp(u.nom, nom) == 0 && strcmp(u.contrasenya, contrasenya) == 0) {
             fclose(file);
+            
+            // Registra activitat de verificació (login)
+            registre_activitat(&u, "Inici de sessió", "Usuari autenticat correctament");
+            
             return 1;
         }
     }
@@ -45,13 +47,18 @@ int verifica_usuari(const char *nom, const char *contrasenya)
 }
 
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio) {
-    FILE *file = fopen(USER_FILE, "a");  // Abrir el archivo para agregar datos
-    if (!file) return -1;  // Retorna -1 si el archivo no se puede abrir
+    FILE *file = fopen(USER_FILE, "a");
+    if (!file) return -1;
 
-    // Agregar la información del usuario al archivo
     fprintf(file, "%s %s %s %s %d %s %s\n", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
     fclose(file);
-    return 1;  // Retorna 1 para indicar que el registro fue exitoso
+
+    // Registra l'activitat de registre d'un nou usuari
+    usuari_t nou_usuari;  // Assumeix que s'ha inicialitzat amb els valors corresponents si cal
+    strncpy(nou_usuari.nom, nom, sizeof(nou_usuari.nom) - 1);
+    registre_activitat(&nou_usuari, "Registre d'usuari", "Nou usuari registrat");
+
+    return 1;
 }
 
 const char* veure_perfil(const usuari_t *usuari) {
@@ -181,14 +188,18 @@ const char* processa_opcio(int opcio, const char *nom, int *continuar) {
             resposta = afegir_amic(nom, "nou_amic");
             break;
         case 4:  // Tancar el programa
-            resposta = "Sortint del programa...";
+            resposta = veure_activitat();
             *continuar = 0;
+            break;
+        case 5:  // Consultar l'activitat de l'usuari
+            resposta = "Sortint del programa...";
             break;
         default:
             resposta = "Opció invàlida.";
     }
     return resposta;
 }
+
 
 void gestiona_client(int s, struct sockaddr_in contacte_client) {
     socklen_t contacte_client_mida = sizeof(contacte_client);
@@ -237,3 +248,68 @@ int configura_socket(int port) {
     return s;
 }
 
+// ============================= HISTORIAL D'ACTIVITATS =============================
+
+// Estructura per emmagatzemar l'activitat de l'usuari
+
+typedef struct {
+    char tipus_activitat[30];
+    char detalls[100];
+    time_t timestamp;
+} Activitat;
+
+// Función para registrar la actividad de un usuario
+void registre_activitat(usuari_t *usuari, const char *tipus, const char *detalls) {
+    Activitat nova_activitat;
+    strncpy(nova_activitat.tipus_activitat, tipus, sizeof(nova_activitat.tipus_activitat) - 1);
+    strncpy(nova_activitat.detalls, detalls, sizeof(nova_activitat.detalls) - 1);
+    nova_activitat.timestamp = time(NULL);
+
+    FILE *file = fopen("activitats.log", "a");  // Modo append para agregar actividades
+    if (file == NULL) {
+        perror("Error al obrir el fitxer d'activitats");
+        return;
+    }
+
+    // Formato de registro: "tipo actividad - detalles - timestamp"
+    fprintf(file, "Usuari: %s | Activitat: %s | Detalls: %s | Temps: %s", 
+            usuari->nom, nova_activitat.tipus_activitat, nova_activitat.detalls, ctime(&nova_activitat.timestamp));
+
+    fclose(file);
+    printf("Activitat registrada: %s - %s\n", nova_activitat.tipus_activitat, nova_activitat.detalls);
+}
+
+// Función para ver la actividad registrada
+char* veure_activitat() {
+    FILE *file = fopen("activitats.log", "r");
+    if (file == NULL) {
+        perror("Error al obrir el fitxer d'activitats");
+        return strdup("Error: no es pot obrir el fitxer d'activitats.");
+    }
+
+    size_t buffer_size = 1024;
+    char *buffer = malloc(buffer_size);
+    if (buffer == NULL) {
+        fclose(file);
+        return strdup("Error: no hi ha prou memòria.");
+    }
+    buffer[0] = '\0'; // Inicializamos el buffer como una cadena vacía
+
+    char linea[256];
+    while (fgets(linea, sizeof(linea), file) != NULL) {
+        if (strlen(buffer) + strlen(linea) + 1 > buffer_size) {
+            buffer_size *= 2; // Duplicamos el tamaño del buffer
+            char *temp = realloc(buffer, buffer_size);
+            if (temp == NULL) {
+                free(buffer);
+                fclose(file);
+                return strdup("Error: no hi ha prou memòria per carregar l'activitat.");
+            }
+            buffer = temp;
+        }
+        strcat(buffer, linea); // Concatenamos la línea actual al buffer
+    }
+
+    fclose(file);
+    return buffer; // Devolvemos el contenido del archivo como una cadena
+}
