@@ -1,6 +1,6 @@
 # Definició del compilador i opcions de compilació
 CC = gcc
-CFLAGS = -Wall -Wextra -g -Iinclude
+CFLAGS = -Wall -Wextra -g -Iinclude -Iinclude/cjson  # Asegúrate de que el directorio de cJSON sea correcto
 
 # Carpetes del projecte
 BIN_DIR = bin
@@ -26,11 +26,11 @@ all: $(CLIENT_EXEC) $(SERVER_EXEC)
 
 # Compilar i enllaçar l'executable del client
 $(CLIENT_EXEC): $(CLIENT_OBJS)
-	$(CC) $(CFLAGS) -o $(CLIENT_EXEC) $(CLIENT_OBJS)
+	$(CC) $(CFLAGS) -o $(CLIENT_EXEC) $(CLIENT_OBJS) -lcjson
 
 # Compilar i enllaçar l'executable del servidor
 $(SERVER_EXEC): $(SERVER_OBJS)
-	$(CC) $(CFLAGS) -o $(SERVER_EXEC) $(SERVER_OBJS)
+	$(CC) $(CFLAGS) -o $(SERVER_EXEC) $(SERVER_OBJS) -lcjson
 
 # Compilar els fitxers objecte per al client
 $(BUILD_DIR)/client.o: $(SRC_DIR)/client.c $(INCLUDE_DIR)/funcions_client.h

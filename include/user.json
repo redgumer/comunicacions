@@ -1,0 +1,18 @@
+{
+    "user1": {
+        "sexe": "M",
+        "estat_civil": "solter",
+        "edat": 25,
+        "ciutat": "Barcelona",
+        "descripcio": "Apasionat de la tecnologia",
+        "contrasenya": "pass123"
+    },
+    "user2": {
+        "sexe": "F",
+        "estat_civil": "casada",
+        "edat": 30,
+        "ciutat": "Madrid",
+        "descripcio": "Amant dels viatges",
+        "contrasenya": "secure456"
+    }
+}

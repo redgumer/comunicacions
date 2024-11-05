@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "cJSON.h"
 
 // Llibreries de xarxa
 #include <sys/socket.h>
@@ -21,35 +22,41 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+
 // Fitxer de funcions del servidor
 #include "../include/funcions_servidor.h"
 
+#define MAX_SUGGERIMENTS 5 // Máximo de sugerencias a mostrar
 #define MIDA_PAQUET 1500
-#define USER_FILE "data/usuaris.txt"
-#define FRIEND_FILE "data/amistats.txt"
 
-int verifica_usuari(const char *nom, const char *contrasenya)
-{
-    FILE *file = fopen(USER_FILE, "r");
-    if (!file)
-        return -1;
-
-    usuari_t u;
-    while (fscanf(file, "%s %s", u.nom, u.contrasenya) == 2)
-    {
-        if (strcmp(u.nom, nom) == 0 && strcmp(u.contrasenya, contrasenya) == 0)
-        {
-            fclose(file);
-
-            // Registra activitat de verificació (login)
-            registre_activitat(u.nom, "Inici de sessió", "autenticat correctament");
-
-            return 1;
-        }
+int verifica_usuari(const char *nom, const char *contrasenya) {
+    // Cargar el archivo JSON de usuarios
+    cJSON *usuarios_json = cargar_json("users.json");
+    if (!usuarios_json) {
+        return -1; // Error al abrir el archivo
     }
-    fclose(file);
-    return 0;
+
+    // Buscar el usuario en el JSON
+    cJSON *usuario = cJSON_GetObjectItem(usuarios_json, nom);
+    if (!usuario) {
+        cJSON_Delete(usuarios_json);
+        return 0; // Usuario no encontrado
+    }
+
+    // Obtener la contraseña almacenada
+    const char *password_json = cJSON_GetObjectItem(usuario, "contrasenya")->valuestring;
+    if (strcmp(password_json, contrasenya) == 0) {
+        // Registrar actividad de autenticación
+        registre_activitat(nom, "Inici de sessió", "autenticat correctament");
+
+        cJSON_Delete(usuarios_json);
+        return 1; // Usuario autenticado correctamente
+    }
+
+    cJSON_Delete(usuarios_json);
+    return 0; // Contraseña incorrecta
 }
+
 
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio)
 {
@@ -87,85 +94,32 @@ const char *veure_perfil(const usuari_t *usuari)
     return resposta;
 }
 
-const char *veure_amics(const char *nom)
+// Función para guardar el objeto JSON en un archivo
+int guardar_json(const char *filename, cJSON *json)
 {
-    static char resposta[500];
-    resposta[0] = '\0';
-
-    // Obtener la información completa del usuario
-    usuari_t usuario_info = get_user_info(nom);
-    if (usuario_info.nom[0] == '\0')
-    { // Verificar si el usuario fue encontrado
-        registre_activitat(usuario_info.nom, "Error", "Usuario no encontrado en veure_amics");
-        return "Error: Usuario no encontrado.\n";
-    }
-
-    FILE *friend_file = fopen(FRIEND_FILE, "r");
-    if (!friend_file)
+    char *json_string = cJSON_Print(json);
+    if (!json_string)
     {
-        registre_activitat(usuario_info.nom, "Error", "Error al abrir el archivo de relaciones de amistad");
-        snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de relaciones de amistad.\n");
-        return resposta;
+        fprintf(stderr, "Error al convertir JSON a cadena\n");
+        return 0;
     }
 
-    FILE *user_file;
-    char friend_name[MAX_USUARI];
-    char line[100];
-    int amigos_encontrados = 0;
-
-    // Leer el archivo de amistades
-    while (fgets(line, sizeof(line), friend_file))
+    FILE *file = fopen(filename, "w");
+    if (!file)
     {
-        char user1[MAX_USUARI], user2[MAX_USUARI];
-        sscanf(line, "%s %s", user1, user2);
-
-        if (strcmp(nom, user1) == 0 || strcmp(nom, user2) == 0)
-        {
-            strcpy(friend_name, (strcmp(nom, user1) == 0) ? user2 : user1);
-
-            // Volver al inicio de USER_FILE para buscar cada amigo
-            user_file = fopen(USER_FILE, "r");
-            if (!user_file)
-            {
-                registre_activitat(usuario_info.nom, "Error", "Error al abrir el archivo de usuarios");
-                fclose(friend_file);
-                snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de usuarios.\n");
-                return resposta;
-            }
-
-            usuari_t friend;
-            while (fscanf(user_file, "%s %s %s %s %d %s %[^\n]", friend.nom, friend.contrasenya, friend.sexe, friend.estat_civil, &friend.edat, friend.ciutat, friend.descripcio) == 7)
-            {
-                if (strcmp(friend.nom, friend_name) == 0)
-                {
-                    snprintf(resposta + strlen(resposta), sizeof(resposta) - strlen(resposta),
-                             "Amic: %s\nSexe: %s\nEstat Civil: %s\nEdat: %d\nCiutat: %s\nDescripció: %s\n\n",
-                             friend.nom, friend.sexe, friend.estat_civil, friend.edat, friend.ciutat, friend.descripcio);
-                    amigos_encontrados++;
-                    break;
-                }
-            }
-            fclose(user_file);
-        }
+        perror("Error al abrir el archivo para escritura");
+        free(json_string);
+        return 0;
     }
 
-    fclose(friend_file);
+    fprintf(file, "%s", json_string);
+    fclose(file);
+    free(json_string);
 
-    // Registrar la actividad según el resultado
-    if (amigos_encontrados > 0)
-    {
-        registre_activitat(usuario_info.nom, "Consulta", "Consulta de lista de amigos completada");
-    }
-    else
-    {
-        registre_activitat(usuario_info.nom, "Consulta", "No se encontraron amigos para el usuario");
-    }
-
-    return resposta[0] ? resposta : "No tens amics registrats.\n";
+    return 1;
 }
 
-const char *afegir_amic(const char *nom, const char *nou_amic)
-{
+const char *afegir_amic(const char *nom, const char *nou_amic){
     static char resposta[100];
 
     // Obtener la información completa del usuario
@@ -176,38 +130,57 @@ const char *afegir_amic(const char *nom, const char *nou_amic)
         return "Error: Usuario no encontrado.\n";
     }
 
-    FILE *file = fopen(FRIEND_FILE, "a+"); // Abrir el archivo para agregar y lectura
-    if (!file)
+    // Cargar el archivo JSON de amistades
+    cJSON *amistades_json = cargar_json("amistats.json");
+    if (!amistades_json)
     {
-        registre_activitat(usuario_info.nom, "Error", "Error al abrir el archivo de relaciones de amistad");
         snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de relaciones de amistad.\n");
         return resposta;
     }
 
-    rewind(file); // Volver al inicio del archivo para buscar duplicados
-    char line[100];
-    int exists = 0;
-
-    // Comprobar si la amistad ya existe en cualquier dirección
-    while (fgets(line, sizeof(line), file))
+    // Verificar si el usuario y el nuevo amigo ya son amigos
+    cJSON *amigos_usuario = cJSON_GetObjectItem(amistades_json, nom);
+    if (!amigos_usuario)
     {
-        char user1[MAX_USUARI], user2[MAX_USUARI];
-        sscanf(line, "%s %s", user1, user2);
-        if ((strcmp(user1, nom) == 0 && strcmp(user2, nou_amic) == 0) ||
-            (strcmp(user1, nou_amic) == 0 && strcmp(user2, nom) == 0))
+        amigos_usuario = cJSON_AddArrayToObject(amistades_json, nom); // Crear la lista si no existe
+    }
+
+    // Verificar si el nuevo amigo ya está en la lista de amigos
+    cJSON *amigo;
+    int existe = 0;
+    cJSON_ArrayForEach(amigo, amigos_usuario)
+    {
+        if (strcmp(amigo->valuestring, nou_amic) == 0)
         {
-            exists = 1;
+            existe = 1;
             break;
         }
     }
 
-    if (!exists)
+    // Si no existe, añadir la relación de amistad
+    if (!existe)
     {
-        // Agregar la amistad en ambas direcciones
-        fprintf(file, "%s %s\n", nom, nou_amic);
-        fprintf(file, "%s %s\n", nou_amic, nom);
-        snprintf(resposta, sizeof(resposta), "Amistad creada entre %s y %s\n", nom, nou_amic);
-        registre_activitat(usuario_info.nom, "Amistad", "Amistad creada exitosamente con el usuario especificado");
+        cJSON_AddItemToArray(amigos_usuario, cJSON_CreateString(nou_amic));
+
+        // Añadir la relación inversa en el JSON
+        cJSON *amigos_nou_amic = cJSON_GetObjectItem(amistades_json, nou_amic);
+        if (!amigos_nou_amic)
+        {
+            amigos_nou_amic = cJSON_AddArrayToObject(amistades_json, nou_amic);
+        }
+        cJSON_AddItemToArray(amigos_nou_amic, cJSON_CreateString(nom));
+
+        // Guardar los cambios en el archivo JSON
+        if (guardar_json("amistats.json", amistades_json))
+        {
+            snprintf(resposta, sizeof(resposta), "Amistad creada entre %s y %s\n", nom, nou_amic);
+            registre_activitat(usuario_info.nom, "Amistad", "Amistad creada exitosamente con el usuario especificado");
+        }
+        else
+        {
+            snprintf(resposta, sizeof(resposta), "Error: No se pudo guardar la relación de amistad.\n");
+            registre_activitat(usuario_info.nom, "Error", "Error al guardar la nueva amistad en el archivo JSON");
+        }
     }
     else
     {
@@ -215,7 +188,8 @@ const char *afegir_amic(const char *nom, const char *nou_amic)
         registre_activitat(usuario_info.nom, "Amistad", "Intento de amistad fallido, ya existe la relación");
     }
 
-    fclose(file);
+    cJSON_Delete(amistades_json); // Liberar memoria
+
     return resposta;
 }
 
@@ -287,7 +261,7 @@ const char *processa_opcio(int opcio, const char *nom, int *continuar)
         resposta = "Opció invàlida.";
         break;
     }
-    
+
     return resposta;
 }
 
@@ -349,15 +323,6 @@ int configura_socket(int port)
 
 // ============================= HISTORIAL D'ACTIVITATS =============================
 
-// Estructura per emmagatzemar l'activitat de l'usuari
-
-typedef struct
-{
-    char tipus_activitat[30];
-    char detalls[100];
-    time_t timestamp;
-} Activitat;
-
 // Función para registrar la actividad de un usuario
 void registre_activitat(const char *usuari, const char *accio, const char *detall)
 {
@@ -385,9 +350,7 @@ void registre_activitat(const char *usuari, const char *accio, const char *detal
     printf("Activitat registrada: %s - %s\n", nova_activitat.tipus_activitat, nova_activitat.detalls);
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+// Función para ver el historial de actividades de un usuario
 
 char *veure_activitat(const char *nom)
 {
@@ -420,7 +383,8 @@ char *veure_activitat(const char *nom)
             char **temp = realloc(lines, max_lines * sizeof(char *));
             if (temp == NULL)
             {
-                for (size_t i = 0; i < line_count; i++) free(lines[i]);
+                for (size_t i = 0; i < line_count; i++)
+                    free(lines[i]);
                 free(lines);
                 fclose(file);
                 return strdup("Error: no hi ha prou memòria per carregar l'activitat.");
@@ -430,7 +394,8 @@ char *veure_activitat(const char *nom)
         lines[line_count] = strdup(linea);
         if (lines[line_count] == NULL)
         {
-            for (size_t i = 0; i < line_count; i++) free(lines[i]);
+            for (size_t i = 0; i < line_count; i++)
+                free(lines[i]);
             free(lines);
             fclose(file);
             return strdup("Error: no hi ha prou memòria per carregar l'activitat.");
@@ -441,12 +406,14 @@ char *veure_activitat(const char *nom)
 
     // Calcular el tamaño del buffer final
     size_t buffer_size = 1;
-    for (size_t i = 0; i < line_count; i++) buffer_size += strlen(lines[i]);
+    for (size_t i = 0; i < line_count; i++)
+        buffer_size += strlen(lines[i]);
 
     char *buffer = malloc(buffer_size);
     if (buffer == NULL)
     {
-        for (size_t i = 0; i < line_count; i++) free(lines[i]);
+        for (size_t i = 0; i < line_count; i++)
+            free(lines[i]);
         free(lines);
         return strdup("Error: no hi ha prou memòria.");
     }
@@ -459,9 +426,217 @@ char *veure_activitat(const char *nom)
     }
 
     // Liberar memoria utilizada
-    for (size_t i = 0; i < line_count; i++) free(lines[i]);
+    for (size_t i = 0; i < line_count; i++)
+        free(lines[i]);
     free(lines);
 
     return buffer;
 }
 
+// ============================= SUGERÈNCIES D'AMICS =============================
+
+// Función para cargar el archivo JSON y obtener el objeto raíz
+cJSON *cargar_json(const char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    if (!file)
+    {
+        perror("Error al abrir el archivo JSON");
+        return NULL;
+    }
+
+    // Leer el contenido del archivo
+    fseek(file, 0, SEEK_END);
+    long length = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    char *data = (char *)malloc(length + 1);
+    fread(data, 1, length, file);
+    fclose(file);
+
+    // Parsear el contenido JSON
+    cJSON *json = cJSON_Parse(data);
+    free(data);
+
+    if (!json)
+    {
+        fprintf(stderr, "Error al parsear JSON\n");
+        return NULL;
+    }
+    return json;
+}
+
+const char *suggerir_amics(const char *nom)
+{
+    static char resposta[500];
+    resposta[0] = '\0';
+
+    // Obtener la información completa del usuario
+    usuari_t usuario_info = get_user_info(nom);
+    if (usuario_info.nom[0] == '\0')
+    { // Verificar si el usuario fue encontrado
+        registre_activitat(usuario_info.nom, "Error", "Usuario no encontrado en suggerir_amics");
+        return "Error: Usuario no encontrado.\n";
+    }
+
+    // Cargar el archivo JSON
+    cJSON *amistades_json = cargar_json("amistats.json");
+    if (!amistades_json)
+    {
+        snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de relaciones de amistad.\n");
+        return resposta;
+    }
+
+    // Obtener la lista de amigos directos
+    cJSON *amigos_directos = cJSON_GetObjectItem(amistades_json, nom);
+    if (!amigos_directos)
+    {
+        snprintf(resposta, sizeof(resposta), "No tens amics registrats.\n");
+        cJSON_Delete(amistades_json);
+        return resposta;
+    }
+
+    // Crear un array de amigos directos para verificación rápida
+    char amics_directes[MAX_AMICS][MAX_USUARI];
+    int num_amics_directes = 0;
+
+    cJSON *amigo;
+    cJSON_ArrayForEach(amigo, amigos_directos)
+    {
+        strcpy(amics_directes[num_amics_directes++], amigo->valuestring);
+    }
+
+    int suggeriments_encontrados = 0;
+
+    // Buscar amigos de amigos para sugerencias
+    cJSON *user;
+    cJSON_ArrayForEach(user, amistades_json)
+    {
+        const char *usuario = user->string;
+
+        // Si el usuario ya es un amigo directo, lo ignoramos
+        int es_directe = 0;
+        for (int i = 0; i < num_amics_directes; i++)
+        {
+            if (strcmp(amics_directes[i], usuario) == 0)
+            {
+                es_directe = 1;
+                break;
+            }
+        }
+        if (es_directe || strcmp(usuario, nom) == 0)
+            continue; // Evitar amigos directos y el mismo usuario
+
+        // Verificar si hay amigos en común
+        cJSON *amigos_usuario = cJSON_GetObjectItem(amistades_json, usuario);
+        cJSON_ArrayForEach(amigo, amigos_usuario)
+        {
+            for (int i = 0; i < num_amics_directes; i++)
+            {
+                if (strcmp(amigo->valuestring, amics_directes[i]) == 0)
+                { // Encontramos un amigo en común
+                    snprintf(resposta + strlen(resposta), sizeof(resposta) - strlen(resposta),
+                             "Suggeriment: %s\n", usuario);
+                    suggeriments_encontrados++;
+                    break;
+                }
+            }
+            if (suggeriments_encontrados >= MAX_SUGGERIMENTS)
+                break;
+        }
+        if (suggeriments_encontrados >= MAX_SUGGERIMENTS)
+            break;
+    }
+
+    cJSON_Delete(amistades_json); // Liberar memoria
+
+    if (suggeriments_encontrados > 0)
+    {
+        registre_activitat(usuario_info.nom, "Sugerencia", "Sugerencias de amigos generadas exitosamente");
+    }
+    else
+    {
+        snprintf(resposta, sizeof(resposta), "No hi ha suggeriments de nous amics.\n");
+        registre_activitat(usuario_info.nom, "Sugerencia", "No se encontraron sugerencias de amigos");
+    }
+
+    return resposta;
+}
+
+const char *veure_amics(const char *nom){
+    static char resposta[500];
+    resposta[0] = '\0';
+
+    // Obtener la información completa del usuario
+    usuari_t usuario_info = get_user_info(nom);
+    if (usuario_info.nom[0] == '\0')
+    { // Verificar si el usuario fue encontrado
+        registre_activitat(usuario_info.nom, "Error", "Usuario no encontrado en veure_amics");
+        return "Error: Usuario no encontrado.\n";
+    }
+
+    // Cargar el archivo de amistades
+    cJSON *amistades_json = cargar_json("amistats.json");
+    if (!amistades_json)
+    {
+        snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de relaciones de amistad.\n");
+        return resposta;
+    }
+
+    // Obtener amigos directos del usuario
+    cJSON *amigos_directos = cJSON_GetObjectItem(amistades_json, nom);
+    if (!amigos_directos)
+    {
+        snprintf(resposta, sizeof(resposta), "No tens amics registrats.\n");
+        cJSON_Delete(amistades_json);
+        return resposta;
+    }
+
+    // Cargar el archivo de usuarios
+    cJSON *usuarios_json = cargar_json("users.json");
+    if (!usuarios_json)
+    {
+        snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de usuarios.\n");
+        cJSON_Delete(amistades_json);
+        return resposta;
+    }
+
+    // Iterar sobre la lista de amigos y obtener su información
+    cJSON *amigo;
+    int amigos_encontrados = 0;
+    cJSON_ArrayForEach(amigo, amigos_directos)
+    {
+        const char *friend_name = amigo->valuestring;
+        cJSON *friend_info = cJSON_GetObjectItem(usuarios_json, friend_name);
+
+        if (friend_info)
+        {
+            const char *sexe = cJSON_GetObjectItem(friend_info, "sexe")->valuestring;
+            const char *estat_civil = cJSON_GetObjectItem(friend_info, "estat_civil")->valuestring;
+            int edat = cJSON_GetObjectItem(friend_info, "edat")->valueint;
+            const char *ciutat = cJSON_GetObjectItem(friend_info, "ciutat")->valuestring;
+            const char *descripcio = cJSON_GetObjectItem(friend_info, "descripcio")->valuestring;
+
+            snprintf(resposta + strlen(resposta), sizeof(resposta) - strlen(resposta),
+                     "Amic: %s\nSexe: %s\nEstat Civil: %s\nEdat: %d\nCiutat: %s\nDescripció: %s\n\n",
+                     friend_name, sexe, estat_civil, edat, ciutat, descripcio);
+            amigos_encontrados++;
+        }
+    }
+
+    // Registrar la actividad según el resultado
+    if (amigos_encontrados > 0)
+    {
+        registre_activitat(usuario_info.nom, "Consulta", "Consulta de lista de amigos completada");
+    }
+    else
+    {
+        snprintf(resposta, sizeof(resposta), "No tens amics registrats.\n");
+        registre_activitat(usuario_info.nom, "Consulta", "No se encontraron amigos para el usuario");
+    }
+
+    // Liberar memoria JSON
+    cJSON_Delete(amistades_json);
+    cJSON_Delete(usuarios_json);
+
+    return resposta;
+}
