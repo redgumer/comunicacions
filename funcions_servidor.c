@@ -69,7 +69,7 @@ const char* veure_perfil(const usuari_t *usuari) {
     return resposta;
 }
 
-const char* veure_amics(const char *nom) {
+/*const char* veure_amics(const char *nom) {
     static char resposta[500];
     resposta[0] = '\0';
 
@@ -113,6 +113,67 @@ const char* veure_amics(const char *nom) {
     fclose(friend_file);
     return resposta[0] ? resposta : "No tens amics registrats.\n";
 }
+*/
+
+const char* veure_amics(const char *nom) {
+    static char resposta[1000]; // Augmentem la mida per a acomodar més dades
+    resposta[0] = '\0';
+
+    FILE *friend_file = fopen(FRIEND_FILE, "r");
+    if (!friend_file) {
+        snprintf(resposta, sizeof(resposta), "Error: No es pot obrir el fitxer de relacions d'amistat.\n");
+        return resposta;
+    }
+
+    FILE *user_file;
+    char friend_name[MAX_USUARI];
+    char line[100];
+    int found_friends = 0;
+
+    while (fgets(line, sizeof(line), friend_file)) {
+        char user1[MAX_USUARI], user2[MAX_USUARI];
+        sscanf(line, "%s %s", user1, user2);
+        
+        if (strcmp(nom, user1) == 0 || strcmp(nom, user2) == 0) {
+            strcpy(friend_name, (strcmp(nom, user1) == 0) ? user2 : user1);
+
+            user_file = fopen(USER_FILE, "r");
+            if (!user_file) {
+                snprintf(resposta, sizeof(resposta), "Error: No es pot obrir el fitxer d'usuaris.\n");
+                fclose(friend_file);
+                return resposta;
+            }
+
+            usuari_t friend;
+            while (fscanf(user_file, "%s %s %s %s %d %s %[^\n]", friend.nom, friend.contrasenya, friend.sexe, friend.estat_civil, &friend.edat, friend.ciutat, friend.descripcio) == 7) {
+                if (strcmp(friend.nom, friend_name) == 0) {
+                    snprintf(resposta + strlen(resposta), sizeof(resposta) - strlen(resposta),
+                        "=======================\n"
+                        "Nom: %s\n"
+                        "Sexe: %s\n"
+                        "Estat Civil: %s\n"
+                        "Edat: %d\n"
+                        "Ciutat: %s\n"
+                        "Descripció: %s\n"
+                        "=======================\n\n",
+                        friend.nom, friend.sexe, friend.estat_civil, friend.edat, friend.ciutat, friend.descripcio);
+                    found_friends = 1;
+                    break;
+                }
+            }
+            fclose(user_file);
+        }
+    }
+
+    fclose(friend_file);
+    // En cas de no trobar amics registrats
+    if (!found_friends) {
+        snprintf(resposta, sizeof(resposta), "No tens amics registrats.\n");
+    }
+
+    return resposta;
+}
+
 
 const char* afegir_amic(const char *nom, const char *nou_amic) {
     static char resposta[100];
