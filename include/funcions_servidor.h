@@ -10,14 +10,19 @@
 
 #ifndef FUNCIONS_SERVIDOR_H
 #define FUNCIONS_SERVIDOR_H
-#include <netinet/in.h>
-#include <unistd.h>
+
+#include <netinet/in.h> // Necessari per a la definició de sockaddr_in
+
+// ================================ CONSTANTS ================================ //
+#define MIDA_PAQUET 1500
 #define MAX_USUARI 30
 #define MAX_CONTRASENYA 30
 #define MAX_SEXE 10
 #define MAX_ESTAT_CIVIL 15
 #define MAX_CIUTAT 20
 #define MAX_DESC 100
+
+// ================================ FUNCIONS ================================ //
 
 /**
  * @brief Estructura que representa un usuari amb els seus atributs bàsics

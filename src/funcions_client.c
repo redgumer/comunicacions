@@ -23,7 +23,7 @@
 // ================================ LLIBRERIES PROPIES ================================ //
 #include "../include/funcions_client.h" // Per funcions específiques definides per al client en el projecte
 
-#define MIDA_PAQUET 100
+#define MIDA_PAQUET 1500
 #define MAX_USUARI 30
 #define MAX_CONTRASENYA 30
 

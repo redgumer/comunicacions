@@ -25,11 +25,11 @@ all: $(CLIENT_EXEC) $(SERVER_EXEC)
 
 # Compilar i enllaçar l'executable del client
 $(CLIENT_EXEC): $(CLIENT_OBJS)
-	$(CC) $(CFLAGS) -o $(CLIENT_EXEC) $(CLIENT_OBJS) -lcjson
+	$(CC) $(CFLAGS) -o $(CLIENT_EXEC) $(CLIENT_OBJS) 
 
 # Compilar i enllaçar l'executable del servidor
 $(SERVER_EXEC): $(SERVER_OBJS)
-	$(CC) $(CFLAGS) -o $(SERVER_EXEC) $(SERVER_OBJS) -lcjson
+	$(CC) $(CFLAGS) -o $(SERVER_EXEC) $(SERVER_OBJS) 
 
 # Compilar els fitxers objecte per al client
 $(BUILD_DIR)/client.o: $(SRC_DIR)/client.c $(INCLUDE_DIR)/funcions_client.h
