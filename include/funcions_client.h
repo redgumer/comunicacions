@@ -28,4 +28,9 @@ void demana_credencials(char *nom, char *contrasenya);
  */
 int mostra_menu();
 
+int inicializar_cliente(const char *ip, int port, struct sockaddr_in *contacte_servidor);
+int enviar_paquete(int s, struct sockaddr_in *contacte_servidor, char *paquet);
+void demana_credencials(char *nom, char *contrasenya);
+void procesa_respuesta_servidor(int s, struct sockaddr_in *contacte_servidor);
+
 #endif

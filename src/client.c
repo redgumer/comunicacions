@@ -1,6 +1,6 @@
 /*
  ================================ PROJECTE XARXES ================================
- | Fitxer     : client.c                                                         |
+ | Fitxer     : funcions_servidor.c                                              |
  | Autors     : Programador 1, Programador 2, Programador 3                      |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
@@ -11,93 +11,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include "../include/funcions_client.h"
 
-#define MIDA_PAQUET 1500
-#define MAX_USUARI 30
-#define MAX_CONTRASENYA 30
+#include "funcions_client.h"
 
-/**
- * @brief Funció principal del client per connectar-se al servidor, verificar credencials i mostrar el menú
- *
- * @param argc Nombre d'arguments passats per línia de comandes (haurien de ser 3)
- * @param argv Vector de cadenes amb els arguments (IP i port del servidor)
- * @return int Retorna 0 al final de l'execució correcte
- *
- * Aquesta funció crea un socket de connexió amb el servidor, demana les credencials de l'usuari
- * i les envia per a la verificació. Si la verificació és correcta, mostra un menú que permet a l'usuari
- * interactuar amb diferents opcions fins que decideixi sortir.
- */
-int main(int argc, char **argv)
-{
-    if (argc == 3)
-    {
-        int s;
+#define MIDA_PAQUET 1024
+#define MAX_USUARI 50
+#define MAX_CONTRASENYA 50
+
+int main(int argc, char **argv) {
+    if (argc == 3) {
         struct sockaddr_in contacte_servidor;
-        char paquet[MIDA_PAQUET];
+        char nom[50], contrasenya[50], paquet[MIDA_PAQUET];
 
-        // Configuració de connexió amb el servidor
-        s = socket(AF_INET, SOCK_DGRAM, 0);
-        contacte_servidor.sin_family = AF_INET;
-        contacte_servidor.sin_addr.s_addr = inet_addr(argv[1]);
-        contacte_servidor.sin_port = htons(atoi(argv[2]));
+        int s = inicializar_cliente(argv[1], atoi(argv[2]), &contacte_servidor);
 
-        // Demana les credencials de l'usuari
-        char nom[MAX_USUARI], contrasenya[MAX_CONTRASENYA];
+        // Obtener credenciales y preparar el paquete
         demana_credencials(nom, contrasenya);
-
-        // Envia les credencials al servidor per a verificació
-        snprintf(paquet, MIDA_PAQUET, "%s %s", nom, contrasenya);
-        if (sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor)) == -1)
-        {
-            perror("Error enviant les credencials al servidor");
-            return 1;
+        snprintf(paquet, MIDA_PAQUET, "%s:%s", nom, contrasenya); // Formato "nombre:contrasena"
+        
+        // Enviar credenciales al servidor y procesar la respuesta
+        if (enviar_paquete(s, &contacte_servidor, paquet) > 0) {
+            printf("Credenciales enviadas. Esperando respuesta...\n");
+            procesa_respuesta_servidor(s, &contacte_servidor);
+        } else {
+            perror("Error al enviar las credenciales");
         }
-
-        // Rep la resposta de verificació del servidor
-        if (recvfrom(s, paquet, MIDA_PAQUET, 0, NULL, NULL) == -1)
-        {
-            perror("Error rebent la resposta de verificació del servidor");
-            return 1;
-        }
-
-        printf("Resposta del servidor: %s\n", paquet);
-
-        // Si la verificació és correcta, mostra el menú d'opcions
-        if (strcmp(paquet, "Usuari verificat\n") == 0)
-        {
-            int opcio;
-            do
-            {
-                // Mostra el menú i envia l'opció seleccionada al servidor
-                opcio = mostra_menu();
-                snprintf(paquet, MIDA_PAQUET, "%d %s", opcio, nom);
-                if (sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor)) == -1)
-                {
-                    perror("Error enviant l'opció al servidor");
-                    return 1;
-                }
-
-                // Rep la resposta del servidor per cada opció seleccionada
-                if (recvfrom(s, paquet, MIDA_PAQUET, 0, NULL, NULL) == -1)
-                {
-                    perror("Error rebent la resposta del servidor");
-                    return 1;
-                }
-                printf("Resposta del servidor:\n%s\n", paquet);
-
-            } while (opcio != 5); // Repeteix fins que l'usuari decideixi sortir
-        }
-        else
-        {
-            printf("Credencials incorrectes o usuari no trobat.\n");
-        }
-
-        return 0;
+        close(s);
+    } else {
+        printf("Uso: %s <IP_servidor> <puerto>\n", argv[0]);
     }
+    return 0;
 }

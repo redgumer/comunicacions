@@ -19,7 +19,7 @@ SERVER_OBJS = $(BUILD_DIR)/server.o $(BUILD_DIR)/funcions_servidor.o
 
 # Definició de valors per defecte de les variables
 PORT = 10000
-IP = 127.0.0.1
+IP = 127.0.0.0
 
 # Objectiu per compilar-ho tot
 all: $(CLIENT_EXEC) $(SERVER_EXEC)

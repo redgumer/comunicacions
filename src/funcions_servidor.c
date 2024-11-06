@@ -28,13 +28,35 @@
 #define MAX_SUGGERIMENTS 5 // Máximo de sugerencias a mostrar
 #define MIDA_PAQUET 1500
 
+// Verifica si el usuario existe y si la contraseña es correcta
 int verifica_usuari(const char *nom, const char *contrasenya)
 {
-    // Cargar el archivo JSON de usuarios
-    cJSON *usuarios_json = cargar_json("users.json");
+    FILE *file = fopen("include/users.json", "r");
+    if (!file)
+    {
+        perror("Error al abrir el archivo JSON");
+        return -1; // Error al abrir el archivo
+    }
+
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    char *json_data = (char *)malloc(file_size + 1);
+    if (!json_data)
+    {
+        fclose(file);
+        return -1; // Error de memoria
+    }
+    fread(json_data, 1, file_size, file);
+    fclose(file);
+    json_data[file_size] = '\0';
+
+    cJSON *usuarios_json = cJSON_Parse(json_data);
+    free(json_data);
     if (!usuarios_json)
     {
-        return -1; // Error al abrir el archivo
+        printf("Error al parsear JSON.\n");
+        return -1;
     }
 
     // Buscar el usuario en el JSON
@@ -42,96 +64,101 @@ int verifica_usuari(const char *nom, const char *contrasenya)
     if (!usuario)
     {
         cJSON_Delete(usuarios_json);
-        printf("Usuari no trobat. Vols registrar-te? (s/n): ");
-        char resposta;
-        scanf(" %c", &resposta);
-
-        if (resposta == 's' || resposta == 'S')
-        {
-            char sexe[10], estat_civil[15], ciutat[30], descripcio[100];
-            int edat;
-
-            printf("Introdueix el teu sexe: ");
-            scanf("%9s", sexe);
-            printf("Introdueix el teu estat civil: ");
-            scanf("%14s", estat_civil);
-            printf("Introdueix la teva edat: ");
-            scanf("%d", &edat);
-            printf("Introdueix la teva ciutat: ");
-            scanf("%29s", ciutat);
-            printf("Descripció personal: ");
-            scanf(" %99[^\n]", descripcio); // Leer línea completa
-
-            int resultat = registra_usuari(nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
-            if (resultat == 1)
-            {
-                printf("Usuari registrat amb èxit!\n");
-            }
-            else
-            {
-                printf("Error en el registre de l'usuari.\n");
-            }
-            return resultat; // Retorna el resultat del registre
-        }
-        else
-        {
-            printf("Registre cancel·lat.\n");
-            return 0; // Indica que el usuari no ha estat validat ni registrat
-        }
+        return 0; // Usuario no encontrado
     }
 
     // Verificar la contraseña
-    const char *password_json = cJSON_GetObjectItem(usuario, "contrasenya")->valuestring;
+    cJSON *contrasenya_json = cJSON_GetObjectItem(usuario, "contrasenya");
+    if (!contrasenya_json || !cJSON_IsString(contrasenya_json))
+    {
+        cJSON_Delete(usuarios_json);
+        return -2; // Error en el formato de la contraseña
+    }
+    const char *password_json = contrasenya_json->valuestring;
     if (strcmp(password_json, contrasenya) == 0)
     {
-        registre_activitat(nom, "Inici de sessió", "autenticat correctament");
         cJSON_Delete(usuarios_json);
         return 1; // Usuario autenticado correctamente
     }
 
-    // Contraseña incorrecta
     cJSON_Delete(usuarios_json);
-    printf("Contrasenya incorrecta. Vols registrar-te amb una nova contrasenya? (s/n): ");
-    char resposta;
-    scanf(" %c", &resposta);
+    return -2; // Contraseña incorrecta
+}
 
-    if (resposta == 's' || resposta == 'S')
+// Función para registrar un nuevo usuario en el archivo JSON
+int gestiona_registre(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio)
+{
+    FILE *file = fopen("../include/users.json", "r");
+    long file_size = 0;
+    char *json_data = NULL;
+
+    if (file)
     {
-        // Solicitar los demás datos para el registro
-        char sexe[10], estat_civil[15], ciutat[30], descripcio[100];
-        int edat;
-
-        printf("Introdueix el teu sexe: ");
-        scanf("%9s", sexe);
-        printf("Introdueix el teu estat civil: ");
-        scanf("%14s", estat_civil);
-        printf("Introdueix la teva edat: ");
-        scanf("%d", &edat);
-        printf("Introdueix la teva ciutat: ");
-        scanf("%29s", ciutat);
-        printf("Descripció personal: ");
-        scanf(" %99[^\n]", descripcio);
-
-        int resultat = registra_usuari(nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
-        if (resultat == 1)
+        fseek(file, 0, SEEK_END);
+        file_size = ftell(file);
+        fseek(file, 0, SEEK_SET);
+        json_data = (char *)malloc(file_size + 1);
+        if (!json_data)
         {
-            printf("Usuari registrat amb èxit!\n");
+            fclose(file);
+            return -1; // Error de memoria
         }
-        else
-        {
-            printf("Error en el registre de l'usuari.\n");
-        }
-        return resultat;
+        fread(json_data, 1, file_size, file);
+        fclose(file);
+        json_data[file_size] = '\0';
     }
 
-    printf("Registre cancel·lat.\n");
-    return 0; // Contraseña incorrecta, registro cancelado
+    // Cargar o inicializar JSON de usuarios
+    cJSON *usuarios_json = file_size > 0 ? cJSON_Parse(json_data) : cJSON_CreateObject();
+    free(json_data);
+    if (!usuarios_json)
+    {
+        printf("Error al parsear JSON.\n");
+        return -1;
+    }
+
+    // Comprobar si el usuario ya existe
+    if (cJSON_GetObjectItem(usuarios_json, nom) != NULL)
+    {
+        cJSON_Delete(usuarios_json);
+        return 0; // Usuario ya existe
+    }
+
+    // Crear el objeto JSON del nuevo usuario
+    cJSON *nuevo_usuario = cJSON_CreateObject();
+    cJSON_AddStringToObject(nuevo_usuario, "contrasenya", contrasenya);
+    cJSON_AddStringToObject(nuevo_usuario, "sexe", sexe);
+    cJSON_AddStringToObject(nuevo_usuario, "estat_civil", estat_civil);
+    cJSON_AddNumberToObject(nuevo_usuario, "edat", edat);
+    cJSON_AddStringToObject(nuevo_usuario, "ciutat", ciutat);
+    cJSON_AddStringToObject(nuevo_usuario, "descripcio", descripcio);
+
+    // Agregar el nuevo usuario al JSON raíz
+    cJSON_AddItemToObject(usuarios_json, nom, nuevo_usuario);
+
+    // Guardar el JSON actualizado en el archivo
+    file = fopen("../include/users.json", "w");
+    if (!file)
+    {
+        printf("Error al abrir el archivo JSON para escribir.\n");
+        cJSON_Delete(usuarios_json);
+        return -1;
+    }
+    char *json_string = cJSON_Print(usuarios_json);
+    fprintf(file, "%s", json_string);
+    fclose(file);
+
+    // Liberar memoria
+    cJSON_Delete(usuarios_json);
+    free(json_string);
+
+    return 1; // Registro exitoso
 }
 
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio)
 {
     // Cargar el archivo JSON de usuarios
-    cJSON *usuarios_json = cargar_json("users.json");
+    cJSON *usuarios_json = cargar_json("include/users.json");
     if (!usuarios_json)
     {
         return -1; // Error al abrir el archivo
@@ -157,7 +184,7 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
     cJSON_AddItemToObject(usuarios_json, nom, nuevo_usuario);
 
     // Guardar los cambios en el archivo JSON
-    if (guardar_json("users.json", usuarios_json))
+    if (guardar_json("include/users.json", usuarios_json))
     {
         // Registrar actividad de creación del usuario
         usuari_t nou_usuari;
@@ -383,61 +410,67 @@ const char *processa_opcio(int opcio, const char *nom, int *continuar)
 }
 
 // ============================= GESTIONA CONECCIÓ =============================
-
-void gestiona_client(int s, struct sockaddr_in contacte_client)
-{
-    socklen_t contacte_client_mida = sizeof(contacte_client);
-    char paquet[MIDA_PAQUET];
-
-    // Rep credencials del client
-    recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, &contacte_client_mida);
-    char nom[MAX_USUARI], contrasenya[MAX_CONTRASENYA];
-    sscanf(paquet, "%s %s", nom, contrasenya);
-
-    // Verifica les credencials d'usuari
-    int resultat = verifica_usuari(nom, contrasenya);
-    if (resultat == 1)
-    {
-        // Envia resposta de verificació correcta
-        strcpy(paquet, "Usuari verificat\n");
-        sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
-        int continuar = 1;
-        while (continuar)
-        {
-            // Rep l'opció seleccionada pel client
-            recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, &contacte_client_mida);
-            int opcio;
-            sscanf(paquet, "%d %s", &opcio, nom);
-            const char *resposta = processa_opcio(opcio, nom, &continuar);
-            sendto(s, resposta, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
-        }
-    }
-    else
-    {
-        // Respon que l'usuari no ha estat trobat o verificat
-        strcpy(paquet, "Usuari no trobat o error de verificació\n");
-        sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
-    }
-}
-
-int configura_socket(int port)
-{
+// Función para inicializar el servidor
+int inicializar_servidor(int port, struct sockaddr_in *socket_servidor) {
     int s = socket(AF_INET, SOCK_DGRAM, 0);
-    struct sockaddr_in socket_servidor;
-    socket_servidor.sin_family = AF_INET;
-    socket_servidor.sin_addr.s_addr = INADDR_ANY;
-    socket_servidor.sin_port = htons(port);
-
-    // Enllaça el socket al port especificat
-    if (bind(s, (struct sockaddr *)&socket_servidor, sizeof(socket_servidor)) < 0)
-    {
-        printf("No s'ha pogut enllaçar el socket\n");
-        return -1;
+    if (s < 0) {
+        perror("Error al crear el socket");
+        exit(1);
     }
-    printf("Servidor operatiu al port %d!\n", port);
+    socket_servidor->sin_family = AF_INET;
+    socket_servidor->sin_addr.s_addr = INADDR_ANY;
+    socket_servidor->sin_port = htons(port);
+    if (bind(s, (struct sockaddr *)socket_servidor, sizeof(*socket_servidor)) < 0) {
+        perror("Error en el bind");
+        close(s);
+        exit(1);
+    }
     return s;
 }
 
+// Función para recibir datos del cliente
+int recibir_datos(int s, struct sockaddr_in *contacte_client, char *paquet) {
+    socklen_t contacte_client_mida = sizeof(*contacte_client);
+    return recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)contacte_client, &contacte_client_mida);
+}
+
+// Función para extraer nombre y contraseña del paquete recibido
+void extraer_credenciales(char *paquet, char *nombre, char *contrasena) {
+    char *token = strtok(paquet, ":");
+    if (token != NULL) {
+        strncpy(nombre, token, 49);
+        nombre[49] = '\0';
+        
+        token = strtok(NULL, ":");
+        if (token != NULL) {
+            strncpy(contrasena, token, 49);
+            contrasena[49] = '\0';
+        }
+    }
+}
+
+// Función para enviar el código de respuesta al cliente
+void enviar_respuesta(int s, struct sockaddr_in *contacte_client, int respuesta) {
+    sendto(s, &respuesta, sizeof(respuesta), 0, (struct sockaddr *)contacte_client, sizeof(*contacte_client));
+}
+
+// Función principal de manejo de conexión
+void manejar_conexion(int s, struct sockaddr_in *contacte_client) {
+    char paquet[MIDA_PAQUET], nombre[50], contrasena[50];
+
+    if (recibir_datos(s, contacte_client, paquet) > 0) {
+        printf("Paquete recibido: %s\n", paquet);
+
+        // Extraer nombre y contraseña
+        extraer_credenciales(paquet, nombre, contrasena);
+
+        // Verificar credenciales
+        int respuesta = verifica_usuari(nombre, contrasena);
+
+        // Enviar código de respuesta al cliente
+        enviar_respuesta(s, contacte_client, respuesta);
+    }
+}
 // ============================= HISTORIAL D'ACTIVITATS =============================
 
 // Función para registrar la actividad de un usuario
@@ -710,7 +743,7 @@ const char *veure_amics(const char *nom)
     }
 
     // Cargar el archivo de usuarios
-    cJSON *usuarios_json = cargar_json("users.json");
+    cJSON *usuarios_json = cargar_json("/include/users.json");
     if (!usuarios_json)
     {
         snprintf(resposta, sizeof(resposta), "Error: No se puede abrir el archivo de usuarios.\n");

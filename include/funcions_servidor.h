@@ -79,4 +79,11 @@ usuari_t get_user_info(const char *nom);
 // Funció per processar opcions de menú
 const char *processa_opcio(int opcio, const char *nom, int *continuar);
 
+int inicializar_servidor(int port, struct sockaddr_in *socket_servidor);
+int recibir_datos(int s, struct sockaddr_in *contacte_client, char *paquet);
+void extraer_credenciales(char *paquet, char *nombre, char *contrasena);
+int verificar_credenciales(const char *nombre, const char *contrasena);
+void enviar_respuesta(int s, struct sockaddr_in *contacte_client, int respuesta);
+void manejar_conexion(int s, struct sockaddr_in *contacte_client);
+
 #endif // FUNCIONS_SERVIDOR_H
