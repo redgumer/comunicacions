@@ -1,11 +1,6 @@
 # Definició del compilador i opcions de compilació
 CC = gcc
-<<<<<<< HEAD
 CFLAGS = -Wall -Wextra -g -Iinclude 
-=======
-CFLAGS = -Wall -Wextra -g -Iinclude -Iinclude/cjson  # Asegúrate de que el directorio de cJSON sea correcto
-
->>>>>>> 7a45e98ae33727134f6a194d7d1aea31be3f7b85
 # Carpetes del projecte
 BIN_DIR = bin
 BUILD_DIR = build
@@ -51,19 +46,11 @@ $(BUILD_DIR)/funcions_servidor.o: $(SRC_DIR)/funcions_servidor.c $(INCLUDE_DIR)/
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/funcions_servidor.c -o $(BUILD_DIR)/funcions_servidor.o
 
 # Executar el servidor amb el port predefinit o personalitzat
-<<<<<<< HEAD
 servidor: $(SERVER_EXEC)
 	./$(SERVER_EXEC) $(PORT)
 
 # Executar el client amb IP i port predefinits o personalitzats
 client: $(CLIENT_EXEC)
-=======
-run-servidor: $(SERVER_EXEC)
-	./$(SERVER_EXEC) $(PORT)
-
-# Executar el client amb IP i port predefinits o personalitzats
-run-client: $(CLIENT_EXEC)
->>>>>>> 7a45e98ae33727134f6a194d7d1aea31be3f7b85
 	./$(CLIENT_EXEC) $(IP) $(PORT)
 
 # Netejar fitxers de compilació

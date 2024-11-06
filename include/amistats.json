@@ -1,7 +1,0 @@
-{
-    "user1": ["user2", "user3", "nou_amic"],
-    "user2": ["user1", "user4"],
-    "user3": ["user1", "user5"],
-    "user4": ["user2", "user5"],
-    "user5": ["user3", "user4"]
-}
