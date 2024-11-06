@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+<<<<<<< HEAD
 #include <sys/socket.h>
 #include "funcions_servidor.h"
 
@@ -33,5 +34,28 @@ int main(int argc, char **argv)
         gestiona_client(s, contacte_client);
     }
         close(s);
+=======
+#include <netinet/in.h>
+#include <sys/socket.h>
+
+#include "../include/funcions_servidor.h"
+
+
+int main(int argc, char **argv) {
+    if (argc == 2) {
+        struct sockaddr_in socket_servidor, contacte_client;
+
+        // Inicializar el servidor
+        int s = inicializar_servidor(atoi(argv[1]), &socket_servidor);
+
+        while (1) {
+            // Manejar la conexión
+            manejar_conexion(s, &contacte_client);
+        }
+        close(s);
+    } else {
+        printf("Uso: %s <puerto>\n", argv[0]);
+    }
+>>>>>>> 7a45e98ae33727134f6a194d7d1aea31be3f7b85
     return 0;
 }

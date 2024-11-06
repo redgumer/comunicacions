@@ -1,0 +1,26 @@
+{
+    "xavi": {
+        "contrasenya": "1234",
+        "sexe": "home",
+        "estat_civil": "solter",
+        "edat": 30,
+        "ciutat": "Barcelona",
+        "descripcio": "Amant de la tecnologia i els esports"
+    },
+    "janedoe": {
+        "contrasenya": "abcd",
+        "sexe": "dona",
+        "estat_civil": "casada",
+        "edat": 28,
+        "ciutat": "Madrid",
+        "descripcio": "Interessada en la lectura i viatjar"
+    },
+    "mikesmith": {
+        "contrasenya": "passw0rd",
+        "sexe": "home",
+        "estat_civil": "divorciat",
+        "edat": 45,
+        "ciutat": "València",
+        "descripcio": "Aficionat a la cuina i el cinema"
+    }
+}
