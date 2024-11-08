@@ -44,7 +44,6 @@ int verifica_usuari(const char *nom, const char *contrasenya)
     return 0;
 }
 
-
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio)
 {
     FILE *file = fopen(USER_FILE, "a"); // Obrir el fitxer en mode "a" per afegir dades al final
@@ -243,26 +242,31 @@ void gestiona_client(int s, struct sockaddr_in contacte_client)
     int edat = 0;
     int resultat; // Declaració de resultat fora del bucle do-while
 
+    printf("Iniciant gestió del client.\n");
+
     do
     {
         // Rep credencials d'usuari del client
+        printf("Esperant credencials del client...\n");
         recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, &contacte_client_mida);
         sscanf(paquet, "%s %s", nom, contrasenya);
         printf("Credencials rebudes: Usuari = %s, Contrasenya = %s\n", nom, contrasenya);
 
         // Verifica les credencials d'usuari
         resultat = verifica_usuari(nom, contrasenya);
+        printf("Resultat de la verificació: %d\n", resultat);
 
         if (resultat == 1)
         {
             // Respon que la verificació ha estat correcta
             strcpy(paquet, "Usuari verificat\n");
             sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
-            printf("Resposta enviada: %s\n", paquet);
+            printf("Resposta enviada al client: %s\n", paquet);
 
             int continuar = 1;
             while (continuar)
             {
+                printf("Esperant opció seleccionada pel client...\n");
                 recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, &contacte_client_mida);
                 int opcio;
                 sscanf(paquet, "%d %s", &opcio, nom);
@@ -271,27 +275,36 @@ void gestiona_client(int s, struct sockaddr_in contacte_client)
                 // Processa l'opció seleccionada pel client i envia la resposta
                 const char *resposta = processa_opcio(opcio, nom, &continuar);
                 sendto(s, resposta, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
-                printf("Resposta enviada: %s\n", resposta);
+                printf("Resposta enviada després de processar opció: %s\n", resposta);
             }
         }
         else if (resultat == 0)
         {
             // L'usuari no es troba o no ha estat verificat
-            strcpy(paquet, "Usuari no trobat o s'ha de registrar\n");
+            printf("Usuari no trobat o s'ha de registrar\n");
+            sscanf(paquet, "%d", &resultat);
             sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
-            printf("Resposta enviada: %s\n", paquet);
+            printf("Resposta enviada per usuari no trobat: %s\n", paquet);
 
             // Processar dades rebudes per registre
+            printf("Esperant dades de registre del client...\n");
             recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, &contacte_client_mida);
             sscanf(paquet, "%s %s %s %s %d %s %[^\n]", nom, contrasenya, sexe, estat_civil, &edat, ciutat, descripcio);
+            printf("Dades de registre rebudes: Usuari = %s, Contrasenya = %s, Sexe = %s, Estat civil = %s, Edat = %d, Ciutat = %s, Descripció = %s\n",
+                   nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+
+            // Intenta registrar l'usuari
             resultat = registra_usuari(nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+            printf("Resultat del registre: %d\n", resultat);
         }
         else
         {
             // Error en la verificació de l'usuari
             strcpy(paquet, "Usuari no trobat o error de verificació\n");
             sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
-            printf("Resposta enviada: %s\n", paquet);
+            printf("Resposta enviada per error de verificació: %s\n", paquet);
         }
     } while (resultat == -1);
+
+    printf("Finalitzada la gestió del client.\n");
 }

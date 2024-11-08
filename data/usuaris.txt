@@ -4,6 +4,4 @@ user3 password3 Male Divorced 42 Valencia "Freelance consultant and traveler"
 user4 password4 Female Single 26 Seville "Creative designer and art enthusiast"
 user5 password5 Male Engaged 31 Bilbao "Engineer interested in sustainable energy solutions"
 
-manon mamon   0  
-Xavi gomez   0  
-xavi 1234   0  
+antonio 1234 F todo 50 lapobla me gusta la juerga

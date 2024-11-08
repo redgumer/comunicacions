@@ -9,16 +9,16 @@
 */
 
 // ================================ LLIBRERIES ESTÀNDARD ================================ //
-#include <stdio.h>          // Per funcions d'entrada/sortida com printf, scanf, etc.
-#include <stdlib.h>         // Per funcions generals com malloc, free, etc.
-#include <string.h>         // Per funcions de manipulació de cadenes, com strcpy, strcmp, etc.
+#include <stdio.h>  // Per funcions d'entrada/sortida com printf, scanf, etc.
+#include <stdlib.h> // Per funcions generals com malloc, free, etc.
+#include <string.h> // Per funcions de manipulació de cadenes, com strcpy, strcmp, etc.
 
 // ================================ LLIBRERIES DE XARXA ================================ //
-#include <sys/socket.h>     // Per funcions de sockets, com socket, connect, etc.
-#include <sys/types.h>      // Per definicions de tipus de dades utilitzades en sockets
-#include <netinet/in.h>     // Per funcions i estructures de la família de protocols d'Internet
-#include <arpa/inet.h>      // Per la conversió d'adreces d'Internet (ex: inet_addr)
-#include <unistd.h>         // Per funcions del sistema Unix, com close, read, write, etc.
+#include <sys/socket.h> // Per funcions de sockets, com socket, connect, etc.
+#include <sys/types.h>  // Per definicions de tipus de dades utilitzades en sockets
+#include <netinet/in.h> // Per funcions i estructures de la família de protocols d'Internet
+#include <arpa/inet.h>  // Per la conversió d'adreces d'Internet (ex: inet_addr)
+#include <unistd.h>     // Per funcions del sistema Unix, com close, read, write, etc.
 
 // ================================ LLIBRERIES PROPIES ================================ //
 #include "../include/funcions_client.h" // Per funcions específiques definides per al client en el projecte
@@ -59,26 +59,43 @@ int inicialitza_connexio(struct sockaddr_in *contacte_servidor, const char *ip, 
     return s;
 }
 
-int verifica_usuari(int s, struct sockaddr_in contacte_servidor)
+int verifica_usuari(int s, struct sockaddr_in contacte_servidor, char nom[MAX_USUARI])
 {
+    char contrasenya[MAX_CONTRASENYA];
     char paquet[MIDA_PAQUET];
-    char nom[MAX_USUARI], contrasenya[MAX_CONTRASENYA];
+    socklen_t contacte_servidor_mida = sizeof(contacte_servidor);
 
-    demana_credencials(nom, contrasenya);
+    // Demana nom d'usuari i contrasenya al client
+    printf("Introdueix el teu nom d'usuari: ");
+    scanf("%s", nom);
+    printf("Nom d'usuari introduït: %s\n", nom);
 
-    sprintf(paquet, "%s %s", nom, contrasenya);
-    sendto(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor));
+    printf("Introdueix la teva contrasenya: ");
+    scanf("%s", contrasenya);
+    printf("Contrasenya introduïda: %s\n", contrasenya);
 
-    recvfrom(s, paquet, MIDA_PAQUET, 0, NULL, NULL);
-    printf("Resposta del servidor: %s\n", paquet);
+    // Empaqueta nom i contrasenya i els envia al servidor
+    snprintf(paquet, sizeof(paquet), "%s %s", nom, contrasenya);
+    printf("Paquet enviat al servidor: %s\n", paquet);
 
-    return strcmp(paquet, "Usuari verificat\n") == 0 ? 1 : 0;
+    // Enviar el paquet al servidor
+    sendto(s, paquet, sizeof(paquet), 0, (struct sockaddr *)&contacte_servidor, contacte_servidor_mida);
+    printf("Paquet enviat correctament al servidor.\n");
+
+    // Rep la resposta del servidor
+    recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_servidor, &contacte_servidor_mida);
+    int codi_resposta;
+    sscanf(paquet, "%d", &codi_resposta);
+    printf("Codi de resposta rebut del servidor: %d\n", codi_resposta);
+
+    // Retorna directament el codi de resposta del servidor
+    return codi_resposta;
 }
 
-void gestiona_menu(int s, struct sockaddr_in contacte_servidor)
+void gestiona_menu(int s, struct sockaddr_in contacte_servidor, char nom[MAX_USUARI])
 {
     char paquet[MIDA_PAQUET];
-    char nom[MAX_USUARI];
+
     int opcio;
 
     do

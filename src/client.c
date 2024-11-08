@@ -11,59 +11,71 @@
 #include <unistd.h>     // Per funcions del sistema Unix, com close, read, write, etc.
 
 // ================================ LLIBRERIES PROPIES ================================ //
-#include "funcions_client.h" // Per funcions específiques definides per al client en el projecte
+#include "../include/funcions_client.h" // Per funcions específiques definides per al client en el projecte
 
 int main(int argc, char **argv)
 {
-    if (argc == 3)
+    char nom[MAX_USUARI], contrasenya[MAX_CONTRASENYA], sexe[MAX_SEXE], estat_civil[MAX_ESTAT_CIVIL], ciutat[MAX_CIUTAT], descripcio[MAX_DESC], paquet[MIDA_PAQUET];
+    int edat;
+    if (argc != 3)
     {
-        int s;
-        struct sockaddr_in contacte_servidor;
-
-        // Inicialització de connexió amb el servidor
-        s = inicialitza_connexio(&contacte_servidor, argv[1], argv[2]);
-
-        // Verificació de l'usuari
-        if (verifica_usuari(s, contacte_servidor) == 1)
-        {
-            // Mostra el menú d'opcions
-            gestiona_menu(s, contacte_servidor);
-        }
-        if (verifica_usuari(s, contacte_servidor) == 0)
-        {
-            char nom[MAX_USUARI], contrasenya[MAX_CONTRASENYA], sexe[MAX_SEXE], estat_civil[MAX_ESTAT_CIVIL], ciutat[MAX_CIUTAT], descripcio[MAX_DESC], paquet[MIDA_PAQUET];
-            int edat;
-            // Enviar nom d'usuari i contrasenya
-            printf("Introdueix el teu nom d'usuari: ");
-            scanf("%s", nom);
-
-            printf("Introdueix la teva contrasenya: ");
-            scanf("%s", contrasenya);
-
-            // Enviar informació addicional per al registre
-            printf("Introdueix el teu sexe (M/F): ");
-            scanf("%s", sexe);
-
-            printf("Introdueix el teu estat civil: ");
-            scanf("%s", estat_civil);
-
-            printf("Introdueix la teva edat: ");
-            scanf("%d", &edat);
-
-            printf("Introdueix la teva ciutat: ");
-            scanf("%s", ciutat);
-
-            printf("Introdueix una breu descripció personal: ");
-            scanf(" %[^\n]", descripcio); // Permet que la descripció tingui espais
-
-            // Empaquetar totes les dades en un únic paquet i enviar-lo al servidor
-            snprintf(paquet, sizeof(paquet), "%s %s %s %s %d %s %s", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
-            sendto(s, paquet, sizeof(paquet), 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor));
-        }
-        else
-        {
-            printf("Error: No s'ha pogut verificar l'usuari.\n");
-        }
-        return 0;
+        printf("Ús: %s <IP_SERVIDOR> <PORT>\n", argv[0]);
+        return 1; // Retorna un codi d'error si no es proporcionen els arguments correctes
     }
+
+    int s;
+    struct sockaddr_in contacte_servidor;
+
+    // Inicialització de connexió amb el servidor
+    s = inicialitza_connexio(&contacte_servidor, argv[1], argv[2]);
+    if (s < 0)
+    {
+        printf("Error: No s'ha pogut inicialitzar la connexió amb el servidor.\n");
+        return 1; // Retorna un codi d'error si la connexió no s'inicialitza correctament
+    }
+
+    // Verificació de l'usuari
+    int verificacio = verifica_usuari(s, contacte_servidor, nom); // Guarda el resultat de la verificació per evitar crides duplicades
+    if (verificacio == 1)
+    {
+        // Mostra el menú d'opcions
+        gestiona_menu(s, contacte_servidor, nom);
+    }
+    else if (verificacio == 0)
+    {
+        // Enviar nom d'usuari i contrasenya
+        printf("Escriu nom nou d'usuari: ");
+        scanf("%s", nom);
+
+        printf("Escriu la teva contrasenya: ");
+        scanf("%s", contrasenya);
+
+        // Enviar informació addicional per al registre
+        printf("Escriu el teu sexe (M/F): ");
+        scanf("%s", sexe);
+
+        printf("Escriu el teu estat civil: ");
+        scanf("%s", estat_civil);
+
+        printf("Escriu la teva edat: ");
+        scanf("%d", &edat);
+
+        printf("Escriu la teva ciutat: ");
+        scanf("%s", ciutat);
+
+        printf("Introdueix una breu descripció personal: ");
+        scanf(" %[^\n]", descripcio); // Permet que la descripció tingui espais
+
+        // Empaquetar totes les dades en un únic paquet i enviar-lo al servidor
+        snprintf(paquet, sizeof(paquet), "%s %s %s %s %d %s %s", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+        sendto(s, paquet, sizeof(paquet), 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor));
+        printf("T'has registrat com nou usuari.\nDades enviades al servidor: %s\n", paquet);
+        gestiona_menu(s, contacte_servidor, nom);
+    }
+    else
+    {
+        printf("Error: No s'ha pogut verificar l'usuari.\n");
+    }
+
+    return 0;
 }

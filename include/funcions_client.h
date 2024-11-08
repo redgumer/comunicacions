@@ -29,9 +29,10 @@ int inicialitza_connexio(struct sockaddr_in *contacte_servidor, const char *ip, 
  *
  * @param s Descriptor de socket per a la connexió
  * @param contacte_servidor Estructura sockaddr_in amb la informació del servidor
+ * @param nom Nom d'usuari a verificar
  * @return int Retorna 1 si l'usuari és verificat, 0 si no ho és
  */
-int verifica_usuari(int s, struct sockaddr_in contacte_servidor);
+int verifica_usuari(int s, struct sockaddr_in contacte_servidor, char nom[MAX_USUARI]);
 
 /**
  * @brief Gestiona el menú d'opcions del client
@@ -39,7 +40,7 @@ int verifica_usuari(int s, struct sockaddr_in contacte_servidor);
  * @param s Descriptor de socket per a la connexió
  * @param contacte_servidor Estructura sockaddr_in amb la informació del servidor
  */
-void gestiona_menu(int s, struct sockaddr_in contacte_servidor);
+void gestiona_menu(int s, struct sockaddr_in contacte_servidor, char nom[MAX_USUARI]);
 
 /**
  * @brief Demana les credencials a l'usuari
