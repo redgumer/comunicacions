@@ -1,7 +1,5 @@
-user1 password1 Male Single 28 Barcelona "Software developer passionate about technology and innovation"
-user2 password2 Female Married 34 Madrid "Data analyst with a love for numbers and trends"
-user3 password3 Male Divorced 42 Valencia "Freelance consultant and traveler"
-user4 password4 Female Single 26 Seville "Creative designer and art enthusiast"
-user5 password5 Male Engaged 31 Bilbao "Engineer interested in sustainable energy solutions"
 
-antonio 1234 F todo 50 lapobla me gusta la juerga
+Angela 1234 Dona Casada 74 Cambrils soc la mara del xavi
+Xavi 1234 Home Solter 43 Cambrils M'agrada fer submarinisme i els videojocs
+Arlet 1234 Dona Soltera 8 Reus El la nevoda del xavi i la neta d'Angela
+Sara 1234 Trans Pareja 0 de hecho

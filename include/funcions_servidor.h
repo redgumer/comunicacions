@@ -35,6 +35,7 @@ typedef struct {
     int edat;                       /**< Edat de l'usuari */
     char ciutat[MAX_CIUTAT];        /**< Ciutat de residència de l'usuari */
     char descripcio[MAX_DESC];      /**< Descripció personal de l'usuari */
+    int id; 
 } usuari_t;
 
 /**
@@ -59,7 +60,7 @@ int verifica_usuari(const char *nom, const char *contrasenya);
  * @return int Retorna 1 si el registre és correcte i -1 si hi ha un error
  */
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
-                    const char *estat_civil, int edat, const char *ciutat, 
+                    const char *estat_civil, int *edat, const char *ciutat, 
                     const char *descripcio);
 
 /**
@@ -68,7 +69,7 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe,
  * @param usuari Punter a estructura usuari_t amb la informació de l'usuari
  * @return const char* Cadena amb la informació formatada del perfil de l'usuari
  */
-const char* veure_perfil(const usuari_t *usuari);
+char *imprimir_amics(const char *nom_usuari);
 
 /**
  * @brief Retorna una llista dels amics de l'usuari especificat
@@ -93,7 +94,13 @@ const char* afegir_amic(const char *nom, const char *nou_amic);
  * @param nom Nom de l'usuari a buscar
  * @return usuari_t Retorna una estructura usuari_t amb la informació de l'usuari
  */
-usuari_t get_user_info(const char *nom);
+usuari_t obtenir_informació_de_usuari(const char *nom);
+
+/**
+ * @brief Imprimeix la informació d'un usuari per la sortida estàndard
+ * @param usuari Punter a l'estructura usuari_t amb la informació de l'usuari
+ */
+char *imprimir_usuari(const usuari_t *usuari);
 
 /**
  * @brief Processa l'opció seleccionada pel client i retorna una resposta.
@@ -106,19 +113,19 @@ usuari_t get_user_info(const char *nom);
 const char* processa_opcio(int opcio, const char *nom, int *continuar);
 
 /**
- * @brief Gestiona la sessió d'un client verificant credencials i responent a les opcions del menú.
- *
- * @param s Socket del servidor
- * @param contacte_client Informació de l'adreça del client
- */
-void gestiona_client(int s, struct sockaddr_in contacte_client);
-
-/**
  * @brief Configura el socket del servidor i el lliga al port especificat.
  *
  * @param port Enter que representa el port del servidor
  * @return int Retorna el descriptor de fitxer del socket o -1 si hi ha un error
  */
 int configura_socket(int port);
+
+/**
+ * @brief Gestiona la sessió d'un client verificant credencials i responent a les opcions del menú.
+ *
+ * @param s Socket del servidor
+ * @param contacte_client Informació de l'adreça del client
+ */
+void gestiona_client(int s, struct sockaddr_in contacte_client);
 
 #endif

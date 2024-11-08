@@ -32,7 +32,7 @@ int inicialitza_connexio(struct sockaddr_in *contacte_servidor, const char *ip, 
  * @param nom Nom d'usuari a verificar
  * @return int Retorna 1 si l'usuari és verificat, 0 si no ho és
  */
-int verifica_usuari(int s, struct sockaddr_in contacte_servidor, char nom[MAX_USUARI]);
+int verifica_usuari(int s, struct sockaddr_in contacte_servidor, char *nom);
 
 /**
  * @brief Gestiona el menú d'opcions del client
@@ -56,5 +56,16 @@ void demana_credencials(char *nom, char *contrasenya);
  * @return int Retorna el número de l'opció seleccionada
  */
 int mostra_menu();
+/**
+ * @brief Registra un usuari al servidor
+ * @param nom Nom de l'usuari
+ * @param contrasenya Contrasenya de l'usuari
+ * @param sexe Sexe de l'usuari
+ * @param estat_civil Estat civil de l'usuari
+ * @param edat Edat de l'usuari
+ * @param ciutat Ciutat de l'usuari
+ * @param descripcio Descripció de l'usuari
+ */
+void registre_usuari(char *nom, char *contrasenya, char *sexe, char *estat_civil, int *edat, char *ciutat, char *descripcio);
 
 #endif // FUNCIONS_CLIENT_H

@@ -38,7 +38,9 @@ void demana_credencials(char *nom, char *contrasenya)
 int mostra_menu()
 {
     int opcio;
-    printf("\nMenu d'usuari:\n");
+    printf("\n========================\n");
+    printf("       Menu d'usuari:\n");
+    printf("========================\n");
     printf("1. Veure perfil\n");
     printf("2. Veure els meus amics\n");
     printf("3. Afegir amics nous\n");
@@ -59,7 +61,7 @@ int inicialitza_connexio(struct sockaddr_in *contacte_servidor, const char *ip, 
     return s;
 }
 
-int verifica_usuari(int s, struct sockaddr_in contacte_servidor, char nom[MAX_USUARI])
+int verifica_usuari(int s, struct sockaddr_in contacte_servidor, char *nom)
 {
     char contrasenya[MAX_CONTRASENYA];
     char paquet[MIDA_PAQUET];
@@ -108,4 +110,32 @@ void gestiona_menu(int s, struct sockaddr_in contacte_servidor, char nom[MAX_USU
         printf("Resposta del servidor: %s\n", paquet);
 
     } while (opcio != 4);
+}
+
+void registre_usuari(char *nom, char *contrasenya, char *sexe, char *estat_civil, int *edat, char *ciutat, char *descripcio)
+{
+    printf("\n=====================================\n");
+    printf("    Benvingut al registre d'Usuaris\n");
+    printf("======================================\n");
+
+    printf("Introdueix el teu nom: ");
+    scanf("%s", nom);
+
+    printf("Escriu la teva contrasenya: ");
+    scanf("%s", contrasenya);
+
+    printf("Escriu el teu sexe: ");
+    scanf("%s", sexe);
+
+    printf("Escriu el teu estat civil: ");
+    scanf("%s", estat_civil);
+
+    printf("Escriu la teva edat: ");
+    scanf("%d", edat);
+
+    printf("Escriu la teva ciutat: ");
+    scanf("%s", ciutat);
+
+    printf("Introdueix una breu descripció personal: ");
+    scanf(" %[^\n]", descripcio);
 }

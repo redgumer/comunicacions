@@ -35,7 +35,8 @@ int main(int argc, char **argv)
     }
 
     // Verificació de l'usuari
-    int verificacio = verifica_usuari(s, contacte_servidor, nom); // Guarda el resultat de la verificació per evitar crides duplicades
+    int verificacio = verifica_usuari(s, contacte_servidor, nom); 
+
     if (verificacio == 1)
     {
         // Mostra el menú d'opcions
@@ -43,28 +44,7 @@ int main(int argc, char **argv)
     }
     else if (verificacio == 0)
     {
-        // Enviar nom d'usuari i contrasenya
-        printf("Escriu nom nou d'usuari: ");
-        scanf("%s", nom);
-
-        printf("Escriu la teva contrasenya: ");
-        scanf("%s", contrasenya);
-
-        // Enviar informació addicional per al registre
-        printf("Escriu el teu sexe (M/F): ");
-        scanf("%s", sexe);
-
-        printf("Escriu el teu estat civil: ");
-        scanf("%s", estat_civil);
-
-        printf("Escriu la teva edat: ");
-        scanf("%d", &edat);
-
-        printf("Escriu la teva ciutat: ");
-        scanf("%s", ciutat);
-
-        printf("Introdueix una breu descripció personal: ");
-        scanf(" %[^\n]", descripcio); // Permet que la descripció tingui espais
+        registre_usuari(nom, contrasenya, sexe, estat_civil, &edat, ciutat, descripcio);
 
         // Empaquetar totes les dades en un únic paquet i enviar-lo al servidor
         snprintf(paquet, sizeof(paquet), "%s %s %s %s %d %s %s", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
