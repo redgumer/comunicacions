@@ -14,8 +14,8 @@ CLIENT_EXEC = $(BIN_DIR)/client
 SERVER_EXEC = $(BIN_DIR)/server
 
 # Fitxers objecte
-CLIENT_OBJS = $(BUILD_DIR)/client.o $(BUILD_DIR)/funcions_client.o $(BUILD_DIR)/fun_afegir_amic.o
-SERVER_OBJS = $(BUILD_DIR)/server.o $(BUILD_DIR)/funcions_servidor.o $(BUILD_DIR)/fun_afegir_amic.o
+CLIENT_OBJS = $(BUILD_DIR)/client.o $(BUILD_DIR)/funcions_client.o $(BUILD_DIR)/fun_afegir_amic.o $(BUILD_DIR)/fnotificacions.o
+SERVER_OBJS = $(BUILD_DIR)/server.o $(BUILD_DIR)/funcions_servidor.o $(BUILD_DIR)/fun_afegir_amic.o $(BUILD_DIR)/fnotificacions.o
 
 # Definició de valors per defecte de les variables
 PORT = 10000
@@ -26,11 +26,11 @@ all: $(CLIENT_EXEC) $(SERVER_EXEC)
 
 # Compilar i enllaçar l'executable del client
 $(CLIENT_EXEC): $(CLIENT_OBJS)
-	$(CC) $(CFLAGS) -o $(CLIENT_EXEC) $(CLIENT_OBJS) 
+	$(CC) $(CFLAGS) -o $(CLIENT_EXEC) $(CLIENT_OBJS)
 
 # Compilar i enllaçar l'executable del servidor
 $(SERVER_EXEC): $(SERVER_OBJS)
-	$(CC) $(CFLAGS) -o $(SERVER_EXEC) $(SERVER_OBJS) 
+	$(CC) $(CFLAGS) -o $(SERVER_EXEC) $(SERVER_OBJS)
 
 # Compilar els fitxers objecte per al client
 $(BUILD_DIR)/client.o: $(SRC_DIR)/client.c $(INCLUDE_DIR)/funcions_client.h
@@ -49,6 +49,10 @@ $(BUILD_DIR)/funcions_servidor.o: $(SRC_DIR)/funcions_servidor.c $(INCLUDE_DIR)/
 # Compilar el fitxer objecte per a afegir amics
 $(BUILD_DIR)/fun_afegir_amic.o: $(SRC_DIR)/fun_afegir_amic.c $(INCLUDE_DIR)/fun_afegir_amic.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/fun_afegir_amic.c -o $(BUILD_DIR)/fun_afegir_amic.o
+
+# Compilar el fitxer objecte per a notificacions
+$(BUILD_DIR)/fnotificacions.o: $(SRC_DIR)/notificacions.c $(INCLUDE_DIR)/notificacions.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/notificacions.c -o $(BUILD_DIR)/fnotificacions.o
 
 # Executar el servidor amb el port predefinit o personalitzat
 servidor: $(SERVER_EXEC)

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -18,7 +19,7 @@
 
 #include "fun_afegir_amic.h"
 
-Usuari usuaris[MAX_USUARIS];
+Usuari_t usuaris[MAX_USUARIS];
 int num_usuaris = 0;
 int id_max = 0;
 
@@ -175,7 +176,7 @@ char *obtenirPerfilUsuari(const char *nomUsuari)
 {
     FILE *fitxer;
     char linia[MAX_LINE];
-    Usuari usuari;
+    Usuari_t usuari;
     char *perfil = (char *)malloc(512 * sizeof(char));
 
     if (perfil == NULL)

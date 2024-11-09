@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+
 #include "funcions_client.h"
 
 #define MIDA_PAQUET 1024
@@ -14,6 +16,7 @@ int main(int argc, char **argv)
     if (argc != 3)
     {
         printf("Ús: %s <IP_SERVIDOR> <PORT>\n", argv[0]);
+
         return -1;
     }
 
@@ -37,6 +40,7 @@ int main(int argc, char **argv)
 
     // Iniciar sessió
     sessio_iniciada = inicia_sessio(s, &contacte_servidor, contacte_servidor_mida, nom);
+    registra_activitat("Inici de sessió", nom);
     if (sessio_iniciada == 1)
     {
         printf("Inici de sessió correcte.\n");
@@ -54,6 +58,7 @@ int main(int argc, char **argv)
                 fgets(nom_amic, sizeof(nom_amic), stdin);
                 nom_amic[strcspn(nom_amic, "\n")] = '\0';
                 snprintf(paquet, sizeof(paquet), "3 %d %s %s", opcio, nom, nom_amic);
+                registra_activitat("Afegint amic", nom_amic);
                 if (envia_paquet(s, &contacte_servidor, contacte_servidor_mida, paquet) < 0)
                 {
                     break;
@@ -70,13 +75,23 @@ int main(int argc, char **argv)
 
             if (opcio == 4)
             {
+                notificacions_menu();
+                scanf("%d", &opcio);
+                getchar(); // Consumir el salt de línea
+                
+            }
+
+            if (opcio == 5)
+            {
                 printf("Tancant sessió...\n");
+                registra_activitat("Tancant sessió", nom);
                 break;
             }
 
             // Rebre resposta del servidor
             if (rep_paquet(s, paquet, &contacte_servidor, &contacte_servidor_mida) < 0)
             {
+                registra_activitat("Error rebent resposta", nom);
                 break;
             }
             printf("Resposta del servidor: %s\n", paquet);
@@ -85,12 +100,14 @@ int main(int argc, char **argv)
     else if (sessio_iniciada == 0)
     {
         printf("Usuari no trobat. Vols registrar un nou usuari? (s/n): ");
+        registra_activitat("Usuari no trobat", nom);
         char opcio_registre;
         scanf(" %c", &opcio_registre);
         getchar(); // Consumir el salt de línia
 
         if (opcio_registre == 's' || opcio_registre == 'S')
         {
+            registra_activitat("Registre nou usuari", nom);
             char contrasenya[50], sexe[10], estat_civil[20], ciutat[50], descripcio[100];
             int edat;
 
@@ -119,12 +136,14 @@ int main(int argc, char **argv)
             descripcio[strcspn(descripcio, "\n")] = '\0';
 
             // Envia la informació al servidor per registrar l'usuari
-            registra_usuari(s, &contacte_servidor, contacte_servidor_mida, nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+            registra(s, &contacte_servidor, contacte_servidor_mida, nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+            registra_activitat("Usuari registrat", nom);
         }
     }
     else
     {
         printf("Error en inici de sessió. Contrasenya incorrectes.\n");
+        registra_activitat("Error inici de sessió", nom);
     }
 
     close(s);

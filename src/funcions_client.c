@@ -3,11 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
 #include "funcions_client.h"
 
+#define LOG_FILE "data/registre.log"
 #define MIDA_PAQUET 1024
 
 void mostra_menu() {
@@ -15,7 +17,17 @@ void mostra_menu() {
     printf("1. Veure perfil\n");
     printf("2. Veure amics\n");
     printf("3. Afegir nous amics\n");
-    printf("4. Tancar sessió\n");
+    printf("4. Notificaions\n");
+    printf("5. Tancar sessió\n");
+    printf("Selecciona una opció: ");
+}
+
+void notificacions_menu(){
+    printf("\n--- MENÚ DE NOTIFICACIONS ---\n");
+    printf("1. Consultar notificacions\n");
+    printf("2. Eliminar notificacions\n");
+    printf("3. Envia notificaio\n");
+    printf("4. Tornar al menú principal\n");
     printf("Selecciona una opció: ");
 }
 
@@ -59,7 +71,7 @@ int inicia_sessio(int s, struct sockaddr_in *contacte_servidor, socklen_t contac
     return atoi(paquet);
 }
 
-int registra_usuari(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, char *nom, const char *contrasenya, char *sexe, char *estat_civil, int edat, char *ciutat, char *descripcio) {
+int registra(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio){
     char paquet[MIDA_PAQUET];
     snprintf(paquet, sizeof(paquet), "2 %s %s %s %s %d %s \"%s\"", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
 
@@ -73,4 +85,26 @@ int registra_usuari(int s, struct sockaddr_in *contacte_servidor, socklen_t cont
 
     printf("Resposta del servidor: %s\n", paquet);
     return 0;
+}
+
+void registra_activitat(const char *tipus, const char *missatge)
+{
+    FILE *fitxer_log = fopen(LOG_FILE, "a");
+    if (!fitxer_log)
+    {
+        printf("Error: No s'ha pogut obrir el fitxer de registre.\n");
+        return;
+    }
+
+    // Obtenir el timestamp actual
+    time_t temps_actual = time(NULL);
+    struct tm *tm_info = localtime(&temps_actual);
+    char timestamp[20];
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", tm_info);
+
+    // Escriure al fitxer de registre
+    fprintf(fitxer_log, "[%s] [%s] %s\n", timestamp, tipus, missatge);
+
+    // Tancar el fitxer
+    fclose(fitxer_log);
 }
