@@ -58,9 +58,9 @@ int inicia_sessio(int s, struct sockaddr_in *contacte_servidor, socklen_t contac
     return atoi(paquet);
 }
 
-int registra_usuari(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, char *nom, const char *contrasenya) {
+int registra_usuari(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, char *nom, const char *contrasenya, char *sexe, char *estat_civil, int edat, char *ciutat, char *descripcio) {
     char paquet[MIDA_PAQUET];
-    snprintf(paquet, sizeof(paquet), "2 %s %s", nom, contrasenya);
+    snprintf(paquet, sizeof(paquet), "2 %s %s %s %s %d %s %s", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
 
     if (envia_paquet(s, contacte_servidor, contacte_servidor_mida, paquet) < 0) {
         return -1;

@@ -1,13 +1,10 @@
 # Llista d'usuaris amb identificador únic
-1; Anna
-2; Marc
-3; Júlia
-4; Pol
-5; Marta
+1; Angela
+2; Xavi
+3; Arlet
 
 # Llista d'amistats (ID usuari 1; ID usuari 2)
 1; 2
 1; 3
-2; 4
-3; 5
-4; 5
+2; 31; Pepe
+1; Alger
