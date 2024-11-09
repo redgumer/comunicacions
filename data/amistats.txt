@@ -7,4 +7,6 @@
 1; Angela
 2; Xavi
 3; Arlet
-1; Pepe
+4; Pepe
+5; Alger
+6; Anna

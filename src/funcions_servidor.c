@@ -14,12 +14,46 @@
 
 Usuari usuaris[MAX_USUARIS];
 int num_usuaris = 0;
+int id_max = 0;
+
+void carregar_usuaris(const char *nom_fitxer)
+{
+    FILE *fitxer = fopen(nom_fitxer, "r");
+    if (!fitxer)
+    {
+        printf("Error: No s'ha pogut obrir el fitxer d'usuaris.\n");
+        return;
+    }
+
+    while (fscanf(fitxer, "%d %s %s %s %s %d %s %[^\n]s",
+                  &usuaris[num_usuaris].id,
+                  usuaris[num_usuaris].nom,
+                  usuaris[num_usuaris].contrasenya,
+                  usuaris[num_usuaris].sexe,
+                  usuaris[num_usuaris].estat_civil,
+                  &usuaris[num_usuaris].edat,
+                  usuaris[num_usuaris].ciutat,
+                  usuaris[num_usuaris].descripcio) == 8)
+    {
+        if (usuaris[num_usuaris].id > id_max)
+            id_max = usuaris[num_usuaris].id;
+
+        num_usuaris++;
+        if (num_usuaris >= MAX_USUARIS)
+        {
+            printf("Error: Màxim nombre d'usuaris assolit.\n");
+            break;
+        }
+    }
+    fclose(fitxer);
+    printf("Usuaris carregats: %d\n", num_usuaris);
+}
 
 int verifica_usuari(const char *nom, const char *contrasenya)
 {
     FILE *fitxer;
     char linia[256];
-    char nom_fitxer[50], contrasenya_fitxer[20];
+    char id[10], nom_fitxer[50], contrasenya_fitxer[20];
     char sexe[10], estatCivil[20], ciutat[50], descripcio[100];
     int edat;
 
@@ -35,8 +69,8 @@ int verifica_usuari(const char *nom, const char *contrasenya)
     while (fgets(linia, sizeof(linia), fitxer) != NULL)
     {
         // Extraurem les dades de la línia
-        sscanf(linia, "%s %s %s %s %d %s %[^\n]",
-               nom_fitxer, contrasenya_fitxer, sexe, estatCivil, &edat, ciutat, descripcio);
+        sscanf(linia, "%s %s %s %s %s %d %s \"%[^\"]\"",
+               id, nom_fitxer, contrasenya_fitxer, sexe, estatCivil, &edat, ciutat, descripcio);
 
         // Comprovem si el nom coincideix
         if (strcmp(nom_fitxer, nom) == 0)
@@ -55,6 +89,7 @@ int verifica_usuari(const char *nom, const char *contrasenya)
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio)
 {
     char linia[256];
+    int id_max = 0;
 
     if (num_usuaris >= MAX_USUARIS)
     {
@@ -63,21 +98,30 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
     }
 
     // Obre els fitxers
-    FILE *fitxer_usuaris = fopen(FILE_USUARIS, "a");
+    FILE *fitxer_usuaris = fopen(FILE_USUARIS, "a+");
     FILE *fitxer_amistats = fopen(FILE_AMISTATS, "a+");
     if (!fitxer_usuaris || !fitxer_amistats)
     {
         printf("Error: No s'han pogut obrir els fitxers.\n");
-        if (fitxer_usuaris) fclose(fitxer_usuaris);
-        if (fitxer_amistats) fclose(fitxer_amistats);
+        if (fitxer_usuaris)
+            fclose(fitxer_usuaris);
+        if (fitxer_amistats)
+            fclose(fitxer_amistats);
         return -1;
     }
 
-    // Comprova si l'usuari ja existeix
+    // Llegeix el fitxer d'usuaris per trobar l'ID màxim i comprovar si l'usuari ja existeix
     while (fgets(linia, sizeof(linia), fitxer_usuaris))
     {
+        int id_exist;
         char nom_exist[50];
-        sscanf(linia, "%s", nom_exist);
+        sscanf(linia, "%d %s", &id_exist, nom_exist);
+
+        // Actualitza l'ID màxim
+        if (id_exist > id_max)
+            id_max = id_exist;
+
+        // Comprova si l'usuari ja existeix
         if (strcmp(nom, nom_exist) == 0)
         {
             printf("Error: L'usuari ja existeix.\n");
@@ -88,38 +132,45 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
     }
 
     // Assigna un nou ID
-    int nou_id = num_usuaris + 1;
+    int nou_id = id_max + 1;
+
+    // Comprova si l'ID ja està a la llista d'usuaris en el fitxer d'amistats
+    rewind(fitxer_amistats);
+    while (fgets(linia, sizeof(linia), fitxer_amistats))
+    {
+        int id_exist;
+        char nom_exist[50];
+        if (sscanf(linia, "%d; %s", &id_exist, nom_exist) == 2)
+        {
+            // Evita duplicats d'ID en la llista d'usuaris del fitxer d'amistats
+            if (id_exist == nou_id || strcmp(nom, nom_exist) == 0)
+            {
+                printf("Error: L'usuari ja existeix a la llista d'amistats.\n");
+                fclose(fitxer_usuaris);
+                fclose(fitxer_amistats);
+                return 0;
+            }
+        }
+    }
 
     // Copia les dades a la llista d'usuaris
     usuaris[num_usuaris].id = nou_id;
     strncpy(usuaris[num_usuaris].nom, nom, sizeof(usuaris[num_usuaris].nom) - 1);
-    usuaris[num_usuaris].nom[sizeof(usuaris[num_usuaris].nom) - 1] = '\0';
-
     strncpy(usuaris[num_usuaris].contrasenya, contrasenya, sizeof(usuaris[num_usuaris].contrasenya) - 1);
-    usuaris[num_usuaris].contrasenya[sizeof(usuaris[num_usuaris].contrasenya) - 1] = '\0';
-
     strncpy(usuaris[num_usuaris].sexe, sexe, sizeof(usuaris[num_usuaris].sexe) - 1);
-    usuaris[num_usuaris].sexe[sizeof(usuaris[num_usuaris].sexe) - 1] = '\0';
-
     strncpy(usuaris[num_usuaris].estat_civil, estat_civil, sizeof(usuaris[num_usuaris].estat_civil) - 1);
-    usuaris[num_usuaris].estat_civil[sizeof(usuaris[num_usuaris].estat_civil) - 1] = '\0';
-
     usuaris[num_usuaris].edat = edat;
-
     strncpy(usuaris[num_usuaris].ciutat, ciutat, sizeof(usuaris[num_usuaris].ciutat) - 1);
-    usuaris[num_usuaris].ciutat[sizeof(usuaris[num_usuaris].ciutat) - 1] = '\0';
-
     strncpy(usuaris[num_usuaris].descripcio, descripcio, sizeof(usuaris[num_usuaris].descripcio) - 1);
-    usuaris[num_usuaris].descripcio[sizeof(usuaris[num_usuaris].descripcio) - 1] = '\0';
 
     num_usuaris++;
 
-    // Escriu al fitxer d'usuaris
-    fprintf(fitxer_usuaris, "%s %s %s %s %d %s %s\n", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+    // Escriu al fitxer d'usuaris amb el nou ID
+    fprintf(fitxer_usuaris, "%d %s %s %s %s %d %s %s\n", nou_id, nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
 
-    // Escriu al fitxer d'amistats amb un salt de línia previ
+    // Afegir l'usuari a la llista d'usuaris amb identificador al fitxer d'amistats
     fseek(fitxer_amistats, 0, SEEK_END);
-    fprintf(fitxer_amistats, "\n%d; %s", nou_id, nom);
+    fprintf(fitxer_amistats, "%d; %s\n", nou_id, nom);
 
     // Tanca els fitxers
     fclose(fitxer_usuaris);
@@ -129,13 +180,73 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
     return 1;
 }
 
+char *obtenirPerfilUsuari(const char *nomUsuari)
+{
+    FILE *fitxer;
+    char linia[256];
+    Usuari usuari;
+    char *perfil = (char *)malloc(512 * sizeof(char));
+
+    if (perfil == NULL)
+    {
+        printf("Error d'assignació de memòria.\n");
+        return "";
+    }
+
+    // Obrir el fitxer d'usuaris en mode lectura
+    fitxer = fopen(FILE_USUARIS, "r");
+    if (fitxer == NULL)
+    {
+        printf("Error obrint el fitxer d'usuaris.\n");
+        free(perfil);
+        return "";
+    }
+
+    // Llegir línia per línia
+    while (fgets(linia, sizeof(linia), fitxer) != NULL)
+    {
+        // Extreure els camps del perfil i emmagatzemar-los a la `struct Usuari`
+        sscanf(linia, "%d %s %s %s %s %d %s %[^\n]",
+               &usuari.id, usuari.nom, usuari.contrasenya,
+               usuari.sexe, usuari.estat_civil, &usuari.edat,
+               usuari.ciutat, usuari.descripcio);
+
+        // Comprovar si el nom coincideix amb l'usuari cercat
+        if (strcmp(usuari.nom, nomUsuari) == 0)
+        {
+            // Construir el perfil formatat
+            snprintf(perfil, 512,
+                     "Nom: %s\n"
+                     "Contrasenya: %s\n"
+                     "Sexe: %s\n"
+                     "Estat civil: %s\n"
+                     "Edat: %d\n"
+                     "Ciutat: %s\n"
+                     "Descripció: %s",
+                     usuari.id, usuari.nom, usuari.contrasenya,
+                     usuari.sexe, usuari.estat_civil, usuari.edat,
+                     usuari.ciutat, usuari.descripcio);
+            fclose(fitxer);
+            return perfil;
+        }
+    }
+
+    // Tancar el fitxer i alliberar memòria si no es troba l'usuari
+    fclose(fitxer);
+    free(perfil);
+    return "";
+}
+
 void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom)
 {
     char resposta[MIDA_PAQUET];
     switch (opcio)
     {
     case 1:
-        snprintf(resposta, sizeof(resposta), "Perfil de l'usuari: %s", nom);
+        char *c = obtenirPerfilUsuari(nom);
+        printf("Perfil de l'usuari: %s\n", c);
+        snprintf(resposta, sizeof(resposta), "\nPerfil de l'usuari: %s", c);
+        free(c);
         break;
     case 2:
         snprintf(resposta, sizeof(resposta), "Amics de l'usuari %s: No implementat encara.", nom);

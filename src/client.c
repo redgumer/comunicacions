@@ -110,7 +110,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        printf("Error en inici de sessió. Credencials incorrectes.\n");
+        printf("Error en inici de sessió. Contrasenya incorrectes.\n");
     }
 
     close(s);
