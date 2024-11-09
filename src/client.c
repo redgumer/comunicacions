@@ -80,7 +80,7 @@ int main(int argc, char **argv)
             char contrasenya[50], sexe[10], estat_civil[20], ciutat[50], descripcio[100];
             int edat;
 
-            printf("Introdueix la teva contrasenya: ");
+            printf("Introdueix la teva contrasenya %s: ", nom);
             fgets(contrasenya, sizeof(contrasenya), stdin);
             contrasenya[strcspn(contrasenya, "\n")] = '\0';
 

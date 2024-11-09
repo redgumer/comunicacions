@@ -54,36 +54,74 @@ int verifica_usuari(const char *nom, const char *contrasenya)
 
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio)
 {
-    printf("Dins Registre d'usuari: %s %s %s %s %d %s %s\n", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+    char linia[256];
+
     if (num_usuaris >= MAX_USUARIS)
     {
         printf("Error: Llista d'usuaris plena.\n");
         return -1;
     }
 
+    // Obre els fitxers
     FILE *fitxer_usuaris = fopen(FILE_USUARIS, "a");
-    FILE *fitxer_amistats = fopen(FILE_AMISTATS, "a");
+    FILE *fitxer_amistats = fopen(FILE_AMISTATS, "a+");
     if (!fitxer_usuaris || !fitxer_amistats)
     {
         printf("Error: No s'han pogut obrir els fitxers.\n");
+        if (fitxer_usuaris) fclose(fitxer_usuaris);
+        if (fitxer_amistats) fclose(fitxer_amistats);
         return -1;
     }
 
+    // Comprova si l'usuari ja existeix
+    while (fgets(linia, sizeof(linia), fitxer_usuaris))
+    {
+        char nom_exist[50];
+        sscanf(linia, "%s", nom_exist);
+        if (strcmp(nom, nom_exist) == 0)
+        {
+            printf("Error: L'usuari ja existeix.\n");
+            fclose(fitxer_usuaris);
+            fclose(fitxer_amistats);
+            return 0;
+        }
+    }
+
+    // Assigna un nou ID
     int nou_id = num_usuaris + 1;
 
+    // Copia les dades a la llista d'usuaris
     usuaris[num_usuaris].id = nou_id;
     strncpy(usuaris[num_usuaris].nom, nom, sizeof(usuaris[num_usuaris].nom) - 1);
+    usuaris[num_usuaris].nom[sizeof(usuaris[num_usuaris].nom) - 1] = '\0';
+
     strncpy(usuaris[num_usuaris].contrasenya, contrasenya, sizeof(usuaris[num_usuaris].contrasenya) - 1);
+    usuaris[num_usuaris].contrasenya[sizeof(usuaris[num_usuaris].contrasenya) - 1] = '\0';
+
     strncpy(usuaris[num_usuaris].sexe, sexe, sizeof(usuaris[num_usuaris].sexe) - 1);
+    usuaris[num_usuaris].sexe[sizeof(usuaris[num_usuaris].sexe) - 1] = '\0';
+
     strncpy(usuaris[num_usuaris].estat_civil, estat_civil, sizeof(usuaris[num_usuaris].estat_civil) - 1);
+    usuaris[num_usuaris].estat_civil[sizeof(usuaris[num_usuaris].estat_civil) - 1] = '\0';
+
     usuaris[num_usuaris].edat = edat;
+
     strncpy(usuaris[num_usuaris].ciutat, ciutat, sizeof(usuaris[num_usuaris].ciutat) - 1);
+    usuaris[num_usuaris].ciutat[sizeof(usuaris[num_usuaris].ciutat) - 1] = '\0';
+
     strncpy(usuaris[num_usuaris].descripcio, descripcio, sizeof(usuaris[num_usuaris].descripcio) - 1);
+    usuaris[num_usuaris].descripcio[sizeof(usuaris[num_usuaris].descripcio) - 1] = '\0';
+
     num_usuaris++;
 
+    // Escriu al fitxer d'usuaris
     fprintf(fitxer_usuaris, "%s %s %s %s %d %s %s\n", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
-    fprintf(fitxer_amistats, "%d; %s\n", nou_id, nom);
 
+    // Escriu al fitxer d'amistats amb un salt de línia previ
+    fseek(fitxer_amistats, 0, SEEK_END);
+    fprintf(fitxer_amistats, "\n%d; %s", nou_id, nom);
+
+    // Tanca els fitxers
     fclose(fitxer_usuaris);
     fclose(fitxer_amistats);
 
@@ -141,7 +179,7 @@ void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t conta
         }
         break;
     case 2:
-        if (sscanf(paquet, "%d %s %s %s %s %d %s %s[^\n]", &codi_operacio, nom, contrasenya, sexe, estat_civil, &edat, ciutat, descripcio) == 8)
+        if (sscanf(paquet, "%d %s %s %s %s %d %s %[^\n]", &codi_operacio, nom, contrasenya, sexe, estat_civil, &edat, ciutat, descripcio) == 8)
         {
             printf("Registre d'usuari case 2: %s %s %s %s %d %s %s\n", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
             int codi_resposta = registra_usuari(nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
