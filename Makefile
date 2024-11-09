@@ -1,6 +1,7 @@
 # Definició del compilador i opcions de compilació
 CC = gcc
 CFLAGS = -Wall -Wextra -g -Iinclude 
+
 # Carpetes del projecte
 BIN_DIR = bin
 BUILD_DIR = build
@@ -13,8 +14,8 @@ CLIENT_EXEC = $(BIN_DIR)/client
 SERVER_EXEC = $(BIN_DIR)/server
 
 # Fitxers objecte
-CLIENT_OBJS = $(BUILD_DIR)/client.o $(BUILD_DIR)/funcions_client.o
-SERVER_OBJS = $(BUILD_DIR)/server.o $(BUILD_DIR)/funcions_servidor.o
+CLIENT_OBJS = $(BUILD_DIR)/client.o $(BUILD_DIR)/funcions_client.o $(BUILD_DIR)/fun_afegir_amic.o
+SERVER_OBJS = $(BUILD_DIR)/server.o $(BUILD_DIR)/funcions_servidor.o $(BUILD_DIR)/fun_afegir_amic.o
 
 # Definició de valors per defecte de les variables
 PORT = 10000
@@ -44,6 +45,10 @@ $(BUILD_DIR)/server.o: $(SRC_DIR)/server.c $(INCLUDE_DIR)/funcions_servidor.h
 
 $(BUILD_DIR)/funcions_servidor.o: $(SRC_DIR)/funcions_servidor.c $(INCLUDE_DIR)/funcions_servidor.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/funcions_servidor.c -o $(BUILD_DIR)/funcions_servidor.o
+
+# Compilar el fitxer objecte per a afegir amics
+$(BUILD_DIR)/fun_afegir_amic.o: $(SRC_DIR)/fun_afegir_amic.c $(INCLUDE_DIR)/fun_afegir_amic.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/fun_afegir_amic.c -o $(BUILD_DIR)/fun_afegir_amic.o
 
 # Executar el servidor amb el port predefinit o personalitzat
 servidor: $(SERVER_EXEC)
