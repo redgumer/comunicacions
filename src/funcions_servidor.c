@@ -9,6 +9,7 @@
 
 #define MIDA_PAQUET 1024
 #define MAX_USUARIS 10
+#define MAX_LINE 256
 #define FILE_USUARIS "data/usuaris.txt"
 #define FILE_AMISTATS "data/amistats.txt"
 
@@ -52,7 +53,7 @@ void carregar_usuaris(const char *nom_fitxer)
 int verifica_usuari(const char *nom, const char *contrasenya)
 {
     FILE *fitxer;
-    char linia[256];
+    char linia[MAX_LINE];
     char id[10], nom_fitxer[50], contrasenya_fitxer[20];
     char sexe[10], estatCivil[20], ciutat[50], descripcio[100];
     int edat;
@@ -88,7 +89,7 @@ int verifica_usuari(const char *nom, const char *contrasenya)
 
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio)
 {
-    char linia[256];
+    char linia[MAX_LINE];
     int id_max = 0;
 
     if (num_usuaris >= MAX_USUARIS)
@@ -183,7 +184,7 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
 char *obtenirPerfilUsuari(const char *nomUsuari)
 {
     FILE *fitxer;
-    char linia[256];
+    char linia[MAX_LINE];
     Usuari usuari;
     char *perfil = (char *)malloc(512 * sizeof(char));
 
@@ -215,17 +216,21 @@ char *obtenirPerfilUsuari(const char *nomUsuari)
         if (strcmp(usuari.nom, nomUsuari) == 0)
         {
             // Construir el perfil formatat
-            snprintf(perfil, 512,
-                     "Nom: %s\n"
-                     "Contrasenya: %s\n"
-                     "Sexe: %s\n"
-                     "Estat civil: %s\n"
-                     "Edat: %d\n"
-                     "Ciutat: %s\n"
-                     "Descripció: %s",
-                     usuari.id, usuari.nom, usuari.contrasenya,
-                     usuari.sexe, usuari.estat_civil, usuari.edat,
-                     usuari.ciutat, usuari.descripcio);
+            sprintf(perfil,
+                    "\n"
+                    "Nom: %s\n"
+                    "Sexe: %s\n"
+                    "Estat civil: %s\n"
+                    "Edat: %d\n"
+                    "Ciutat: %s\n"
+                    "Descripció: %s\n",
+                    usuari.nom,         // char *
+                    usuari.sexe,        // char *
+                    usuari.estat_civil, // char *
+                    usuari.edat,        // int
+                    usuari.ciutat,      // char *
+                    usuari.descripcio   // char *
+            );
             fclose(fitxer);
             return perfil;
         }
@@ -237,19 +242,106 @@ char *obtenirPerfilUsuari(const char *nomUsuari)
     return "";
 }
 
+int buscarIdUsuari(const char *nomUsuari)
+{
+    for (int i = 0; i < num_usuaris; i++)
+    {
+        if (strcmp(usuaris[i].nom, nomUsuari) == 0)
+        {
+            return usuaris[i].id;
+        }
+    }
+    return -1; // Usuari no trobat
+}
+
+char *obtenirNomUsuari(int idUsuari)
+{
+    for (int i = 0; i < num_usuaris; i++)
+    {
+        if (usuaris[i].id == idUsuari)
+        {
+            return usuaris[i].nom;
+        }
+    }
+    return NULL; // ID no trobat
+}
+
+char *veureAmics(const char *nomUsuari)
+{
+    int idUsuari = buscarIdUsuari(nomUsuari);
+    if (idUsuari == -1)
+    {
+        return strdup("Usuari no trobat.");
+    }
+
+    FILE *fitxerAmistats = fopen(FILE_AMISTATS, "r");
+    if (!fitxerAmistats)
+    {
+        perror("Error obrint el fitxer d'amistats");
+        return NULL;
+    }
+
+    char linia[MAX_LINE];
+    char *resultat = malloc(2048 * sizeof(char));
+    resultat[0] = '\0';
+
+    while (fgets(linia, MAX_LINE, fitxerAmistats))
+    {
+        int id1;
+        char amics[1024];
+        // Llegir l'ID de l'usuari i la llista d'amics
+        if (sscanf(linia, "%d; %[^\n]", &id1, amics) != 2)
+        {
+            continue;
+        }
+
+        // Si la línia correspon a l'usuari, processar la llista d'amics
+        if (id1 == idUsuari)
+        {
+            char *amic = strtok(amics, " ");
+            while (amic)
+            {
+                int idAmic = atoi(amic);
+                char *nomAmic = obtenirNomUsuari(idAmic);
+                if (nomAmic)
+                {
+                    char *perfilAmic = obtenirPerfilUsuari(nomAmic);
+                    if (perfilAmic)
+                    {
+                        strcat(resultat, perfilAmic);
+                        strcat(resultat, "\n");
+                        free(perfilAmic);
+                    }
+                }
+                amic = strtok(NULL, " ");
+            }
+        }
+    }
+    fclose(fitxerAmistats);
+
+    if (strlen(resultat) == 0)
+    {
+        strcpy(resultat, "No s'han trobat amics per aquest usuari.");
+    }
+
+    return resultat;
+}
+
 void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom)
 {
     char resposta[MIDA_PAQUET];
     switch (opcio)
     {
     case 1:
-        char *c = obtenirPerfilUsuari(nom);
-        printf("Perfil de l'usuari: %s\n", c);
-        snprintf(resposta, sizeof(resposta), "\nPerfil de l'usuari: %s", c);
-        free(c);
+        char *O = obtenirPerfilUsuari(nom);
+        snprintf(resposta, sizeof(resposta), "\n\nPerfil de l'usuari: %s", O);
+        free(O);
         break;
     case 2:
-        snprintf(resposta, sizeof(resposta), "Amics de l'usuari %s: No implementat encara.", nom);
+        carregar_usuaris(FILE_USUARIS);
+        char *V = veureAmics(nom);
+        snprintf(resposta, sizeof(resposta), "\n\nAmics de l'usuari %s:", V);
+        free(V);
         break;
     case 3:
         snprintf(resposta, sizeof(resposta), "Afegir nous amics: Funció no implementada encara.");
