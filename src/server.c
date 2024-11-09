@@ -1,37 +1,48 @@
-/*
- ================================ PROJECTE XARXES ================================
- | Fitxer     : server.c                                                         |
- | Autors     : Programador 1, Programador 2, Programador 3                      |
- | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
- | Universitat: Universitat Rovira i Virgili                                     |
- | Descripció : Breu descripció del fitxer o mòdul                               |
- =================================================================================
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
-#include "../include/funcions_servidor.h"
+#include <arpa/inet.h>
+#include "funcions_servidor.h"
 
-int main(int argc, char **argv)
-{
-    if (argc != 2)
-    {
-        printf("El nombre de paràmetres no és el correcte!\n");
+#define MIDA_PAQUET 1024
+
+int main(int argc, char **argv) {
+    if (argc != 2) {
+        printf("Ús: %s <PORT>\n", argv[0]);
         return -1;
     }
-    int port = atoi(argv[1]);
-    int s = configura_socket(port);
-    if (s < 0)
+
+    int s = socket(AF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in serv_addr, contacte_client;
+    socklen_t contacte_client_mida = sizeof(contacte_client);
+    char paquet[MIDA_PAQUET];
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(atoi(argv[1]));
+
+    if (bind(s, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        perror("Error en el bind");
         return -1;
-    struct sockaddr_in contacte_client;
-    while (1)
-    {
-        printf("Esperant connexió d'un client...\n");
-        gestiona_client(s, contacte_client);
     }
-        close(s);
+    printf("Servidor UDP configurat correctament al port %d.\n", atoi(argv[1]));
+
+    while (1) {
+        int bytes_rebuts = recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, &contacte_client_mida);
+        if (bytes_rebuts < 0) {
+            perror("Error rebent el paquet");
+            continue;
+        }
+
+        paquet[bytes_rebuts] = '\0';
+        printf("Paquet rebut de %s:%d - %s\n", inet_ntoa(contacte_client.sin_addr), ntohs(contacte_client.sin_port), paquet);
+
+        processa_peticio(s, contacte_client, contacte_client_mida, paquet);
+    }
+
+    close(s);
     return 0;
 }

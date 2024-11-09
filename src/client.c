@@ -1,61 +1,80 @@
-// ================================ LLIBRERIES ESTÀNDARD ================================ //
-#include <stdio.h>  // Per funcions d'entrada/sortida com printf, scanf, etc.
-#include <stdlib.h> // Per funcions generals com malloc, free, etc.
-#include <string.h> // Per funcions de manipulació de cadenes, com strcpy, strcmp, etc.
 
-// ================================ LLIBRERIES DE XARXA ================================ //
-#include <sys/socket.h> // Per funcions de sockets, com socket, connect, etc.
-#include <sys/types.h>  // Per definicions de tipus de dades utilitzades en sockets
-#include <netinet/in.h> // Per funcions i estructures de la família de protocols d'Internet
-#include <arpa/inet.h>  // Per la conversió d'adreces d'Internet (ex: inet_addr)
-#include <unistd.h>     // Per funcions del sistema Unix, com close, read, write, etc.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include "funcions_client.h"
 
-// ================================ LLIBRERIES PROPIES ================================ //
-#include "../include/funcions_client.h" // Per funcions específiques definides per al client en el projecte
+#define MIDA_PAQUET 1024
 
-int main(int argc, char **argv)
-{
-    char nom[MAX_USUARI], contrasenya[MAX_CONTRASENYA], sexe[MAX_SEXE], estat_civil[MAX_ESTAT_CIVIL], ciutat[MAX_CIUTAT], descripcio[MAX_DESC], paquet[MIDA_PAQUET];
-    int edat;
-    if (argc != 3)
-    {
+int main(int argc, char **argv) {
+    if (argc != 3) {
         printf("Ús: %s <IP_SERVIDOR> <PORT>\n", argv[0]);
-        return 1; // Retorna un codi d'error si no es proporcionen els arguments correctes
+        return -1;
     }
 
     int s;
     struct sockaddr_in contacte_servidor;
+    socklen_t contacte_servidor_mida = sizeof(contacte_servidor);
+    char paquet[MIDA_PAQUET], nom[50];
+    int opcio, sessio_iniciada;
 
-    // Inicialització de connexió amb el servidor
-    s = inicialitza_connexio(&contacte_servidor, argv[1], argv[2]);
-    if (s < 0)
-    {
-        printf("Error: No s'ha pogut inicialitzar la connexió amb el servidor.\n");
-        return 1; // Retorna un codi d'error si la connexió no s'inicialitza correctament
+    // Crear socket
+    s = socket(AF_INET, SOCK_DGRAM, 0);
+    if (s < 0) {
+        perror("Error creant el socket");
+        return -1;
     }
 
-    // Verificació de l'usuari
-    int verificacio = verifica_usuari(s, contacte_servidor, nom); 
+    contacte_servidor.sin_family = AF_INET;
+    contacte_servidor.sin_port = htons(atoi(argv[2]));
+    inet_pton(AF_INET, argv[1], &contacte_servidor.sin_addr);
 
-    if (verificacio == 1)
-    {
+    // Iniciar sessió
+    sessio_iniciada = inicia_sessio(s, &contacte_servidor, contacte_servidor_mida, nom);
+    if (sessio_iniciada == 1) {
+        printf("Inici de sessió correcte.\n");
+
         // Mostra el menú d'opcions
-        gestiona_menu(s, contacte_servidor, nom);
-    }
-    else if (verificacio == 0)
-    {
-        registre_usuari(nom, contrasenya, sexe, estat_civil, &edat, ciutat, descripcio);
+        while (1) {
+            mostra_menu();
+            scanf("%d", &opcio);
+            getchar(); // Consumir el salt de línea
 
-        // Empaquetar totes les dades en un únic paquet i enviar-lo al servidor
-        snprintf(paquet, sizeof(paquet), "%s %s %s %s %d %s %s", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
-        sendto(s, paquet, sizeof(paquet), 0, (struct sockaddr *)&contacte_servidor, sizeof(contacte_servidor));
-        printf("T'has registrat com nou usuari.\nDades enviades al servidor: %s\n", paquet);
-        gestiona_menu(s, contacte_servidor, nom);
-    }
-    else
-    {
-        printf("Error: No s'ha pogut verificar l'usuari.\n");
+            snprintf(paquet, sizeof(paquet), "3 %d %s", opcio, nom);
+            if (envia_paquet(s, &contacte_servidor, contacte_servidor_mida, paquet) < 0) {
+                break;
+            }
+
+            if (opcio == 4) {
+                printf("Tancant sessió...\n");
+                break;
+            }
+
+            // Rebre resposta del servidor
+            if (rep_paquet(s, paquet, &contacte_servidor, &contacte_servidor_mida) < 0) {
+                break;
+            }
+            printf("Resposta del servidor: %s\n", paquet);
+        }
+    } else if (sessio_iniciada == 0) {
+        printf("Usuari no trobat. Vols registrar un nou usuari? (s/n): ");
+        char opcio_registre;
+        scanf(" %c", &opcio_registre);
+        getchar(); // Consumir el salt de línea
+
+        if (opcio_registre == 's' || opcio_registre == 'S') {
+            printf("Introdueix la teva contrasenya: ");
+            fgets(paquet, 50, stdin);
+            paquet[strcspn(paquet, "\n")] = '\0';
+            registra_usuari(s, &contacte_servidor, contacte_servidor_mida, nom, paquet);
+        }
+    } else {
+        printf("Error en inici de sessió. Credencials incorrectes.\n");
     }
 
+    close(s);
     return 0;
 }
