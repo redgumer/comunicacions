@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/redgu/OneDrive - URV/Segon Curs/xarxes/comunicacions",
-      "program": "c:/Users/redgu/OneDrive - URV/Segon Curs/xarxes/comunicacions/build/Debug/outDebug",
+      "cwd": ".",
+      "program": "build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
