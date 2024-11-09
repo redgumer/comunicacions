@@ -106,10 +106,8 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
     if (!fitxer_usuaris || !fitxer_amistats)
     {
         printf("Error: No s'han pogut obrir els fitxers.\n");
-        if (fitxer_usuaris)
-            fclose(fitxer_usuaris);
-        if (fitxer_amistats)
-            fclose(fitxer_amistats);
+        if (fitxer_usuaris) fclose(fitxer_usuaris);
+        if (fitxer_amistats) fclose(fitxer_amistats);
         return -1;
     }
 
@@ -118,7 +116,8 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
     {
         int id_exist;
         char nom_exist[50];
-        sscanf(linia, "%d %s", &id_exist, nom_exist);
+        if (sscanf(linia, "%d %49s", &id_exist, nom_exist) != 2)
+            continue;
 
         // Actualitza l'ID màxim
         if (id_exist > id_max)
@@ -137,43 +136,29 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
     // Assigna un nou ID
     int nou_id = id_max + 1;
 
-    // Comprova si l'ID ja està a la llista d'usuaris en el fitxer d'amistats
-    rewind(fitxer_amistats);
-    while (fgets(linia, sizeof(linia), fitxer_amistats))
-    {
-        int id_exist;
-        char nom_exist[50];
-        if (sscanf(linia, "%d; %s", &id_exist, nom_exist) == 2)
-        {
-            // Evita duplicats d'ID en la llista d'usuaris del fitxer d'amistats
-            if (id_exist == nou_id || strcmp(nom, nom_exist) == 0)
-            {
-                printf("Error: L'usuari ja existeix a la llista d'amistats.\n");
-                fclose(fitxer_usuaris);
-                fclose(fitxer_amistats);
-                return 0;
-            }
-        }
-    }
-
     // Copia les dades a la llista d'usuaris
     usuaris[num_usuaris].id = nou_id;
     strncpy(usuaris[num_usuaris].nom, nom, sizeof(usuaris[num_usuaris].nom) - 1);
+    usuaris[num_usuaris].nom[sizeof(usuaris[num_usuaris].nom) - 1] = '\0';
     strncpy(usuaris[num_usuaris].contrasenya, contrasenya, sizeof(usuaris[num_usuaris].contrasenya) - 1);
+    usuaris[num_usuaris].contrasenya[sizeof(usuaris[num_usuaris].contrasenya) - 1] = '\0';
     strncpy(usuaris[num_usuaris].sexe, sexe, sizeof(usuaris[num_usuaris].sexe) - 1);
+    usuaris[num_usuaris].sexe[sizeof(usuaris[num_usuaris].sexe) - 1] = '\0';
     strncpy(usuaris[num_usuaris].estat_civil, estat_civil, sizeof(usuaris[num_usuaris].estat_civil) - 1);
+    usuaris[num_usuaris].estat_civil[sizeof(usuaris[num_usuaris].estat_civil) - 1] = '\0';
     usuaris[num_usuaris].edat = edat;
     strncpy(usuaris[num_usuaris].ciutat, ciutat, sizeof(usuaris[num_usuaris].ciutat) - 1);
+    usuaris[num_usuaris].ciutat[sizeof(usuaris[num_usuaris].ciutat) - 1] = '\0';
     strncpy(usuaris[num_usuaris].descripcio, descripcio, sizeof(usuaris[num_usuaris].descripcio) - 1);
+    usuaris[num_usuaris].descripcio[sizeof(usuaris[num_usuaris].descripcio) - 1] = '\0';
 
     num_usuaris++;
 
-    // Escriu al fitxer d'usuaris amb el nou ID
+    // Escriu al fitxer d'usuaris
     fprintf(fitxer_usuaris, "%d %s %s %s %s %d %s %s\n", nou_id, nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
 
-    // Afegir l'usuari a la llista d'usuaris amb identificador al fitxer d'amistats
-    fseek(fitxer_amistats, 0, SEEK_END);
-    fprintf(fitxer_amistats, "%d; %s\n", nou_id, nom);
+    // Afegir l'usuari al fitxer d'amistats amb el nou format
+    fprintf(fitxer_amistats, "%d;\n", nou_id);
 
     // Tanca els fitxers
     fclose(fitxer_usuaris);

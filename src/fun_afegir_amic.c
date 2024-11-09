@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define MAX_USUARIS 10
+#define MAX_USUARIS 50
 #define MAX_AMICS 500
 #define FILE_AMISTATS "data/amistats.txt"
 

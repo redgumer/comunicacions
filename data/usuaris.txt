@@ -5,3 +5,4 @@
 5 Alguer 1234 Home Solter 8 Reus "M'agrada jugar amb tothom"
 6 Anna 1234 Dona Casat 42 Reus "Soc la mare de l'Alger"
 
+7 Josep 1234 Home Solter 30 Mursia "Li agrada molt navegar"
