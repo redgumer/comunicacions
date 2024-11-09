@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     int s;
     struct sockaddr_in contacte_servidor;
     socklen_t contacte_servidor_mida = sizeof(contacte_servidor);
-    char paquet[MIDA_PAQUET], nom[50];
+    char paquet[MIDA_PAQUET], nom[50], nom_amic[50];
     int opcio, sessio_iniciada;
 
     // Crear socket
@@ -48,10 +48,24 @@ int main(int argc, char **argv)
             scanf("%d", &opcio);
             getchar(); // Consumir el salt de línea
 
-            snprintf(paquet, sizeof(paquet), "3 %d %s", opcio, nom);
-            if (envia_paquet(s, &contacte_servidor, contacte_servidor_mida, paquet) < 0)
+            if (opcio == 3)
             {
-                break;
+                printf("Introdueix el teu nou amic: ");
+                fgets(nom_amic, sizeof(nom_amic), stdin);
+                nom_amic[strcspn(nom_amic, "\n")] = '\0';
+                snprintf(paquet, sizeof(paquet), "3 %d %s %s", opcio, nom, nom_amic);
+                if (envia_paquet(s, &contacte_servidor, contacte_servidor_mida, paquet) < 0)
+                {
+                    break;
+                }
+            }
+            else
+            {
+                snprintf(paquet, sizeof(paquet), "3 %d %s %s", opcio, nom, nom_amic);
+                if (envia_paquet(s, &contacte_servidor, contacte_servidor_mida, paquet) < 0)
+                {
+                    break;
+                }
             }
 
             if (opcio == 4)

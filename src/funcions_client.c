@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+
 #include "funcions_client.h"
 
 #define MIDA_PAQUET 1024

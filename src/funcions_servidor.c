@@ -13,6 +13,8 @@
 #define FILE_USUARIS "data/usuaris.txt"
 #define FILE_AMISTATS "data/amistats.txt"
 
+#include "fun_afegir_amic.h"
+
 Usuari usuaris[MAX_USUARIS];
 int num_usuaris = 0;
 int id_max = 0;
@@ -327,7 +329,7 @@ char *veureAmics(const char *nomUsuari)
     return resultat;
 }
 
-void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom)
+void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom, const char *nouAmic)
 {
     char resposta[MIDA_PAQUET];
     switch (opcio)
@@ -340,11 +342,20 @@ void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t co
     case 2:
         carregar_usuaris(FILE_USUARIS);
         char *V = veureAmics(nom);
-        snprintf(resposta, sizeof(resposta), "\n\nAmics de l'usuari %s:", V);
+        snprintf(resposta, sizeof(resposta), "\n\nAmics de l'usuari: %s", V);
         free(V);
         break;
     case 3:
-        snprintf(resposta, sizeof(resposta), "Afegir nous amics: Funció no implementada encara.");
+        carregar_usuaris(FILE_USUARIS);
+        int idUsuari = buscarIdUsuari(nom);
+        int idNouAmic = buscarIdUsuari(nouAmic);
+        llegirAmistats(FILE_AMISTATS);
+        // Afegir amistat de manera recíproca
+        afegirAmic(idUsuari, idNouAmic);
+        afegirAmic(idNouAmic, idUsuari);
+        ordenarAmistats();
+        guardarAmistats(FILE_AMISTATS);
+        snprintf(resposta, sizeof(resposta), "\n\n%s i %s ara son amics", nom, nouAmic);
         break;
     case 4:
         snprintf(resposta, sizeof(resposta), "Sessió tancada per l'usuari %s.", nom);
@@ -358,7 +369,7 @@ void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t co
 void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, char *paquet)
 {
     int codi_operacio, opcio;
-    char nom[50], contrasenya[50], sexe[10], estat_civil[20], ciutat[50], descripcio[100];
+    char nom[50], contrasenya[50], sexe[10], estat_civil[20], ciutat[50], descripcio[100], nouAmic[50];
     int edat;
 
     if (sscanf(paquet, "%d", &codi_operacio) != 1)
@@ -395,9 +406,10 @@ void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t conta
         }
         break;
     case 3:
-        if (sscanf(paquet, "%d %d %s", &codi_operacio, &opcio, nom) == 3)
+        if (sscanf(paquet, "%d %d %s %s", &codi_operacio, &opcio, nom, nouAmic) == 4)
         {
-            processa_opcio_menu(s, contacte_client, contacte_client_mida, opcio, nom);
+            printf("Processant opció de menú: %d %d %s %s\n", codi_operacio, opcio, nom, nouAmic);
+            processa_opcio_menu(s, contacte_client, contacte_client_mida, opcio, nom, nouAmic);
         }
         else
         {

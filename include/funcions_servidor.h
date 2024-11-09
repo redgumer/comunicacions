@@ -27,7 +27,8 @@ int verifica_usuari(const char *nom, const char *contrasenya);
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio);
 int obtenirIdUsuari(const char *nomUsuari);
 char *veureAmics(const char *nomUsuari);
-void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom);
+char *obtenirNomUsuari(int idUsuari);
+void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom, const char *nouAmic);
 void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, char *paquet);
 
 #endif
