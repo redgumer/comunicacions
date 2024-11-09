@@ -2,14 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "funcions_servidor.h"
 
 #define MIDA_PAQUET 1024
-#define MAX_USUARIS 10
+#define MAX_USUARIS 50
 #define MAX_LINE 256
+
+#define LOG_FILE "data/registre.log"
 #define FILE_USUARIS "data/usuaris.txt"
 #define FILE_AMISTATS "data/amistats.txt"
 
@@ -317,38 +320,89 @@ char *veureAmics(const char *nomUsuari)
 void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom, const char *nouAmic)
 {
     char resposta[MIDA_PAQUET];
+    char missatge_log[150];
+
     switch (opcio)
     {
     case 1:
-        char *O = obtenirPerfilUsuari(nom);
-        snprintf(resposta, sizeof(resposta), "\n\nPerfil de l'usuari: %s", O);
-        free(O);
+        // Obtenir el perfil de l'usuari
+        char *perfil = obtenirPerfilUsuari(nom);
+        if (perfil)
+        {
+            snprintf(resposta, sizeof(resposta), "\n\nPerfil de l'usuari: %s", perfil);
+            snprintf(missatge_log, sizeof(missatge_log), "Usuari %s ha consultat el seu perfil.", nom);
+            registra_activitat("INFO", missatge_log);
+            free(perfil);
+        }
+        else
+        {
+            snprintf(resposta, sizeof(resposta), "Error: No s'ha pogut obtenir el perfil de l'usuari %s.", nom);
+            registra_activitat("ERROR", resposta);
+        }
         break;
+
     case 2:
+        // Veure amics de l'usuari
         carregar_usuaris(FILE_USUARIS);
-        char *V = veureAmics(nom);
-        snprintf(resposta, sizeof(resposta), "\n\nAmics de l'usuari: %s", V);
-        free(V);
+        char *amics = veureAmics(nom);
+        if (amics)
+        {
+            snprintf(resposta, sizeof(resposta), "\n\nAmics de l'usuari: %s", amics);
+            snprintf(missatge_log, sizeof(missatge_log), "Usuari %s ha consultat la seva llista d'amics.", nom);
+            registra_activitat("INFO", missatge_log);
+            free(amics);
+        }
+        else
+        {
+            snprintf(resposta, sizeof(resposta), "Error: No s'han pogut obtenir els amics de l'usuari %s.", nom);
+            registra_activitat("ERROR", resposta);
+        }
         break;
+
     case 3:
+        // Afegir un nou amic
         carregar_usuaris(FILE_USUARIS);
         int idUsuari = buscarIdUsuari(nom);
         int idNouAmic = buscarIdUsuari(nouAmic);
-        llegirAmistats(FILE_AMISTATS);
-        // Afegir amistat de manera recíproca
-        afegirAmic(idUsuari, idNouAmic);
-        afegirAmic(idNouAmic, idUsuari);
-        ordenarAmistats();
-        guardarAmistats(FILE_AMISTATS);
-        snprintf(resposta, sizeof(resposta), "\n\n%s i %s ara son amics", nom, nouAmic);
+
+        if (idUsuari >= 0 && idNouAmic >= 0)
+        {
+            llegirAmistats(FILE_AMISTATS);
+            afegirAmic(idUsuari, idNouAmic);
+            afegirAmic(idNouAmic, idUsuari);
+            ordenarAmistats();
+            guardarAmistats(FILE_AMISTATS);
+            snprintf(resposta, sizeof(resposta), "\n\n%s i %s ara són amics", nom, nouAmic);
+            snprintf(missatge_log, sizeof(missatge_log), "Usuari %s ha afegit %s com a nou amic.", nom, nouAmic);
+            registra_activitat("INFO", missatge_log);
+        }
+        else
+        {
+            snprintf(resposta, sizeof(resposta), "Error: No s'ha pogut afegir %s com a amic de %s.", nouAmic, nom);
+            registra_activitat("ERROR", resposta);
+        }
         break;
+
     case 4:
+        // Tancar sessió
         snprintf(resposta, sizeof(resposta), "Sessió tancada per l'usuari %s.", nom);
+        snprintf(missatge_log, sizeof(missatge_log), "Usuari %s ha tancat la sessió.", nom);
+        registra_activitat("INFO", missatge_log);
         break;
+
     default:
+        // Opció no vàlida
         snprintf(resposta, sizeof(resposta), "Opció no vàlida.");
+        snprintf(missatge_log, sizeof(missatge_log), "Usuari %s ha seleccionat una opció no vàlida (%d).", nom, opcio);
+        registra_activitat("WARNING", missatge_log);
+        break;
     }
+
+    // Enviar la resposta al client
     sendto(s, resposta, strlen(resposta), 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
+    snprintf(missatge_log, sizeof(missatge_log), "Resposta enviada al client %s:%d - %.100s",
+             inet_ntoa(contacte_client.sin_addr), ntohs(contacte_client.sin_port), resposta);
+    registra_activitat("SERVER", missatge_log);
 }
 
 void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, char *paquet)
@@ -404,4 +458,26 @@ void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t conta
     default:
         printf("Operació desconeguda: %d\n", codi_operacio);
     }
+}
+
+void registra_activitat(const char *tipus, const char *missatge)
+{
+    FILE *fitxer_log = fopen(LOG_FILE, "a");
+    if (!fitxer_log)
+    {
+        printf("Error: No s'ha pogut obrir el fitxer de registre.\n");
+        return;
+    }
+
+    // Obtenir el timestamp actual
+    time_t temps_actual = time(NULL);
+    struct tm *tm_info = localtime(&temps_actual);
+    char timestamp[20];
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", tm_info);
+
+    // Escriure al fitxer de registre
+    fprintf(fitxer_log, "[%s] [%s] %s\n", timestamp, tipus, missatge);
+
+    // Tancar el fitxer
+    fclose(fitxer_log);
 }

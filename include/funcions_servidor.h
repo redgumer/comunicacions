@@ -30,5 +30,6 @@ char *veureAmics(const char *nomUsuari);
 char *obtenirNomUsuari(int idUsuari);
 void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom, const char *nouAmic);
 void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, char *paquet);
+void registra_activitat(const char *tipus, const char *missatge);
 
 #endif

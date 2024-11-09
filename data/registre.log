@@ -1,0 +1,21 @@
+[2024-11-09 22:40:28] [INFO] Servidor UDP configurat correctament.
+[2024-11-09 22:40:43] [CLIENT] Paquet rebut de 127.0.0.1:51446 - 1 Antonio 1234
+[2024-11-09 22:40:43] [SERVER] Peticio processada per a 127.0.0.1:51446
+[2024-11-09 22:41:15] [CLIENT] Paquet rebut de 127.0.0.1:51446 - 2 Antonio 1234 Home Solter 33 Vinaros "Les motos son la meva vida"
+[2024-11-09 22:41:15] [SERVER] Peticio processada per a 127.0.0.1:51446
+[2024-11-09 22:41:34] [CLIENT] Paquet rebut de 127.0.0.1:51678 - 1 Antonio 1234
+[2024-11-09 22:41:34] [SERVER] Peticio processada per a 127.0.0.1:51678
+[2024-11-09 22:41:36] [CLIENT] Paquet rebut de 127.0.0.1:51678 - 3 1 Antonio 
+[2024-11-09 22:41:36] [SERVER] Peticio processada per a 127.0.0.1:51678
+[2024-11-09 22:41:38] [CLIENT] Paquet rebut de 127.0.0.1:51678 - 3 2 Antonio 
+[2024-11-09 22:41:38] [SERVER] Peticio processada per a 127.0.0.1:51678
+[2024-11-09 22:41:44] [CLIENT] Paquet rebut de 127.0.0.1:51678 - 3 3 Antonio Xavi
+[2024-11-09 22:41:44] [SERVER] Peticio processada per a 127.0.0.1:51678
+[2024-11-09 22:41:46] [CLIENT] Paquet rebut de 127.0.0.1:51678 - 3 2 Antonio Xavi
+[2024-11-09 22:41:46] [SERVER] Peticio processada per a 127.0.0.1:51678
+[2024-11-09 22:41:53] [CLIENT] Paquet rebut de 127.0.0.1:51678 - 3 3 Antonio Anna
+[2024-11-09 22:41:53] [SERVER] Peticio processada per a 127.0.0.1:51678
+[2024-11-09 22:41:55] [CLIENT] Paquet rebut de 127.0.0.1:51678 - 3 2 Antonio Anna
+[2024-11-09 22:41:55] [SERVER] Peticio processada per a 127.0.0.1:51678
+[2024-11-09 22:41:59] [CLIENT] Paquet rebut de 127.0.0.1:51678 - 3 4 Antonio Anna
+[2024-11-09 22:41:59] [SERVER] Peticio processada per a 127.0.0.1:51678

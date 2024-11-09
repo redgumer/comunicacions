@@ -6,3 +6,4 @@
 6 Anna 1234 Dona Casat 42 Reus "Soc la mare de l'Alger"
 
 7 Josep 1234 Home Solter 30 Mursia "Li agrada molt navegar"
+8 Antonio 1234 Home Solter 33 Vinaros "Les motos son la meva vida"
