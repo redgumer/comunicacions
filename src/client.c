@@ -1,6 +1,6 @@
 /*
  ================================ PROJECTE XARXES ================================
- | Fitxer     : funcions_servidor.h                                              |
+ | Fitxer     : src/client.c                                                     |
  | Autors     : Xavi, Jadi, Ivette                                               |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |

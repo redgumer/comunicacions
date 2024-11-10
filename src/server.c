@@ -1,6 +1,6 @@
 /*
  ================================ PROJECTE XARXES ================================
- | Fitxer     : funcions_servidor.h                                              |
+ | Fitxer     : src/server.c                                                     |
  | Autors     : Xavi, Jadi, Ivette                                               |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
@@ -22,6 +22,7 @@
 
 // Definición de constantes
 #define MIDA_PAQUET 1024 // Tamaño del paquete de datos para la comunicación
+#define FILE_USUARIS "data/usuaris.txt"   // Archivo con datos de usuarios
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -45,6 +46,29 @@ int main(int argc, char **argv) {
     }
     printf("Servidor UDP configurat correctament al port %d.\n", atoi(argv[1]));
     registra_activitat("INFO", "Servidor UDP configurat correctament.");
+    carregar_usuaris(FILE_USUARIS);
+    carrega_notificacions(usuaris);
+    printf("Processant opció de menú: %d %s %s %s %s %d %s %s %d\n",
+           usuaris[0].id,
+           usuaris[0].nom,
+           usuaris[0].contrasenya,
+           usuaris[0].sexe,        // Això és correcte com a %c
+           usuaris[0].estat_civil, // Canvia `%c` a `%s`
+           usuaris[0].edat,
+           usuaris[0].ciutat,
+           usuaris[0].descripcio,
+           usuaris[0].num_notificacions);
+
+    printf("Processant opció de menú: %d %s %s %s %s %d %s %s %d\n",
+           usuaris[1].id,
+           usuaris[1].nom,
+           usuaris[1].contrasenya,
+           usuaris[1].sexe,        // Això és correcte com a %c
+           usuaris[1].estat_civil, // Canvia `%c` a `%s`
+           usuaris[1].edat,
+           usuaris[1].ciutat,
+           usuaris[1].descripcio,
+           usuaris[1].num_notificacions);
 
     while (1) {
         int bytes_rebuts = recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, &contacte_client_mida);

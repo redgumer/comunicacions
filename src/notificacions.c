@@ -1,6 +1,6 @@
 /*
  ================================ PROJECTE XARXES ================================
- | Fitxer     : funcions_servidor.h                                              |
+ | Fitxer     : src/notificacions.c                                              |
  | Autors     : Xavi, Jadi, Ivette                                               |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
@@ -11,6 +11,9 @@
 // Inclusión de librerías estándar
 #include <stdio.h>  // Para operaciones de entrada/salida
 #include <string.h> // Para manipulación de cadenas de texto
+#include <stdlib.h> // Para funciones estándar, como manejo de memoria
+#include <ctype.h>  // Para funciones de manipulación de caracteres
+#include <unistd.h> // Per a la funció unlink()
 
 // Inclusión de librerías personalizadas
 #include "funcions_servidor.h" // Archivo de cabecera con funciones específicas para el servidor
@@ -18,189 +21,196 @@
 #include "tipus.h"             // Archivo de cabecera con definiciones de tipos de datos
 
 // Definición de constantes
-#define MAX_MISSATGE 256                              // Tamaño máximo para un mensaje de notificación
-#define MAX_NOTIFICACIONS 10                          // Número máximo de notificaciones almacenadas por usuario
-#define FITXER_NOTIFICACIONS "data/notificacions.txt" // Ruta del archivo de notificaciones
-#define MAX_USUARIS 50                                // Número máximo de usuarios permitidos
-
-#ifndef CLIENT
-extern Usuari_t usuaris[MAX_USUARI];
-extern int num_usuaris;
-#endif
-
-int tens_notificacions(char *nom) {
-#ifndef CLIENT
-    for (int i = 0; i < num_usuaris; i++) {
-        if (strcmp(usuaris[i].nom, nom) == 0) {
-            return usuaris[i].num_notificacions > 0;
-        }
-    }
-#else
-    (void)nom; // Indica que no s'utilitza el paràmetre en mode client
-#endif
-    return 0;
-}
-
+#define MIDA_PAQUET 1024                                            // Tamaño del paquete para la comunicación
+#define MAX_MISSATGE 256                                            // Tamaño máximo para un mensaje de notificación
+#define MAX_NOTIFICACIONS 10                                        // Número máximo de notificaciones almacenadas por usuario
+#define FITXER_NOTIFICACIONS "data/notificacions/notificacions.txt" // Ruta del archivo de notificaciones
+#define MAX_USUARIS 50                                              // Número máximo de usuarios permitidos
+#define MAX_LINE 256                                                // Tamaño máximo para leer líneas del archivo
 
 extern Usuari_t usuaris[MAX_USUARIS];
 extern int num_usuaris;
-
-#include <stdio.h>
-#include <string.h>
-
-extern Usuari_t usuaris[MAX_USUARIS];
-extern int num_usuaris;
-
-void afegir_notificacio(const char *nom, const char *emissor, const char *missatge)
-{
-    Usuari_t *usuari = NULL;
-
-    // Busca l'usuari pel nom
-    for (int i = 0; i < num_usuaris; i++)
-    {
-        if (strcmp(usuaris[i].nom, nom) == 0)
-        {
-            usuari = &usuaris[i];
-            break;
-        }
-    }
-
-    // Comprova si s'ha trobat l'usuari
-    if (usuari == NULL)
-    {
-        printf("Usuari no trobat!\n");
-        return;
-    }
-
-    // Comprova si hi ha espai per a una nova notificació
-    if (usuari->num_notificacions >= MAX_NOTIFICACIONS)
-    {
-        printf("No es poden afegir més notificacions. Bandeja plena!\n");
-        return;
-    }
-
-    // Afegir la notificació
-    strncpy(usuari->notificacions[usuari->num_notificacions].emissor, emissor, MAX_USUARI - 1);
-    usuari->notificacions[usuari->num_notificacions].emissor[MAX_USUARI - 1] = '\0';
-
-    strncpy(usuari->notificacions[usuari->num_notificacions].receptor, usuari->nom, MAX_USUARI - 1);
-    usuari->notificacions[usuari->num_notificacions].receptor[MAX_USUARI - 1] = '\0';
-
-    strncpy(usuari->notificacions[usuari->num_notificacions].missatge, missatge, MAX_MISSATGE - 1);
-    usuari->notificacions[usuari->num_notificacions].missatge[MAX_MISSATGE - 1] = '\0';
-
-    usuari->num_notificacions++;
-
-    printf("Notificació afegida correctament!\n");
-}
-
-void emmagatzema_notificacions(char *nom)
-{
-    Usuari_t *usuari = NULL;
-
-    // Busca l'usuari pel nom
-    for (int i = 0; i < num_usuaris; i++)
-    {
-        if (strcmp(usuaris[i].nom, nom) == 0)
-        {
-            usuari = &usuaris[i];
-            break;
-        }
-    }
-
-    // Comprova si s'ha trobat l'usuari
-    if (usuari == NULL)
-    {
-        printf("Usuari no trobat!\n");
-        return;
-    }
-
-    // Obre el fitxer per escriure les notificacions
-    FILE *fitxer = fopen(FITXER_NOTIFICACIONS, "w");
-    if (!fitxer)
-    {
-        perror("Error obrint el fitxer de notificacions");
-        return;
-    }
-
-    // Escriu les notificacions al fitxer
-    for (int i = 0; i < usuari->num_notificacions; i++)
-    {
-        fprintf(fitxer, "%s;%s;%s\n",
-                usuari->notificacions[i].emissor,
-                usuari->notificacions[i].receptor,
-                usuari->notificacions[i].missatge);
-    }
-
-    fclose(fitxer);
-    printf("Notificacions emmagatzemades correctament!\n");
-}
 
 void carrega_notificacions(Usuari_t *usuari)
 {
-    FILE *fitxer = fopen(FITXER_NOTIFICACIONS, "r");
-    if (!fitxer)
-    {
-        perror("Error obrint el fitxer de notificacions");
-        return;
-    }
-    char linia[MAX_MISSATGE + MAX_USUARI * 2];
-    usuari->num_notificacions = 0;
-    while (fgets(linia, sizeof(linia), fitxer) && usuari->num_notificacions < MAX_NOTIFICACIONS)
-    {
-        sscanf(linia, "%[^;];%[^;];%[^\n]",
-               usuari->notificacions[usuari->num_notificacions].emissor,
-               usuari->notificacions[usuari->num_notificacions].receptor,
-               usuari->notificacions[usuari->num_notificacions].missatge);
-        usuari->num_notificacions++;
-    }
-    fclose(fitxer);
-}
+    // Construïm el nom del fitxer de notificacions per l'usuari
+    char fitxer_notificacions[150];
+    snprintf(fitxer_notificacions, sizeof(fitxer_notificacions), "data/notificacions/%s_not.txt", usuari->nom);
 
-void consultar_notificacions(Usuari_t *usuari)
-{
-    if (usuari->num_notificacions == 0)
-    {
-        printf("No tens notificacions pendents.\n");
-        return;
-    }
-    for (int i = 0; i < usuari->num_notificacions; i++)
-    {
-        printf("De: %s - Missatge: %s\n",
-               usuari->notificacions[i].emissor,
-               usuari->notificacions[i].missatge);
-    }
-}
-
-void elimina_notificacions(Usuari_t *usuari)
-{
-    // Esborrar les notificacions de l'usuari
-    usuari->num_notificacions = 0;
-    memset(usuari->notificacions, 0, sizeof(usuari->notificacions));
-
-    // Desa els canvis a l'arxiu (igual que a emmagatzema_notificacions)
-    FILE *fitxer = fopen("notificacions.dat", "wb");
+    // Obrim el fitxer de notificacions en mode lectura
+    FILE *fitxer = fopen(fitxer_notificacions, "r");
     if (fitxer == NULL)
     {
-        perror("Error obrint fitxer de notificacions");
+        printf("Fitxer de notificacions no trobat per l'usuari: %s\n", usuari->nom);
+        usuari->num_notificacions = 0;
         return;
     }
 
-    // Escriure l'usuari actualitzat al fitxer
-    if (fwrite(usuari, sizeof(Usuari_t), 1, fitxer) != 1)
+    // Inicialitzem el comptador de notificacions
+    int num_notificacions = 0;
+    char linia[512];
+    char emissor[MAX_USUARI];
+    char missatge[MAX_MISSATGE];
+
+    // Llegim cada línia del fitxer i emmagatzemem les notificacions
+    while (fgets(linia, sizeof(linia), fitxer) != NULL && num_notificacions < MAX_NOTIFICACIONS)
     {
-        perror("Error esborrant notificacions al fitxer");
+        // Parsejar la línia en format "emissor;missatge"
+        if (sscanf(linia, "%[^;];%[^\n]", emissor, missatge) == 2)
+        {
+            // Emmagatzemem la notificació a l'array notificacions de l'usuari
+            strncpy(usuari->notificacions[num_notificacions].emissor, emissor, MAX_USUARI);
+            strncpy(usuari->notificacions[num_notificacions].receptor, usuari->nom, MAX_USUARI);
+            strncpy(usuari->notificacions[num_notificacions].missatge, missatge, MAX_MISSATGE);
+
+            // Incrementem el comptador de notificacions
+            num_notificacions++;
+        }
     }
 
+    // Tanquem el fitxer
     fclose(fitxer);
-    printf("Totes les notificacions han estat eliminades correctament.\n");
+
+    // Actualitzem el camp num_notificacions de l'usuari
+    usuari->num_notificacions = num_notificacions;
+
+    printf("Usuari: %s, Notificacions emmagatzemades: %d\n", usuari->nom, usuari->num_notificacions);
+}
+
+char *consultar_notificacions(char *nom)
+{
+    static char resultat[MIDA_PAQUET]; // Cadena per emmagatzemar el resultat (buffer estàtic)
+    resultat[0] = '\0';                // Inicialitzar la cadena
+
+    // Buscar l'usuari a la llista d'usuaris
+    for (int i = 0; i < num_usuaris; i++)
+    {
+        if (strcmp(usuaris[i].nom, nom) == 0)
+        {
+            // Usuari trobat, recorrem les notificacions
+            if (usuaris[i].num_notificacions == 0)
+            {
+                snprintf(resultat, sizeof(resultat), "No hi ha notificacions per l'usuari: %s\n", nom);
+                return resultat;
+            }
+
+            // Afegir les notificacions a la cadena de resultat
+            for (int j = 0; j < usuaris[i].num_notificacions; j++)
+            {
+                char notificacio[512]; // Incrementem la mida del buffer per evitar truncació
+                snprintf(notificacio, sizeof(notificacio), "Emissor: %.50s, Missatge: %.200s\n",
+                         usuaris[i].notificacions[j].emissor,
+                         usuaris[i].notificacions[j].missatge);
+
+                // Concatenar la notificació al resultat
+                strncat(resultat, notificacio, sizeof(resultat) - strlen(resultat) - 1);
+            }
+
+            return resultat; // Retornar la cadena amb les notificacions
+        }
+    }
+
+    // Si no es troba l'usuari
+    snprintf(resultat, sizeof(resultat), "Usuari no trobat: %s\n", nom);
+    return resultat;
+}
+
+void afegir_notificacio(const char *nom, const char *emissor, const char *missatge)
+{
+    // Construïm el nom del fitxer de notificacions per l'usuari
+    char fitxer_notificacions[100];
+    snprintf(fitxer_notificacions, sizeof(fitxer_notificacions), "data/notificacions/%s_not.txt", nom);
+
+    // Obrim el fitxer en mode "a" (append), que afegeix sense eliminar contingut
+    FILE *fitxer = fopen(fitxer_notificacions, "a");
+    if (fitxer == NULL)
+    {
+        printf("Error en crear o obrir el fitxer de notificacions per l'usuari: %s\n", nom);
+        return;
+    }
+
+    // Escriure la notificació al fitxer en format "emissor;missatge"
+    fprintf(fitxer, "%s;%s\n", emissor, missatge);
+
+    // Tanquem el fitxer
+    fclose(fitxer);
+
+    printf("Notificació afegida per a l'usuari: %s\n", nom);
+}
+
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h> // Per a la funció unlink()
+#include "tipus.h"
+
+void elimina_notificacions(char *nom)
+{
+    // Buscar l'usuari a la llista d'usuaris
+    for (int i = 0; i < num_usuaris; i++)
+    {
+        if (strcmp(usuaris[i].nom, nom) == 0)
+        {
+            // Comprovem si l'usuari té notificacions
+            if (usuaris[i].num_notificacions == 0)
+            {
+                printf("L'usuari %s no té notificacions per eliminar.\n", nom);
+                return;
+            }
+
+            // L'usuari té notificacions, així que procedim a eliminar-les
+            char fitxer_notificacions[100];
+            snprintf(fitxer_notificacions, sizeof(fitxer_notificacions), "data/notificacions/%s_not.txt", nom);
+
+            // Intentem eliminar el fitxer de notificacions
+            if (unlink(fitxer_notificacions) == 0)
+            {
+                printf("Fitxer de notificacions eliminat per a l'usuari: %s\n", nom);
+            }
+            else
+            {
+                printf("No s'ha pogut eliminar el fitxer de notificacions per a l'usuari: %s\n", nom);
+            }
+
+            // Buidem l'estructura de notificacions de l'usuari
+            for (int j = 0; j < MAX_NOTIFICACIONS; j++)
+            {
+                usuaris[i].notificacions[j].emissor[0] = '\0';
+                usuaris[i].notificacions[j].receptor[0] = '\0';
+                usuaris[i].notificacions[j].missatge[0] = '\0';
+            }
+            usuaris[i].num_notificacions = 0;
+
+            printf("Les notificacions de l'usuari %s han estat buidades correctament.\n", nom);
+            return;
+        }
+    }
+
+    // Si l'usuari no es troba
+    printf("No s'ha trobat cap usuari amb el nom: %s\n", nom);
+}
+
+int tens_notificacions(char *nom)
+{
+    // Buscar l'usuari a la llista d'usuaris
+    for (int i = 0; i < num_usuaris; i++)
+    {
+        if (strcmp(usuaris[i].nom, nom) == 0)
+        {
+            // Retornem el nombre de notificacions de l'usuari
+            return usuaris[i].num_notificacions;
+        }
+    }
+
+    // Si no es troba l'usuari, retornem -1
+    printf("Usuari no trobat: %s\n", nom);
+    return -1;
 }
 
 void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in contacte_client, int contacte_client_mida, Usuari_t *usuaris)
 {
     char accio[20], receptor[50], missatge[MAX_MISSATGE], nom[MAX_USUARI];
     int codi_operacio;
-
+    
     // Analitzar l'acció de notificacions (ex: "4 nom CONSULTAR_NOTIFICACIONS")
     if (sscanf(paquet, "%d %s %s", &codi_operacio, nom, accio) < 3)
     {
@@ -213,14 +223,17 @@ void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in con
     if (strcmp(accio, "CONSULTAR_NOTIFICACIONS") == 0)
     {
         // Consultar notificacions
-        consultar_notificacions(&usuaris[0]);
-        sendto(s, usuaris[0].notificacions, sizeof(usuaris[0].notificacions), 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
+        char *paquet = consultar_notificacions(nom);
+        printf("Notificacions: %s\n", paquet);
+        printf("Enviat a %s\n", nom);
+        sendto(s, paquet, sizeof(paquet), 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
+        printf("Notificacions enviades: %s\n", paquet);
     }
     else if (strcmp(accio, "ELIMINAR_NOTIFICACIONS") == 0)
     {
         // Eliminar notificacions i desar els canvis
         usuaris[0].num_notificacions = 0;
-        elimina_notificacions(&usuaris[0]);
+        elimina_notificacions(nom);
         sendto(s, "Notificacions eliminades", 24, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
     }
     else if (strcmp(accio, "ENVIAR_NOTIFICACIO") == 0)
@@ -228,14 +241,17 @@ void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in con
         // Analitzar el paquet per obtenir el receptor i el missatge
         if (sscanf(paquet, "%d %s ENVIAR_NOTIFICACIO %s %[^\n]", &codi_operacio, nom, receptor, missatge) == 4)
         {
-            afegir_notificacio(nom, receptor, missatge);
-            emmagatzema_notificacions(nom);
+            afegir_notificacio(receptor, nom, missatge);
             sendto(s, "Notificació enviada", 20, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
         }
         else
         {
             printf("Error de format en enviar notificació.\n");
         }
+    }
+    else if (strcmp(accio, "SURT_DE_NOTIFICAIONS") == 0)
+    {
+        sendto(s, "Surto de notificacions", 20, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
     }
     else
     {

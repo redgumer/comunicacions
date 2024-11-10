@@ -1,6 +1,6 @@
 /*
  ================================ PROJECTE XARXES ================================
- | Fitxer     : funcions_servidor.h                                              |
+ | Fitxer     : src/funcions_client.c                                            |
  | Autors     : Xavi, Jadi, Ivette                                               |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
@@ -9,12 +9,12 @@
 */
 
 // Inclusión de librerías estándar
-#include <stdio.h>  // Para operaciones de entrada/salida
-#include <stdlib.h> // Para gestión de memoria dinámica y control de procesos
-#include <string.h> // Para manipulación de cadenas de texto
-#include <unistd.h> // Para funciones del sistema como close(), sleep(), etc.
-#include <stdbool.h>// Para el uso de variables booleanas
-#include <time.h>   // Para funciones de manejo de tiempo (registro de eventos)
+#include <stdio.h>   // Para operaciones de entrada/salida
+#include <stdlib.h>  // Para gestión de memoria dinámica y control de procesos
+#include <string.h>  // Para manipulación de cadenas de texto
+#include <unistd.h>  // Para funciones del sistema como close(), sleep(), etc.
+#include <stdbool.h> // Para el uso de variables booleanas
+#include <time.h>    // Para funciones de manejo de tiempo (registro de eventos)
 
 // Inclusión de librerías para manejo de sockets
 #include <sys/socket.h> // Para la creación y manipulación de sockets
@@ -24,12 +24,12 @@
 #include "funcions_client.h" // Archivo de cabecera con funciones específicas del cliente
 #include "notificacions.h"   // Archivo de cabecera con funciones de notificaciones
 
-
 // Definición de constantes
 #define LOG_FILE "data/registre.log" // Ruta del archivo de registro de eventos
 #define MIDA_PAQUET 1024             // Tamaño del paquete de datos para la comunicación
 
-void mostra_menu(){
+void mostra_menu()
+{
     printf("\n--- MENÚ D'OPCIONS ---\n");
     printf("1. Veure perfil\n");
     printf("2. Veure amics\n");
@@ -176,6 +176,7 @@ void processar_opcio(int s, struct sockaddr_in *contacte_servidor, socklen_t con
         else if (opcio == 4)
         {
             gestionar_notificacions_client(nom, paquet, sizeof(paquet));
+            
         }
         else if (opcio == 5)
         {
@@ -183,7 +184,7 @@ void processar_opcio(int s, struct sockaddr_in *contacte_servidor, socklen_t con
             registra_activitat("Tancant sessió", nom);
             break;
         }
-        else
+        else if (opcio == 1 || opcio == 2)  
         {
             snprintf(paquet, sizeof(paquet), "3 %d %s", opcio, nom);
         }
@@ -239,17 +240,17 @@ void registra_nou_usuari(int s, struct sockaddr_in *contacte_servidor, socklen_t
 bool mostra_error_inici_sessio(char *nom)
 {
     bool tornar_menu = false;
-     printf("Usuari no trobat. Vols registrar un nou usuari? (s/n): ");
-        registra_activitat("Usuari no trobat", nom);
-        char opcio_registre;
-        scanf(" %c", &opcio_registre);
-        getchar(); // Consumir el salt de línia
+    printf("Usuari no trobat. Vols registrar un nou usuari? (s/n): ");
+    registra_activitat("Usuari no trobat", nom);
+    char opcio_registre;
+    scanf(" %c", &opcio_registre);
+    getchar(); // Consumir el salt de línia
 
-        if (opcio_registre == 's' || opcio_registre == 'S')
-        {
-           tornar_menu = true;
-        }
-    return tornar_menu;    
+    if (opcio_registre == 's' || opcio_registre == 'S')
+    {
+        tornar_menu = true;
+    }
+    return tornar_menu;
 }
 
 void finalitza_sessio(int s, char *nom)
@@ -271,29 +272,32 @@ int gestionar_notificacions_client(char *nom, char *paquet, size_t mida_paquet)
 
         switch (not_opcio)
         {
-            case 1: // Consultar notificacions
-                snprintf(paquet, mida_paquet, "4 %s CONSULTAR_NOTIFICACIONS", nom);
-                return 1; // Paquet preparat per ser enviat
+        case 1: // Consultar notificacions
+            snprintf(paquet, mida_paquet, "4 %s CONSULTAR_NOTIFICACIONS", nom);
+            return 1; // Paquet preparat per ser enviat
 
-            case 2: // Eliminar notificacions
-                snprintf(paquet, mida_paquet, "4 %s ELIMINAR_NOTIFICACIONS", nom);
-                return 1; // Paquet preparat per ser enviat
+        case 2: // Eliminar notificacions
+            snprintf(paquet, mida_paquet, "4 %s ELIMINAR_NOTIFICACIONS", nom);
+            return 1; // Paquet preparat per ser enviat
 
-            case 3: // Enviar notificació
-                if (strlen(destinatari) == 0 || strlen(missatge) == 0)
-                {
-                    printf("El destinatari o el missatge no poden estar buits.\n");
-                    continue;
-                }
-                snprintf(paquet, mida_paquet, "4 %s ENVIAR_NOTIFICACIO %s %s", nom, destinatari, missatge);
-                return 1; // Paquet preparat per ser enviat
+        case 3: // Enviar notificació
+            if (strlen(destinatari) == 0 || strlen(missatge) == 0)
+            {
+                printf("El destinatari o el missatge no poden estar buits.\n");
+                continue;
+            }
+            snprintf(paquet, mida_paquet, "4 %s ENVIAR_NOTIFICACIO %s %s", nom, destinatari, missatge);
+            return 1; // Paquet preparat per ser enviat
 
-            case 4: // Tornar al menú principal
-                return 1; // Indica a `processar_opcio()` que no hi ha paquet a enviar
+        case 4: // Tornar al menú principal
+            printf("Surt de notificacions...\n");
+            registra_activitat("Surt de notificacions", nom);
+            snprintf(paquet, mida_paquet, "4 %s SURT_DE_NOTIFICAIONS", nom);
+            return 1; // Tancar sessió
 
-            default:
-                printf("Opció no vàlida, torna-ho a intentar.\n");
-                break;
+        default:
+            printf("Opció no vàlida, torna-ho a intentar.\n");
+            break;
         }
     }
 }

@@ -1,6 +1,6 @@
 /*
  ================================ PROJECTE XARXES ================================
- | Fitxer     : funcions_servidor.h                                              |
+ | Fitxer     : src/funcions_servidor.c                                          |
  | Autors     : Xavi, Jadi, Ivette                                               |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
@@ -34,7 +34,7 @@
 #define FILE_USUARIS "data/usuaris.txt"   // Archivo con datos de usuarios
 #define FILE_AMISTATS "data/amistats.txt" // Archivo con datos de amistades
 
-//variables globales
+// variables globales
 extern Usuari_t usuaris[MAX_USUARIS];
 extern int num_usuaris;
 extern int id_max;
@@ -337,11 +337,9 @@ char *veureAmics(const char *nomUsuari)
 }
 
 void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom, const char *nouAmic)
-{   
-    carregar_usuaris(FILE_USUARIS);
+{
     char resposta[MIDA_PAQUET];
     char missatge_log[150];
-
     switch (opcio)
     {
     case 1:
@@ -379,7 +377,7 @@ void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t co
         break;
 
     case 3:
-        // Afegir un nou amic        
+        // Afegir un nou amic
         int idUsuari = buscarIdUsuari(nom);
         int idNouAmic = buscarIdUsuari(nouAmic);
 

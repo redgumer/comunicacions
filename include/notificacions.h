@@ -1,6 +1,6 @@
 /*
  ================================ PROJECTE XARXES ================================
- | Fitxer     : funcions_servidor.h                                              |
+ | Fitxer     : include/notificacions.h                                          |
  | Autors     : Xavi, Jadi, Ivette                                               |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
@@ -13,13 +13,11 @@
 
 #include "tipus.h"
 #include <arpa/inet.h>
-
-void afegir_notificacio(const char *nom, const char *emissor, const char *missatge);
-void emmagatzema_notificacions(char *nom);
 void carrega_notificacions(Usuari_t *usuari);
-void consultar_notificacions(Usuari_t *usuari);
+char *consultar_notificacions(char *nom);
+void afegir_notificacio(const char *nom, const char *emissor, const char *missatge);
+void elimina_notificacions(char *nom);
 int tens_notificacions(char *nom);
-void elimina_notificacions(Usuari_t *usuari);
 void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in contacte_client, int contacte_client_mida, Usuari_t *usuaris);
 
 #endif

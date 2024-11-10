@@ -1,6 +1,6 @@
 # ================== CONFIGURACIÓN ==================
 CC = gcc
-CFLAGS = -Wall -Wextra -g -Iinclude -DCLIENT
+CFLAGS = -Wall -Wextra -g -Iinclude
 
 # Carpetas del proyecto
 BIN_DIR = bin
