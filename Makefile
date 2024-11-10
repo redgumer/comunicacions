@@ -1,67 +1,85 @@
-# Definició del compilador i opcions de compilació
+# ================== CONFIGURACIÓN ==================
 CC = gcc
-CFLAGS = -Wall -Wextra -g -Iinclude 
+CFLAGS = -Wall -Wextra -g -Iinclude
 
-# Carpetes del projecte
+# Carpetas del proyecto
 BIN_DIR = bin
 BUILD_DIR = build
 SRC_DIR = src
 INCLUDE_DIR = include
 DATA_DIR = data
 
-# Executables a generar
+# Archivos ejecutables
 CLIENT_EXEC = $(BIN_DIR)/client
 SERVER_EXEC = $(BIN_DIR)/server
 
-# Fitxers objecte
-CLIENT_OBJS = $(BUILD_DIR)/client.o $(BUILD_DIR)/funcions_client.o $(BUILD_DIR)/fun_afegir_amic.o $(BUILD_DIR)/fnotificacions.o
-SERVER_OBJS = $(BUILD_DIR)/server.o $(BUILD_DIR)/funcions_servidor.o $(BUILD_DIR)/fun_afegir_amic.o $(BUILD_DIR)/fnotificacions.o
+# Archivos fuente
+CLIENT_SRC = $(SRC_DIR)/client.c $(SRC_DIR)/funcions_client.c $(SRC_DIR)/fun_afegir_amic.c $(SRC_DIR)/notificacions.c
+SERVER_SRC = $(SRC_DIR)/server.c $(SRC_DIR)/funcions_servidor.c $(SRC_DIR)/fun_afegir_amic.c $(SRC_DIR)/notificacions.c
 
-# Definició de valors per defecte de les variables
+# Archivos objeto
+CLIENT_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(CLIENT_SRC))
+SERVER_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SERVER_SRC))
+
+# Variables para IP y Puerto
 PORT = 10000
 IP = 127.0.0.1
 
-# Objectiu per compilar-ho tot
+# ================== REGLAS PRINCIPALES ==================
+
+# Compilar todo
 all: $(CLIENT_EXEC) $(SERVER_EXEC)
 
-# Compilar i enllaçar l'executable del client
+# Ejecutable del cliente
 $(CLIENT_EXEC): $(CLIENT_OBJS)
 	$(CC) $(CFLAGS) -o $(CLIENT_EXEC) $(CLIENT_OBJS)
 
-# Compilar i enllaçar l'executable del servidor
+# Ejecutable del servidor
 $(SERVER_EXEC): $(SERVER_OBJS)
 	$(CC) $(CFLAGS) -o $(SERVER_EXEC) $(SERVER_OBJS)
 
-# Compilar els fitxers objecte per al client
+# ================== REGLAS DE COMPILACIÓN ==================
+
+# Compilar archivos objeto del cliente
 $(BUILD_DIR)/client.o: $(SRC_DIR)/client.c $(INCLUDE_DIR)/funcions_client.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/client.c -o $(BUILD_DIR)/client.o
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/funcions_client.o: $(SRC_DIR)/funcions_client.c $(INCLUDE_DIR)/funcions_client.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/funcions_client.c -o $(BUILD_DIR)/funcions_client.o
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Compilar els fitxers objecte per al servidor
+$(BUILD_DIR)/fun_afegir_amic.o: $(SRC_DIR)/fun_afegir_amic.c $(INCLUDE_DIR)/fun_afegir_amic.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/notificacions.o: $(SRC_DIR)/notificacions.c $(INCLUDE_DIR)/notificacions.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Compilar archivos objeto del servidor
 $(BUILD_DIR)/server.o: $(SRC_DIR)/server.c $(INCLUDE_DIR)/funcions_servidor.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/server.c -o $(BUILD_DIR)/server.o
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/funcions_servidor.o: $(SRC_DIR)/funcions_servidor.c $(INCLUDE_DIR)/funcions_servidor.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/funcions_servidor.c -o $(BUILD_DIR)/funcions_servidor.o
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Compilar el fitxer objecte per a afegir amics
-$(BUILD_DIR)/fun_afegir_amic.o: $(SRC_DIR)/fun_afegir_amic.c $(INCLUDE_DIR)/fun_afegir_amic.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/fun_afegir_amic.c -o $(BUILD_DIR)/fun_afegir_amic.o
+# ================== REGLAS DE EJECUCIÓN ==================
 
-# Compilar el fitxer objecte per a notificacions
-$(BUILD_DIR)/fnotificacions.o: $(SRC_DIR)/notificacions.c $(INCLUDE_DIR)/notificacions.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/notificacions.c -o $(BUILD_DIR)/fnotificacions.o
-
-# Executar el servidor amb el port predefinit o personalitzat
+# Ejecutar el servidor
 servidor: $(SERVER_EXEC)
 	./$(SERVER_EXEC) $(PORT)
 
-# Executar el client amb IP i port predefinits o personalitzats
+# Ejecutar el cliente
 client: $(CLIENT_EXEC)
 	./$(CLIENT_EXEC) $(IP) $(PORT)
 
-# Netejar fitxers de compilació
+# ================== LIMPIEZA ==================
+
+# Limpiar archivos de compilación
 clean:
 	rm -f $(BUILD_DIR)/*.o $(BIN_DIR)/*
+
+# ================== REGLA DE DEPENDENCIAS ==================
+
+# Generar dependencias automáticamente
+dependencias:
+	$(CC) -MM $(CFLAGS) $(SRC_DIR)/*.c > .depend
+
+-include .depend
