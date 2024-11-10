@@ -16,7 +16,7 @@
 #include <arpa/inet.h>
 
 void mostra_menu();
-void not_menu(char *nom);
+void not_menu();
 int envia_paquet(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, const char *paquet);
 int rep_paquet(int s, char *paquet, struct sockaddr_in *contacte_servidor, socklen_t *contacte_servidor_mida);
 int inicia_sessio(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, char *nom);
@@ -31,6 +31,6 @@ int inicialitza_socket(struct sockaddr_in *contacte_servidor, char *ip, char *po
 bool mostra_error_inici_sessio(char *nom);
 
 int gestionar_notificacions_client(char *nom, char *paquet, size_t mida_paquet);
-int notificacions_menu(char *destinatari, char *missatge, char *nom);
+int notificacions_menu(char *destinatari, char *missatge);
 
 #endif

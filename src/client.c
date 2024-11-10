@@ -22,8 +22,10 @@
 // Inclusión de librerías personalizadas
 #include "funcions_client.h" // Funciones específicas definidas para el cliente
 
+
 // Definición de constantes
 #define MIDA_PAQUET 1024 // Tamaño del paquete para la comunicación
+
 
 int main(int argc, char **argv)
 {
@@ -49,7 +51,7 @@ int main(int argc, char **argv)
     // Iniciar sessió
     sessio_iniciada = inicia_sessio(s, &contacte_servidor, contacte_servidor_mida, nom);
     registra_activitat("Inici de sessió", nom);
-
+    
     if (sessio_iniciada == 1)
     {
         printf("Inici de sessió correcte.\n");

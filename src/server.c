@@ -102,22 +102,11 @@ int main(int argc, char **argv) {
     }
     printf("Servidor UDP configurat correctament al port %d.\n", atoi(argv[1]));
     registra_activitat("INFO", "Servidor UDP configurat correctament.");
+    
+    // Carregar els usuaris i les notificacions
     carregar_usuaris(FILE_USUARIS);
     carrega_notificacions(usuaris, num_usuaris);
-    printf("Usuaris carregats:\n");
-    for(int i = 0; i < num_usuaris; i++) {
-        printf("Usuari %d: %d %s %s %s %s %d %s %s %d\n",
-               i,
-               usuaris[i].id,
-               usuaris[i].nom,
-               usuaris[i].contrasenya,
-               usuaris[i].sexe,
-               usuaris[i].estat_civil,
-               usuaris[i].edat,
-               usuaris[i].ciutat,
-               usuaris[i].descripcio,
-               usuaris[i].num_notificacions);
-    }
+    
     while (1) {
         int bytes_rebuts = recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, &contacte_client_mida);
         if (bytes_rebuts < 0) {

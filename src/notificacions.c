@@ -171,11 +171,6 @@ void afegir_notificacio(const char *nom, const char *emissor, const char *missat
     printf("Notificació afegida per a l'usuari: %s\n", nom);
 }
 
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h> // Per a la funció unlink()
-#include "tipus.h"
-
 void elimina_notificacions(char *nom)
 {
     // Buscar l'usuari a la llista d'usuaris
@@ -227,6 +222,7 @@ int tens_notificacions(char *nom)
     // Buscar l'usuari a la llista d'usuaris
     for (int i = 0; i < num_usuaris; i++)
     {
+         printf("Comparant '%s' amb '%s'\n", usuaris[i].nom, nom);
         if (strcmp(usuaris[i].nom, nom) == 0)
         {
             // Retornem el nombre de notificacions de l'usuari
@@ -238,6 +234,7 @@ int tens_notificacions(char *nom)
     printf("Usuari no trobat: %s\n", nom);
     return -1;
 }
+
 
 void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in contacte_client, int contacte_client_mida, Usuari_t *usuaris)
 {

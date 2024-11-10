@@ -12,6 +12,7 @@
 #define NOTIFICACIONS_H
 
 #include "tipus.h"
+
 #include <arpa/inet.h>
 void carrega_notificacions(Usuari_t *usuaris, int num_usuaris);
 char *consultar_notificacions(char *nom);
