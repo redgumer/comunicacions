@@ -9,11 +9,12 @@
 */
 
 // Inclusión de librerías estándar
-#include <stdio.h>      // Para operaciones de entrada/salida
-#include <stdlib.h>     // Para gestión de memoria dinámica y control de procesos
-#include <string.h>     // Para manipulación de cadenas de texto
-#include <unistd.h>     // Para funciones del sistema como close(), sleep(), etc.
-#include <time.h>       // Para funciones de manejo de tiempo (registro de eventos)
+#include <stdio.h>  // Para operaciones de entrada/salida
+#include <stdlib.h> // Para gestión de memoria dinámica y control de procesos
+#include <string.h> // Para manipulación de cadenas de texto
+#include <unistd.h> // Para funciones del sistema como close(), sleep(), etc.
+#include <stdbool.h>// Para el uso de variables booleanas
+#include <time.h>   // Para funciones de manejo de tiempo (registro de eventos)
 
 // Inclusión de librerías para manejo de sockets
 #include <sys/socket.h> // Para la creación y manipulación de sockets
@@ -26,8 +27,7 @@
 #define LOG_FILE "data/registre.log" // Ruta del archivo de registro de eventos
 #define MIDA_PAQUET 1024             // Tamaño del paquete de datos para la comunicación
 
-
-void mostra_menu() {
+void mostra_menu(){
     printf("\n--- MENÚ D'OPCIONS ---\n");
     printf("1. Veure perfil\n");
     printf("2. Veure amics\n");
@@ -37,7 +37,8 @@ void mostra_menu() {
     printf("Selecciona una opció: ");
 }
 
-void notificacions_menu(){
+void not_menu()
+{
     printf("\n--- MENÚ DE NOTIFICACIONS ---\n");
     printf("1. Consultar notificacions\n");
     printf("2. Eliminar notificacions\n");
@@ -46,17 +47,21 @@ void notificacions_menu(){
     printf("Selecciona una opció: ");
 }
 
-int envia_paquet(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, const char *paquet) {
-    if (sendto(s, paquet, strlen(paquet), 0, (struct sockaddr *)contacte_servidor, contacte_servidor_mida) < 0) {
+int envia_paquet(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, const char *paquet)
+{
+    if (sendto(s, paquet, strlen(paquet), 0, (struct sockaddr *)contacte_servidor, contacte_servidor_mida) < 0)
+    {
         perror("Error enviant paquet");
         return -1;
     }
     return 0;
 }
 
-int rep_paquet(int s, char *paquet, struct sockaddr_in *contacte_servidor, socklen_t *contacte_servidor_mida) {
+int rep_paquet(int s, char *paquet, struct sockaddr_in *contacte_servidor, socklen_t *contacte_servidor_mida)
+{
     int bytes_rebuts = recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)contacte_servidor, contacte_servidor_mida);
-    if (bytes_rebuts < 0) {
+    if (bytes_rebuts < 0)
+    {
         perror("Error rebent el paquet");
         return -1;
     }
@@ -64,7 +69,8 @@ int rep_paquet(int s, char *paquet, struct sockaddr_in *contacte_servidor, sockl
     return 0;
 }
 
-int inicia_sessio(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, char *nom) {
+int inicia_sessio(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, char *nom)
+{
     char paquet[MIDA_PAQUET], contrasenya[50];
     printf("Introdueix el teu nom d'usuari: ");
     fgets(nom, 50, stdin);
@@ -75,26 +81,31 @@ int inicia_sessio(int s, struct sockaddr_in *contacte_servidor, socklen_t contac
     contrasenya[strcspn(contrasenya, "\n")] = '\0';
 
     snprintf(paquet, sizeof(paquet), "1 %s %s", nom, contrasenya);
-    if (envia_paquet(s, contacte_servidor, contacte_servidor_mida, paquet) < 0) {
+    if (envia_paquet(s, contacte_servidor, contacte_servidor_mida, paquet) < 0)
+    {
         return -1;
     }
 
-    if (rep_paquet(s, paquet, contacte_servidor, &contacte_servidor_mida) < 0) {
+    if (rep_paquet(s, paquet, contacte_servidor, &contacte_servidor_mida) < 0)
+    {
         return -1;
     }
 
     return atoi(paquet);
 }
 
-int registra(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio){
+int registra(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio)
+{
     char paquet[MIDA_PAQUET];
     snprintf(paquet, sizeof(paquet), "2 %s %s %s %s %d %s \"%s\"", nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
 
-    if (envia_paquet(s, contacte_servidor, contacte_servidor_mida, paquet) < 0) {
+    if (envia_paquet(s, contacte_servidor, contacte_servidor_mida, paquet) < 0)
+    {
         return -1;
     }
 
-    if (rep_paquet(s, paquet, contacte_servidor, &contacte_servidor_mida) < 0) {
+    if (rep_paquet(s, paquet, contacte_servidor, &contacte_servidor_mida) < 0)
+    {
         return -1;
     }
 
@@ -157,7 +168,12 @@ void processar_opcio(int s, struct sockaddr_in *contacte_servidor, socklen_t con
             fgets(nom_amic, sizeof(nom_amic), stdin);
             nom_amic[strcspn(nom_amic, "\n")] = '\0';
             snprintf(paquet, sizeof(paquet), "3 %d %s %s", opcio, nom, nom_amic);
+            printf("paquet: %s\n", paquet);
             registra_activitat("Afegint amic", nom_amic);
+        }
+        else if (opcio == 4)
+        {
+            gestionar_notificacions_client(nom, paquet, sizeof(paquet));
         }
         else if (opcio == 5)
         {
@@ -170,6 +186,7 @@ void processar_opcio(int s, struct sockaddr_in *contacte_servidor, socklen_t con
             snprintf(paquet, sizeof(paquet), "3 %d %s", opcio, nom);
         }
 
+        // Comunicacio amb el servidor
         if (envia_paquet(s, contacte_servidor, contacte_servidor_mida, paquet) < 0)
         {
             break;
@@ -217,10 +234,20 @@ void registra_nou_usuari(int s, struct sockaddr_in *contacte_servidor, socklen_t
     registra_activitat("Usuari registrat", nom);
 }
 
-void mostra_error_inici_sessio(char *nom)
+bool mostra_error_inici_sessio(char *nom)
 {
-    printf("Usuari no trobat. Vols registrar un nou usuari? (s/n): ");
-    registra_activitat("Usuari no trobat", nom);
+    bool tornar_menu = false;
+     printf("Usuari no trobat. Vols registrar un nou usuari? (s/n): ");
+        registra_activitat("Usuari no trobat", nom);
+        char opcio_registre;
+        scanf(" %c", &opcio_registre);
+        getchar(); // Consumir el salt de línia
+
+        if (opcio_registre == 's' || opcio_registre == 'S')
+        {
+           tornar_menu = true;
+        }
+    return tornar_menu;    
 }
 
 void finalitza_sessio(int s, char *nom)
@@ -228,4 +255,65 @@ void finalitza_sessio(int s, char *nom)
     close(s);
     printf("Sessió finalitzada.\n");
     registra_activitat("Sessió finalitzada", nom);
+}
+
+int gestionar_notificacions_client(char *nom, char *paquet, size_t mida_paquet)
+{
+    char destinatari[50] = "";
+    char missatge[256] = "";
+    int not_opcio;
+
+    while (1)
+    {
+        not_opcio = notificacions_menu(destinatari, missatge);
+
+        switch (not_opcio)
+        {
+            case 1: // Consultar notificacions
+                snprintf(paquet, mida_paquet, "4 %s CONSULTAR_NOTIFICACIONS", nom);
+                return 1; // Paquet preparat per ser enviat
+
+            case 2: // Eliminar notificacions
+                snprintf(paquet, mida_paquet, "4 %s ELIMINAR_NOTIFICACIONS", nom);
+                return 1; // Paquet preparat per ser enviat
+
+            case 3: // Enviar notificació
+                if (strlen(destinatari) == 0 || strlen(missatge) == 0)
+                {
+                    printf("El destinatari o el missatge no poden estar buits.\n");
+                    continue;
+                }
+                snprintf(paquet, mida_paquet, "4 %s ENVIAR_NOTIFICACIO %s %s", nom, destinatari, missatge);
+                return 1; // Paquet preparat per ser enviat
+
+            case 4: // Tornar al menú principal
+                return 1; // Indica a `processar_opcio()` que no hi ha paquet a enviar
+
+            default:
+                printf("Opció no vàlida, torna-ho a intentar.\n");
+                break;
+        }
+    }
+}
+
+int notificacions_menu(char *destinatari, char *missatge)
+{
+
+    int opcio;
+    not_menu();
+    scanf("%d", &opcio);
+    getchar(); // Consumir el salt de línia
+
+    if (opcio == 3) // Si l'opció és enviar notificació
+    {
+        printf("Introdueix el nom del destinatari: ");
+        fgets(destinatari, 50, stdin);
+        destinatari[strcspn(destinatari, "\n")] = '\0'; // Eliminar el salt de línia
+
+        printf("Introdueix el missatge: ");
+        fgets(missatge, 256, stdin);
+        missatge[strcspn(missatge, "\n")] = '\0'; // Eliminar el salt de línia
+    }
+
+    return opcio;
 }

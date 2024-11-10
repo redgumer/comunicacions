@@ -9,10 +9,10 @@
 */
 
 // Inclusión de librerías estándar
-#include <stdio.h>      // Para operaciones de entrada/salida
-#include <stdlib.h>     // Para funciones de control de procesos y gestión de memoria
-#include <string.h>     // Para manipulación de cadenas de texto
-#include <time.h>       // Para funciones de tiempo (registro de eventos)
+#include <stdio.h>  // Para operaciones de entrada/salida
+#include <stdlib.h> // Para funciones de control de procesos y gestión de memoria
+#include <string.h> // Para manipulación de cadenas de texto
+#include <time.h>   // Para funciones de tiempo (registro de eventos)
 
 // Inclusión de librerías de red y sockets
 #include <unistd.h>     // Para funciones del sistema como close(), read(), write()
@@ -20,13 +20,14 @@
 #include <arpa/inet.h>  // Para funciones de red como inet_addr(), htons()
 
 // Inclusión de librerías personalizadas
-#include "funcions_servidor.h"    // Funciones específicas para la lógica del servidor
-#include "fun_afegir_amic.h"      // Funciones para gestión de amistades
+#include "funcions_servidor.h" // Funciones específicas para la lógica del servidor
+#include "fun_afegir_amic.h"   // Funciones para gestión de amistades
+#include "notificacions.h"     // Funciones para gestión de amistades
 
 // Definición de constantes
-#define MIDA_PAQUET 1024          // Tamaño del paquete para la comunicación
-#define MAX_USUARIS 50            // Número máximo de usuarios permitidos
-#define MAX_LINE 256              // Tamaño máximo para leer líneas del archivo
+#define MIDA_PAQUET 1024 // Tamaño del paquete para la comunicación
+#define MAX_USUARIS 50   // Número máximo de usuarios permitidos
+#define MAX_LINE 256     // Tamaño máximo para leer líneas del archivo
 
 // Definición de rutas de archivos
 #define LOG_FILE "data/registre.log"      // Archivo de registro de eventos
@@ -124,8 +125,10 @@ int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, 
     if (!fitxer_usuaris || !fitxer_amistats)
     {
         printf("Error: No s'han pogut obrir els fitxers.\n");
-        if (fitxer_usuaris) fclose(fitxer_usuaris);
-        if (fitxer_amistats) fclose(fitxer_amistats);
+        if (fitxer_usuaris)
+            fclose(fitxer_usuaris);
+        if (fitxer_amistats)
+            fclose(fitxer_amistats);
         return -1;
     }
 
@@ -425,13 +428,13 @@ void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t conta
     int codi_operacio, opcio;
     char nom[50], contrasenya[50], sexe[10], estat_civil[20], ciutat[50], descripcio[100], nouAmic[50];
     int edat;
-
+    printf("Paquet rebut: %s\n", paquet);
     if (sscanf(paquet, "%d", &codi_operacio) != 1)
     {
         printf("Error de format en el paquet rebut.\n");
         return;
     }
-
+    printf("Codi d'operació: %d\n", codi_operacio);
     switch (codi_operacio)
     {
     case 1:
@@ -460,7 +463,8 @@ void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t conta
         }
         break;
     case 3:
-        if (sscanf(paquet, "%d %d %s %s", &codi_operacio, &opcio, nom, nouAmic) == 4)
+        int num_elements = sscanf(paquet, "%d %d %s %s", &codi_operacio, &opcio, nom, nouAmic);
+        if (num_elements == 3 || num_elements == 4)
         {
             printf("Processant opció de menú: %d %d %s %s\n", codi_operacio, opcio, nom, nouAmic);
             processa_opcio_menu(s, contacte_client, contacte_client_mida, opcio, nom, nouAmic);
@@ -469,6 +473,10 @@ void processa_peticio(int s, struct sockaddr_in contacte_client, socklen_t conta
         {
             printf("Error de format en opcions del menú.\n");
         }
+        break;
+    case 4:
+        printf("Consultar notificacions\n");
+        gestiona_notificacions_servidor(paquet, s, contacte_client, contacte_client_mida, usuaris);
         break;
     default:
         printf("Operació desconeguda: %d\n", codi_operacio);

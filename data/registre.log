@@ -19,3 +19,166 @@
 [2024-11-09 22:41:55] [SERVER] Peticio processada per a 127.0.0.1:51678
 [2024-11-09 22:41:59] [CLIENT] Paquet rebut de 127.0.0.1:51678 - 3 4 Antonio Anna
 [2024-11-09 22:41:59] [SERVER] Peticio processada per a 127.0.0.1:51678
+[2024-11-10 11:52:52] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 11:53:04] [CLIENT] Paquet rebut de 127.0.0.1:48440 - 1 1234 1234
+[2024-11-10 11:53:04] [SERVER] Peticio processada per a 127.0.0.1:48440
+[2024-11-10 11:53:04] [Inici de sessi처] 1234
+[2024-11-10 11:53:04] [Usuari no trobat] 1234
+[2024-11-10 11:53:29] [CLIENT] Paquet rebut de 127.0.0.1:37787 - 1 Xavi 1234
+[2024-11-10 11:53:29] [Inici de sessi처] Xavi
+[2024-11-10 11:53:29] [SERVER] Peticio processada per a 127.0.0.1:37787
+[2024-11-10 11:53:43] [CLIENT] Paquet rebut de 127.0.0.1:37787 - 3 1 Xavi
+[2024-11-10 11:53:43] [SERVER] Peticio processada per a 127.0.0.1:37787
+[2024-11-10 11:58:35] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 11:59:02] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 11:59:15] [CLIENT] Paquet rebut de 127.0.0.1:44004 - 1 Xavi 1234
+[2024-11-10 11:59:15] [SERVER] Peticio processada per a 127.0.0.1:44004
+[2024-11-10 11:59:15] [Inici de sessi처] Xavi
+[2024-11-10 11:59:17] [CLIENT] Paquet rebut de 127.0.0.1:44004 - 3 1 Xavi
+[2024-11-10 11:59:17] [SERVER] Peticio processada per a 127.0.0.1:44004
+[2024-11-10 12:00:34] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 12:00:47] [CLIENT] Paquet rebut de 127.0.0.1:60138 - 1 Xavi 1234
+[2024-11-10 12:00:47] [SERVER] Peticio processada per a 127.0.0.1:60138
+[2024-11-10 12:00:47] [Inici de sessi처] Xavi
+[2024-11-10 12:01:03] [CLIENT] Paquet rebut de 127.0.0.1:60138 - 3 1 Xavi
+[2024-11-10 12:01:03] [SERVER] Peticio processada per a 127.0.0.1:60138
+[2024-11-10 12:01:34] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 12:01:43] [CLIENT] Paquet rebut de 127.0.0.1:39504 - 1 xavi 1234
+[2024-11-10 12:01:43] [SERVER] Peticio processada per a 127.0.0.1:39504
+[2024-11-10 12:01:43] [Inici de sessi처] xavi
+[2024-11-10 12:01:43] [Usuari no trobat] xavi
+[2024-11-10 12:21:10] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 12:21:19] [CLIENT] Paquet rebut de 127.0.0.1:44801 - 1 Xavi 1234
+[2024-11-10 12:21:19] [SERVER] Peticio processada per a 127.0.0.1:44801
+[2024-11-10 12:21:19] [Inici de sessi처] Xavi
+[2024-11-10 12:21:23] [CLIENT] Paquet rebut de 127.0.0.1:44801 - 3 1 Xavi
+[2024-11-10 12:21:23] [SERVER] Peticio processada per a 127.0.0.1:44801
+[2024-11-10 12:21:43] [CLIENT] Paquet rebut de 127.0.0.1:55761 - 1 xavi 1234
+[2024-11-10 12:21:43] [SERVER] Peticio processada per a 127.0.0.1:55761
+[2024-11-10 12:21:43] [Inici de sessi처] xavi
+[2024-11-10 12:21:43] [Usuari no trobat] xavi
+[2024-11-10 12:21:45] [Sessi처 finalitzada] xavi
+[2024-11-10 12:21:56] [CLIENT] Paquet rebut de 127.0.0.1:53232 - 1 xavi 1234
+[2024-11-10 12:21:56] [SERVER] Peticio processada per a 127.0.0.1:53232
+[2024-11-10 12:21:56] [Inici de sessi처] xavi
+[2024-11-10 12:21:56] [Usuari no trobat] xavi
+[2024-11-10 12:24:20] [CLIENT] Paquet rebut de 127.0.0.1:56092 - 1 Xavi 1234
+[2024-11-10 12:24:20] [SERVER] Peticio processada per a 127.0.0.1:56092
+[2024-11-10 12:24:20] [Inici de sessi처] Xavi
+[2024-11-10 12:24:25] [CLIENT] Paquet rebut de 127.0.0.1:56092 - 3 1 Xavi
+[2024-11-10 12:24:25] [SERVER] Peticio processada per a 127.0.0.1:56092
+[2024-11-10 12:25:50] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 12:26:09] [CLIENT] Paquet rebut de 127.0.0.1:41388 - 1 Xavi 1234
+[2024-11-10 12:26:09] [SERVER] Peticio processada per a 127.0.0.1:41388
+[2024-11-10 12:26:09] [Inici de sessi처] Xavi
+[2024-11-10 12:26:13] [CLIENT] Paquet rebut de 127.0.0.1:41388 - 3 1 Xavi
+[2024-11-10 12:26:13] [INFO] Usuari Xavi ha consultat el seu perfil.
+[2024-11-10 12:26:13] [SERVER] Resposta enviada al client 127.0.0.1:41388 - 
+
+Perfil de l'usuari: 
+Nom: Xavi
+Sexe: Home
+Estat civil: Solter
+Edat: 43
+Ciutat: Cambrils
+Descripci�
+[2024-11-10 12:26:13] [SERVER] Peticio processada per a 127.0.0.1:41388
+[2024-11-10 12:28:41] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 12:28:59] [CLIENT] Paquet rebut de 127.0.0.1:58053 - 1 Xavi 1234
+[2024-11-10 12:28:59] [SERVER] Peticio processada per a 127.0.0.1:58053
+[2024-11-10 12:28:59] [Inici de sessi처] Xavi
+[2024-11-10 12:29:01] [CLIENT] Paquet rebut de 127.0.0.1:58053 - 3 1 Xavi
+[2024-11-10 12:29:01] [INFO] Usuari Xavi ha consultat el seu perfil.
+[2024-11-10 12:29:01] [SERVER] Resposta enviada al client 127.0.0.1:58053 - 
+
+Perfil de l'usuari: 
+Nom: Xavi
+Sexe: Home
+Estat civil: Solter
+Edat: 43
+Ciutat: Cambrils
+Descripci�
+[2024-11-10 12:29:01] [SERVER] Peticio processada per a 127.0.0.1:58053
+[2024-11-10 12:29:03] [CLIENT] Paquet rebut de 127.0.0.1:58053 - 3 2 Xavi
+[2024-11-10 12:29:03] [INFO] Usuari Xavi ha consultat la seva llista d'amics.
+[2024-11-10 12:29:03] [SERVER] Resposta enviada al client 127.0.0.1:58053 - 
+
+Amics de l'usuari: 
+Nom: Pepe
+Sexe: Home
+Estat civil: Solter
+Edat: 40
+Ciutat: Reus
+Descripci처: "A
+[2024-11-10 12:29:03] [SERVER] Peticio processada per a 127.0.0.1:58053
+[2024-11-10 12:29:55] [Afegint amic] Arlet
+[2024-11-10 12:29:55] [CLIENT] Paquet rebut de 127.0.0.1:58053 - 3 3 Xavi Arlet
+[2024-11-10 12:29:55] [SERVER] Peticio processada per a 127.0.0.1:58053
+[2024-11-10 12:37:49] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 12:38:00] [CLIENT] Paquet rebut de 127.0.0.1:40746 - 1 Xavi 1234
+[2024-11-10 12:38:00] [Inici de sessi처] Xavi
+[2024-11-10 12:38:00] [SERVER] Peticio processada per a 127.0.0.1:40746
+[2024-11-10 12:38:21] [Afegint amic] Arlet
+[2024-11-10 12:38:21] [CLIENT] Paquet rebut de 127.0.0.1:40746 - 3 3 Xavi Arlet
+[2024-11-10 12:38:21] [SERVER] Peticio processada per a 127.0.0.1:40746
+[2024-11-10 12:41:10] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 12:41:18] [CLIENT] Paquet rebut de 127.0.0.1:58971 - 1 Xavi 1234
+[2024-11-10 12:41:18] [SERVER] Peticio processada per a 127.0.0.1:58971
+[2024-11-10 12:41:18] [Inici de sessi처] Xavi
+[2024-11-10 12:41:20] [CLIENT] Paquet rebut de 127.0.0.1:58971 - 3 1 Xavi
+[2024-11-10 12:41:20] [SERVER] Peticio processada per a 127.0.0.1:58971
+[2024-11-10 12:43:49] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 12:44:01] [CLIENT] Paquet rebut de 127.0.0.1:37743 - 1 Xavi 1234
+[2024-11-10 12:44:01] [SERVER] Peticio processada per a 127.0.0.1:37743
+[2024-11-10 12:44:01] [Inici de sessi처] Xavi
+[2024-11-10 12:44:04] [CLIENT] Paquet rebut de 127.0.0.1:37743 - 3 1 Xavi
+[2024-11-10 12:44:04] [INFO] Usuari Xavi ha consultat el seu perfil.
+[2024-11-10 12:44:04] [SERVER] Resposta enviada al client 127.0.0.1:37743 - 
+
+Perfil de l'usuari: 
+Nom: Xavi
+Sexe: Home
+Estat civil: Solter
+Edat: 43
+Ciutat: Cambrils
+Descripci�
+[2024-11-10 12:44:04] [SERVER] Peticio processada per a 127.0.0.1:37743
+[2024-11-10 12:44:14] [CLIENT] Paquet rebut de 127.0.0.1:37743 - 3 2 Xavi
+[2024-11-10 12:44:14] [INFO] Usuari Xavi ha consultat la seva llista d'amics.
+[2024-11-10 12:44:14] [SERVER] Resposta enviada al client 127.0.0.1:37743 - 
+
+Amics de l'usuari: 
+Nom: Pepe
+Sexe: Home
+Estat civil: Solter
+Edat: 40
+Ciutat: Reus
+Descripci처: "A
+[2024-11-10 12:44:14] [SERVER] Peticio processada per a 127.0.0.1:37743
+[2024-11-10 12:44:32] [Afegint amic] Arlet
+[2024-11-10 12:44:32] [CLIENT] Paquet rebut de 127.0.0.1:37743 - 3 3 Xavi Arlet
+[2024-11-10 12:44:32] [INFO] Usuari Xavi ha afegit Arlet com a nou amic.
+[2024-11-10 12:44:32] [SERVER] Resposta enviada al client 127.0.0.1:37743 - 
+
+Xavi i Arlet ara s처n amics
+[2024-11-10 12:44:32] [SERVER] Peticio processada per a 127.0.0.1:37743
+[2024-11-10 12:44:38] [CLIENT] Paquet rebut de 127.0.0.1:37743 - 3 2 Xavi
+[2024-11-10 12:44:38] [INFO] Usuari Xavi ha consultat la seva llista d'amics.
+[2024-11-10 12:44:38] [SERVER] Resposta enviada al client 127.0.0.1:37743 - 
+
+Amics de l'usuari: 
+Nom: Arlet
+Sexe: Dona
+Estat civil: Soltera
+Edat: 8
+Ciutat: Reus
+Descripci처: "
+[2024-11-10 12:44:38] [SERVER] Peticio processada per a 127.0.0.1:37743
+[2024-11-10 12:45:11] [CLIENT] Paquet rebut de 127.0.0.1:37743 - 4 Xavi CONSULTAR_NOTIFICACIONS
+[2024-11-10 12:45:11] [SERVER] Peticio processada per a 127.0.0.1:37743
+[2024-11-10 12:45:33] [CLIENT] Paquet rebut de 127.0.0.1:37743 - 4 Xavi ELIMINAR_NOTIFICACIONS
+[2024-11-10 12:45:33] [SERVER] Peticio processada per a 127.0.0.1:37743
+[2024-11-10 12:46:27] [CLIENT] Paquet rebut de 127.0.0.1:37743 - 4 Xavi ENVIAR_NOTIFICACIO Arlet Hola soc el teu tie
+[2024-11-10 12:46:27] [SERVER] Peticio processada per a 127.0.0.1:37743
+[2024-11-10 12:46:40] [CLIENT] Paquet rebut de 127.0.0.1:37743 - Notificaci처 enviada
+[2024-11-10 12:46:40] [SERVER] Peticio processada per a 127.0.0.1:37743

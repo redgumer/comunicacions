@@ -9,9 +9,10 @@
 */
 
 // Inclusión de librerías estándar
-#include <stdio.h>      // Para operaciones de entrada/salida
-#include <stdlib.h>     // Para funciones estándar como malloc, exit, etc.
-#include <string.h>     // Para manipulación de cadenas de texto
+#include <stdio.h>   // Para operaciones de entrada/salida
+#include <stdlib.h>  // Para funciones estándar como malloc, exit, etc.
+#include <string.h>  // Para manipulación de cadenas de texto
+#include <stdbool.h> // Para el uso de variables booleanas
 
 // Inclusión de librerías de red y sockets
 #include <unistd.h>     // Para funciones como close(), read(), write()
@@ -23,7 +24,6 @@
 
 // Definición de constantes
 #define MIDA_PAQUET 1024 // Tamaño del paquete para la comunicación
-
 
 int main(int argc, char **argv)
 {
@@ -57,8 +57,7 @@ int main(int argc, char **argv)
     }
     else if (sessio_iniciada == 0)
     {
-        mostra_error_inici_sessio(nom);
-        registra_nou_usuari(s, &contacte_servidor, contacte_servidor_mida, nom);
+        mostra_error_inici_sessio(nom) ? registra_nou_usuari(s, &contacte_servidor, contacte_servidor_mida, nom) : (void)0;
     }
     else
     {

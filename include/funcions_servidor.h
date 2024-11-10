@@ -11,29 +11,8 @@
 #ifndef FUNCIONS_SERVIDOR_H
 #define FUNCIONS_SERVIDOR_H
 
-#define MAX_USUARI 50
-#define MAX_MISSATGE 256
-#define MAX_NOTIFICACIONS 10
-
+#include "tipus.h"
 #include <arpa/inet.h>
-typedef struct {
-    char emissor[MAX_USUARI];
-    char receptor[MAX_USUARI];
-    char missatge[MAX_MISSATGE];
-} Notificacio_t;
-
-typedef struct {
-    int id;
-    char nom[50];
-    char contrasenya[50];
-    char sexe[10];
-    char estat_civil[20];
-    int edat;
-    char ciutat[50];
-    char descripcio[100];
-    Notificacio_t notificacions[MAX_NOTIFICACIONS];
-    int num_notificacions;
-} Usuari_t;
 
 int verifica_usuari(const char *nom, const char *contrasenya);
 int registra_usuari(const char *nom, const char *contrasenya, const char *sexe, const char *estat_civil, int edat, const char *ciutat, const char *descripcio);
