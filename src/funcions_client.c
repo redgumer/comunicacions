@@ -108,3 +108,109 @@ void registra_activitat(const char *tipus, const char *missatge)
     // Tancar el fitxer
     fclose(fitxer_log);
 }
+
+int inicialitza_socket(struct sockaddr_in *contacte_servidor, char *ip, char *port)
+{
+    int s = socket(AF_INET, SOCK_DGRAM, 0);
+    if (s < 0)
+    {
+        perror("Error creant el socket");
+        return -1;
+    }
+
+    contacte_servidor->sin_family = AF_INET;
+    contacte_servidor->sin_port = htons(atoi(port));
+    inet_pton(AF_INET, ip, &contacte_servidor->sin_addr);
+
+    return s;
+}
+
+void processar_opcio(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, char *nom)
+{
+    char paquet[MIDA_PAQUET], nom_amic[50];
+    int opcio;
+
+    while (1)
+    {
+        mostra_menu();
+        scanf("%d", &opcio);
+        getchar(); // Consumir el salt de línea
+
+        if (opcio == 3)
+        {
+            printf("Introdueix el teu nou amic: ");
+            fgets(nom_amic, sizeof(nom_amic), stdin);
+            nom_amic[strcspn(nom_amic, "\n")] = '\0';
+            snprintf(paquet, sizeof(paquet), "3 %d %s %s", opcio, nom, nom_amic);
+            registra_activitat("Afegint amic", nom_amic);
+        }
+        else if (opcio == 5)
+        {
+            printf("Tancant sessió...\n");
+            registra_activitat("Tancant sessió", nom);
+            break;
+        }
+        else
+        {
+            snprintf(paquet, sizeof(paquet), "3 %d %s", opcio, nom);
+        }
+
+        if (envia_paquet(s, contacte_servidor, contacte_servidor_mida, paquet) < 0)
+        {
+            break;
+        }
+
+        if (rep_paquet(s, paquet, contacte_servidor, &contacte_servidor_mida) < 0)
+        {
+            registra_activitat("Error rebent resposta", nom);
+            break;
+        }
+        printf("Resposta del servidor: %s\n", paquet);
+    }
+}
+
+void registra_nou_usuari(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, char *nom)
+{
+    char contrasenya[50], sexe[10], estat_civil[20], ciutat[50], descripcio[100];
+    int edat;
+
+    printf("Introdueix la teva contrasenya %s: ", nom);
+    fgets(contrasenya, sizeof(contrasenya), stdin);
+    contrasenya[strcspn(contrasenya, "\n")] = '\0';
+
+    printf("Introdueix el teu sexe (Home/Dona): ");
+    fgets(sexe, sizeof(sexe), stdin);
+    sexe[strcspn(sexe, "\n")] = '\0';
+
+    printf("Introdueix el teu estat civil (Solter/Casat): ");
+    fgets(estat_civil, sizeof(estat_civil), stdin);
+    estat_civil[strcspn(estat_civil, "\n")] = '\0';
+
+    printf("Introdueix la teva edat: ");
+    scanf("%d", &edat);
+    getchar(); // Consumir el salt de línia
+
+    printf("Introdueix la teva ciutat: ");
+    fgets(ciutat, sizeof(ciutat), stdin);
+    ciutat[strcspn(ciutat, "\n")] = '\0';
+
+    printf("Introdueix una breu descripció personal: ");
+    fgets(descripcio, sizeof(descripcio), stdin);
+    descripcio[strcspn(descripcio, "\n")] = '\0';
+
+    registra(s, contacte_servidor, contacte_servidor_mida, nom, contrasenya, sexe, estat_civil, edat, ciutat, descripcio);
+    registra_activitat("Usuari registrat", nom);
+}
+
+void mostra_error_inici_sessio(char *nom)
+{
+    printf("Usuari no trobat. Vols registrar un nou usuari? (s/n): ");
+    registra_activitat("Usuari no trobat", nom);
+}
+
+void finalitza_sessio(int s, char *nom)
+{
+    close(s);
+    printf("Sessió finalitzada.\n");
+    registra_activitat("Sessió finalitzada", nom);
+}
