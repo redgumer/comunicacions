@@ -14,8 +14,8 @@
 #include "tipus.h"
 #include <arpa/inet.h>
 
-void afegir_notificacio(Usuari_t *usuari, const char *emissor, const char *missatge);
-void emmagatzema_notificacions(Usuari_t *usuari);
+void afegir_notificacio(const char *nom, const char *emissor, const char *missatge);
+void emmagatzema_notificacions(char *nom);
 void carrega_notificacions(Usuari_t *usuari);
 void consultar_notificacions(Usuari_t *usuari);
 int tens_notificacions(char *nom);

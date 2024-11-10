@@ -29,6 +29,6 @@ int inicialitza_socket(struct sockaddr_in *contacte_servidor, char *ip, char *po
 bool mostra_error_inici_sessio(char *nom);
 
 int gestionar_notificacions_client(char *nom, char *paquet, size_t mida_paquet);
-int notificacions_menu(char *destinatari, char *missatge);
+int notificacions_menu(char *destinatari, char *missatge, char *nom);
 
 #endif

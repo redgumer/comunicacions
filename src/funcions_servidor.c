@@ -337,7 +337,8 @@ char *veureAmics(const char *nomUsuari)
 }
 
 void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t contacte_client_mida, int opcio, const char *nom, const char *nouAmic)
-{
+{   
+    carregar_usuaris(FILE_USUARIS);
     char resposta[MIDA_PAQUET];
     char missatge_log[150];
 
@@ -362,7 +363,6 @@ void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t co
 
     case 2:
         // Veure amics de l'usuari
-        carregar_usuaris(FILE_USUARIS);
         char *amics = veureAmics(nom);
         if (amics)
         {
@@ -379,8 +379,7 @@ void processa_opcio_menu(int s, struct sockaddr_in contacte_client, socklen_t co
         break;
 
     case 3:
-        // Afegir un nou amic
-        carregar_usuaris(FILE_USUARIS);
+        // Afegir un nou amic        
         int idUsuari = buscarIdUsuari(nom);
         int idNouAmic = buscarIdUsuari(nouAmic);
 

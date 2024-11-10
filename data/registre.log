@@ -286,3 +286,115 @@ Xavi i Anna ara són amics
 [2024-11-10 16:42:49] [SERVER] Peticio processada per a 127.0.0.1:60855
 [2024-11-10 16:43:00] [CLIENT] Paquet rebut de 127.0.0.1:60855 - 4 Xavi ELIMINAR_NOTIFICACIONS
 [2024-11-10 16:43:00] [SERVER] Peticio processada per a 127.0.0.1:60855
+[2024-11-10 16:44:25] [CLIENT] Paquet rebut de 127.0.0.1:60855 - 4 Xavi ENVIAR_NOTIFICACIO Anna Hola Anna
+[2024-11-10 16:44:25] [SERVER] Peticio processada per a 127.0.0.1:60855
+[2024-11-10 16:44:29] [Tancant sessió] Xavi
+[2024-11-10 16:44:29] [Sessió finalitzada] Xavi
+[2024-11-10 16:44:42] [CLIENT] Paquet rebut de 127.0.0.1:36352 - 1 Anna 1234
+[2024-11-10 16:44:42] [SERVER] Peticio processada per a 127.0.0.1:36352
+[2024-11-10 16:44:42] [Inici de sessió] Anna
+[2024-11-10 16:44:47] [CLIENT] Paquet rebut de 127.0.0.1:36352 - 4 Anna CONSULTAR_NOTIFICACIONS
+[2024-11-10 16:44:47] [SERVER] Peticio processada per a 127.0.0.1:36352
+[2024-11-10 16:49:32] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 16:49:45] [CLIENT] Paquet rebut de 127.0.0.1:59387 - 1 Xavi 1234
+[2024-11-10 16:49:45] [SERVER] Peticio processada per a 127.0.0.1:59387
+[2024-11-10 16:49:45] [Inici de sessió] Xavi
+[2024-11-10 16:49:58] [CLIENT] Paquet rebut de 127.0.0.1:48146 - 1 Anna 1234
+[2024-11-10 16:49:58] [Inici de sessió] Anna
+[2024-11-10 16:49:58] [SERVER] Peticio processada per a 127.0.0.1:48146
+[2024-11-10 16:50:25] [CLIENT] Paquet rebut de 127.0.0.1:59387 - 4 Xavi ENVIAR_NOTIFICACIO Anna Hola Anna
+[2024-11-10 16:50:25] [SERVER] Peticio processada per a 127.0.0.1:59387
+[2024-11-10 16:50:33] [CLIENT] Paquet rebut de 127.0.0.1:48146 - 4 Anna CONSULTAR_NOTIFICACIONS
+[2024-11-10 16:50:33] [SERVER] Peticio processada per a 127.0.0.1:48146
+[2024-11-10 16:58:13] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 16:58:34] [CLIENT] Paquet rebut de 127.0.0.1:33411 - 1 Xavi 1234
+[2024-11-10 16:58:34] [SERVER] Peticio processada per a 127.0.0.1:33411
+[2024-11-10 16:58:34] [Inici de sessió] Xavi
+[2024-11-10 16:58:44] [Afegint amic] Anna
+[2024-11-10 16:58:44] [CLIENT] Paquet rebut de 127.0.0.1:33411 - 3 3 Xavi Anna
+[2024-11-10 16:58:44] [INFO] Usuari Xavi ha afegit Anna com a nou amic.
+[2024-11-10 16:58:44] [SERVER] Resposta enviada al client 127.0.0.1:33411 - 
+
+Xavi i Anna ara són amics
+[2024-11-10 16:58:44] [SERVER] Peticio processada per a 127.0.0.1:33411
+[2024-11-10 16:58:50] [Afegint amic] Anna
+[2024-11-10 16:58:50] [CLIENT] Paquet rebut de 127.0.0.1:33411 - 3 3 Xavi Anna
+[2024-11-10 16:58:50] [INFO] Usuari Xavi ha afegit Anna com a nou amic.
+[2024-11-10 16:58:50] [SERVER] Resposta enviada al client 127.0.0.1:33411 - 
+
+Xavi i Anna ara són amics
+[2024-11-10 16:58:50] [SERVER] Peticio processada per a 127.0.0.1:33411
+[2024-11-10 17:00:12] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 17:00:14] [ERROR] Error en el bind del servidor.
+[2024-11-10 17:00:16] [ERROR] Error en el bind del servidor.
+[2024-11-10 17:00:32] [CLIENT] Paquet rebut de 127.0.0.1:55435 - 1 Xavi 1234
+[2024-11-10 17:00:32] [Inici de sessió] Xavi
+[2024-11-10 17:00:32] [SERVER] Peticio processada per a 127.0.0.1:55435
+[2024-11-10 17:00:43] [CLIENT] Paquet rebut de 127.0.0.1:55435 - 4 Xavi CONSULTAR_NOTIFICACIONS
+[2024-11-10 17:00:43] [SERVER] Peticio processada per a 127.0.0.1:55435
+[2024-11-10 17:00:58] [CLIENT] Paquet rebut de 127.0.0.1:55435 - 4 Xavi ENVIAR_NOTIFICACIO Anna hola anna
+[2024-11-10 17:00:58] [SERVER] Peticio processada per a 127.0.0.1:55435
+[2024-11-10 17:49:51] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 17:50:07] [CLIENT] Paquet rebut de 127.0.0.1:41369 - 1 Xavi 1234
+[2024-11-10 17:50:07] [Inici de sessió] Xavi
+[2024-11-10 17:50:07] [SERVER] Peticio processada per a 127.0.0.1:41369
+[2024-11-10 17:50:10] [CLIENT] Paquet rebut de 127.0.0.1:41369 - 3 1 Xavi
+[2024-11-10 17:50:10] [INFO] Usuari Xavi ha consultat el seu perfil.
+[2024-11-10 17:50:10] [SERVER] Resposta enviada al client 127.0.0.1:41369 - 
+
+Perfil de l'usuari: 
+Nom: Xavi
+Sexe: Home
+Estat civil: Solter
+Edat: 43
+Ciutat: Cambrils
+Descripci�
+[2024-11-10 17:50:10] [SERVER] Peticio processada per a 127.0.0.1:41369
+[2024-11-10 17:50:11] [CLIENT] Paquet rebut de 127.0.0.1:41369 - 3 2 Xavi
+[2024-11-10 17:50:11] [INFO] Usuari Xavi ha consultat la seva llista d'amics.
+[2024-11-10 17:50:11] [SERVER] Resposta enviada al client 127.0.0.1:41369 - 
+
+Amics de l'usuari: No s'han trobat amics per aquest usuari.
+[2024-11-10 17:50:11] [SERVER] Peticio processada per a 127.0.0.1:41369
+[2024-11-10 17:50:20] [Afegint amic] Anna
+[2024-11-10 17:50:20] [CLIENT] Paquet rebut de 127.0.0.1:41369 - 3 3 Xavi Anna
+[2024-11-10 17:50:20] [INFO] Usuari Xavi ha afegit Anna com a nou amic.
+[2024-11-10 17:50:20] [SERVER] Resposta enviada al client 127.0.0.1:41369 - 
+
+Xavi i Anna ara són amics
+[2024-11-10 17:50:20] [SERVER] Peticio processada per a 127.0.0.1:41369
+[2024-11-10 17:50:23] [CLIENT] Paquet rebut de 127.0.0.1:41369 - 3 2 Xavi
+[2024-11-10 17:50:23] [INFO] Usuari Xavi ha consultat la seva llista d'amics.
+[2024-11-10 17:50:23] [SERVER] Resposta enviada al client 127.0.0.1:41369 - 
+
+Amics de l'usuari: 
+Nom: Anna
+Sexe: Dona
+Estat civil: Casat
+Edat: 42
+Ciutat: Reus
+Descripció: "So
+[2024-11-10 17:50:23] [SERVER] Peticio processada per a 127.0.0.1:41369
+[2024-11-10 17:50:56] [CLIENT] Paquet rebut de 127.0.0.1:41369 - 4 Xavi ENVIAR_NOTIFICACIO Anna hola Anna
+[2024-11-10 17:50:56] [SERVER] Peticio processada per a 127.0.0.1:41369
+[2024-11-10 17:51:10] [Afegint amic] Josep
+[2024-11-10 17:51:10] [CLIENT] Paquet rebut de 127.0.0.1:41369 - 3 3 Xavi Josep
+[2024-11-10 17:51:10] [INFO] Usuari Xavi ha afegit Josep com a nou amic.
+[2024-11-10 17:51:10] [SERVER] Resposta enviada al client 127.0.0.1:41369 - 
+
+Xavi i Josep ara són amics
+[2024-11-10 17:51:10] [SERVER] Peticio processada per a 127.0.0.1:41369
+[2024-11-10 17:51:38] [CLIENT] Paquet rebut de 127.0.0.1:41369 - 4 Xavi ENVIAR_NOTIFICACIO Josep Hola Josep que tal vas
+[2024-11-10 17:51:38] [SERVER] Peticio processada per a 127.0.0.1:41369
+[2024-11-10 17:51:52] [CLIENT] Paquet rebut de 127.0.0.1:39545 - 1 Josep 1234
+[2024-11-10 17:51:52] [SERVER] Peticio processada per a 127.0.0.1:39545
+[2024-11-10 17:51:52] [Inici de sessió] Josep
+[2024-11-10 17:51:59] [CLIENT] Paquet rebut de 127.0.0.1:39545 - 4 Josep CONSULTAR_NOTIFICACIONS
+[2024-11-10 17:51:59] [SERVER] Peticio processada per a 127.0.0.1:39545
+[2024-11-10 17:52:10] [Tancant sessió] Josep
+[2024-11-10 17:52:10] [Sessió finalitzada] @�P�
+[2024-11-10 17:52:18] [CLIENT] Paquet rebut de 127.0.0.1:41144 - 1 Anna 1234
+[2024-11-10 17:52:18] [SERVER] Peticio processada per a 127.0.0.1:41144
+[2024-11-10 17:52:18] [Inici de sessió] Anna
+[2024-11-10 17:52:27] [CLIENT] Paquet rebut de 127.0.0.1:41144 - 4 Anna CONSULTAR_NOTIFICACIONS
+[2024-11-10 17:52:27] [SERVER] Peticio processada per a 127.0.0.1:41144

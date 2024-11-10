@@ -19,15 +19,9 @@
 
 // Inclusión de librerías personalizadas
 #include "funcions_servidor.h" // Archivo de cabecera con funciones específicas para el servidor
-#include "tipus.h"             // Archivo de cabecera con definiciones de tipos de datos
 
 // Definición de constantes
 #define MIDA_PAQUET 1024 // Tamaño del paquete de datos para la comunicación
-#define MAX_USUARIS 50   // Número máximo de usuarios permitidos
-
-Usuari_t usuaris[MAX_USUARIS];
-int num_usuaris = 0;
-int id_max = 0;
 
 int main(int argc, char **argv) {
     if (argc != 2) {

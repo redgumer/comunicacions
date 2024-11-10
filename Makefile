@@ -14,8 +14,8 @@ CLIENT_EXEC = $(BIN_DIR)/client
 SERVER_EXEC = $(BIN_DIR)/server
 
 # Archivos fuente
-SERVER_SRC = $(SRC_DIR)/server.c $(SRC_DIR)/funcions_servidor.c $(SRC_DIR)/fun_afegir_amic.c $(SRC_DIR)/notificacions.c
-CLIENT_SRC = $(SRC_DIR)/client.c $(SRC_DIR)/funcions_client.c $(SRC_DIR)/fun_afegir_amic.c $(SRC_DIR)/notificacions.c 
+SERVER_SRC = $(SRC_DIR)/server.c $(SRC_DIR)/funcions_servidor.c $(SRC_DIR)/fun_afegir_amic.c $(SRC_DIR)/notificacions.c $(SRC_DIR)/variables_globals.c
+CLIENT_SRC = $(SRC_DIR)/client.c $(SRC_DIR)/funcions_client.c $(SRC_DIR)/fun_afegir_amic.c $(SRC_DIR)/notificacions.c $(SRC_DIR)/variables_globals.c
 
 # Archivos objeto
 SERVER_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SERVER_SRC))
@@ -51,6 +51,9 @@ $(BUILD_DIR)/fun_afegir_amic.o: $(SRC_DIR)/fun_afegir_amic.c $(INCLUDE_DIR)/fun_
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/notificacions.o: $(SRC_DIR)/notificacions.c $(INCLUDE_DIR)/notificacions.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/variables_globals.o: $(SRC_DIR)/variables_globals.c $(INCLUDE_DIR)/variables_globals.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Compilar archivos objeto del servidor
