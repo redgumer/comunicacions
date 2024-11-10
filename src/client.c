@@ -1,15 +1,29 @@
+/*
+ ================================ PROJECTE XARXES ================================
+ | Fitxer     : funcions_servidor.h                                              |
+ | Autors     : Xavi, Jadi, Ivette                                               |
+ | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
+ | Universitat: Universitat Rovira i Virgili                                     |
+ | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
+ =================================================================================
+*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+// Inclusión de librerías estándar
+#include <stdio.h>      // Para operaciones de entrada/salida
+#include <stdlib.h>     // Para funciones estándar como malloc, exit, etc.
+#include <string.h>     // Para manipulación de cadenas de texto
 
-#include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
+// Inclusión de librerías de red y sockets
+#include <unistd.h>     // Para funciones como close(), read(), write()
+#include <sys/socket.h> // Para funciones de sockets
+#include <arpa/inet.h>  // Para funciones de red como inet_addr()
 
-#include "funcions_client.h"
+// Inclusión de librerías personalizadas
+#include "funcions_client.h" // Funciones específicas definidas para el cliente
 
-#define MIDA_PAQUET 1024
+// Definición de constantes
+#define MIDA_PAQUET 1024 // Tamaño del paquete para la comunicación
+
 
 int main(int argc, char **argv)
 {

@@ -1,10 +1,10 @@
 /*
  ================================ PROJECTE XARXES ================================
  | Fitxer     : funcions_servidor.h                                              |
- | Autors     : Programador 1, Programador 2, Programador 3                      |
+ | Autors     : Xavi, Jadi, Ivette                                               |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
- | Descripció : Breu descripció del fitxer o mòdul                               |
+ | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
  =================================================================================
 */
 

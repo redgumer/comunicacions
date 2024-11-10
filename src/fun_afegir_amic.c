@@ -1,14 +1,28 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+/*
+ ================================ PROJECTE XARXES ================================
+ | Fitxer     : funcions_servidor.h                                              |
+ | Autors     : Xavi, Jadi, Ivette                                               |
+ | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
+ | Universitat: Universitat Rovira i Virgili                                     |
+ | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
+ =================================================================================
+*/
+// Inclusión de librerías estándar
+#include <stdio.h>      // Para operaciones de entrada/salida
+#include <string.h>     // Para manipulación de cadenas de texto
+#include <stdlib.h>     // Para funciones estándar, como manejo de memoria
 
-#define MAX_USUARIS 50
-#define MAX_AMICS 500
-#define FILE_AMISTATS "data/amistats.txt"
+// Definición de constantes
+#define MAX_USUARIS 50            // Número máximo de usuarios permitidos
+#define MAX_AMICS 500             // Número máximo de amigos por usuario
+#define FILE_AMISTATS "data/amistats.txt" // Archivo para almacenar amistades
 
-#include "fun_afegir_amic.h"
+// Inclusión de librerías personalizadas
+#include "fun_afegir_amic.h"      // Funciones para añadir amigos
 
+// Declaración de la matriz de amistades
 char amistats[MAX_USUARIS][MAX_AMICS];
+
 
 // Funció per llegir les amistats des del fitxer
 void llegirAmistats(const char *nom_fitxer){

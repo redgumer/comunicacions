@@ -1,23 +1,37 @@
+/*
+ ================================ PROJECTE XARXES ================================
+ | Fitxer     : funcions_servidor.h                                              |
+ | Autors     : Xavi, Jadi, Ivette                                               |
+ | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
+ | Universitat: Universitat Rovira i Virgili                                     |
+ | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
+ =================================================================================
+*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+// Inclusión de librerías estándar
+#include <stdio.h>      // Para operaciones de entrada/salida
+#include <stdlib.h>     // Para funciones de control de procesos y gestión de memoria
+#include <string.h>     // Para manipulación de cadenas de texto
+#include <time.h>       // Para funciones de tiempo (registro de eventos)
 
-#include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include "funcions_servidor.h"
+// Inclusión de librerías de red y sockets
+#include <unistd.h>     // Para funciones del sistema como close(), read(), write()
+#include <sys/socket.h> // Para creación y manipulación de sockets
+#include <arpa/inet.h>  // Para funciones de red como inet_addr(), htons()
 
-#define MIDA_PAQUET 1024
-#define MAX_USUARIS 50
-#define MAX_LINE 256
+// Inclusión de librerías personalizadas
+#include "funcions_servidor.h"    // Funciones específicas para la lógica del servidor
+#include "fun_afegir_amic.h"      // Funciones para gestión de amistades
 
-#define LOG_FILE "data/registre.log"
-#define FILE_USUARIS "data/usuaris.txt"
-#define FILE_AMISTATS "data/amistats.txt"
+// Definición de constantes
+#define MIDA_PAQUET 1024          // Tamaño del paquete para la comunicación
+#define MAX_USUARIS 50            // Número máximo de usuarios permitidos
+#define MAX_LINE 256              // Tamaño máximo para leer líneas del archivo
 
-#include "fun_afegir_amic.h"
+// Definición de rutas de archivos
+#define LOG_FILE "data/registre.log"      // Archivo de registro de eventos
+#define FILE_USUARIS "data/usuaris.txt"   // Archivo con datos de usuarios
+#define FILE_AMISTATS "data/amistats.txt" // Archivo con datos de amistades
 
 Usuari_t usuaris[MAX_USUARIS];
 int num_usuaris = 0;

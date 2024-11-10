@@ -1,14 +1,26 @@
+/*
+ ================================ PROJECTE XARXES ================================
+ | Fitxer     : funcions_servidor.h                                              |
+ | Autors     : Xavi, Jadi, Ivette                                               |
+ | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
+ | Universitat: Universitat Rovira i Virgili                                     |
+ | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
+ =================================================================================
+*/
 
+// Inclusión de librerías estándar
+#include <stdio.h>       // Para operaciones de entrada/salida
+#include <string.h>      // Para manipulación de cadenas de texto
 
-#include <stdio.h>
-#include <string.h>
-#include "funcions_servidor.h"
+// Inclusión de librerías personalizadas
+#include "funcions_servidor.h" // Archivo de cabecera con funciones específicas para el servidor
 
+// Definición de constantes
+#define MAX_MISSATGE 256                   // Tamaño máximo para un mensaje de notificación
+#define MAX_NOTIFICACIONS 10               // Número máximo de notificaciones almacenadas por usuario
+#define FITXER_NOTIFICACIONS "data/notificacions.txt" // Ruta del archivo de notificaciones
+#define MAX_USUARI 50                      // Número máximo de caracteres para un nombre de usuario
 
-#define MAX_MISSATGE 256
-#define MAX_NOTIFICACIONS 10
-#define FITXER_NOTIFICACIONS "data/notificacions.txt"
-#define MAX_USUARI 50  // Define MAX_USUARI with an appropriate value
 
 // Funció per afegir una notificació a la bandeja d'entrada
 void afegir_notificacio(Usuari_t *usuari, const char *emissor, const char *missatge) {

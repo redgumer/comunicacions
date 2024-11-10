@@ -1,10 +1,10 @@
 /*
  ================================ PROJECTE XARXES ================================
  | Fitxer     : funcions_servidor.h                                              |
- | Autors     : Programador 1, Programador 2, Programador 3                      |
+ | Autors     : Xavi, Jadi, Ivette                                               |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
- | Descripció : Breu descripció del fitxer o mòdul                               |
+ | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
  =================================================================================
 */
 
@@ -34,7 +34,6 @@ typedef struct {
     Notificacio_t notificacions[MAX_NOTIFICACIONS];
     int num_notificacions;
 } Usuari_t;
-
 
 void afegir_notificacio(Usuari_t *usuari, const char *emissor, const char *missatge);
 void emmagatzema_notificacions(Usuari_t *usuari);

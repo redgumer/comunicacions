@@ -1,16 +1,31 @@
+/*
+ ================================ PROJECTE XARXES ================================
+ | Fitxer     : funcions_servidor.h                                              |
+ | Autors     : Xavi, Jadi, Ivette                                               |
+ | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
+ | Universitat: Universitat Rovira i Virgili                                     |
+ | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
+ =================================================================================
+*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
+// Inclusión de librerías estándar
+#include <stdio.h>      // Para operaciones de entrada/salida
+#include <stdlib.h>     // Para gestión de memoria dinámica y control de procesos
+#include <string.h>     // Para manipulación de cadenas de texto
+#include <unistd.h>     // Para funciones del sistema como close(), sleep(), etc.
+#include <time.h>       // Para funciones de manejo de tiempo (registro de eventos)
 
-#include "funcions_client.h"
+// Inclusión de librerías para manejo de sockets
+#include <sys/socket.h> // Para la creación y manipulación de sockets
+#include <arpa/inet.h>  // Para funciones de red como inet_addr(), htons()
 
-#define LOG_FILE "data/registre.log"
-#define MIDA_PAQUET 1024
+// Inclusión de librerías personalizadas
+#include "funcions_client.h" // Archivo de cabecera con funciones específicas del cliente
+
+// Definición de constantes
+#define LOG_FILE "data/registre.log" // Ruta del archivo de registro de eventos
+#define MIDA_PAQUET 1024             // Tamaño del paquete de datos para la comunicación
+
 
 void mostra_menu() {
     printf("\n--- MENÚ D'OPCIONS ---\n");

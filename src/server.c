@@ -1,12 +1,27 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include "funcions_servidor.h"
+/*
+ ================================ PROJECTE XARXES ================================
+ | Fitxer     : funcions_servidor.h                                              |
+ | Autors     : Xavi, Jadi, Ivette                                               |
+ | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
+ | Universitat: Universitat Rovira i Virgili                                     |
+ | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
+ =================================================================================
+*/
+// Inclusión de librerías estándar
+#include <stdio.h>      // Para operaciones de entrada y salida
+#include <stdlib.h>     // Para funciones de control de procesos y manejo de memoria
+#include <string.h>     // Para manipulación de cadenas de texto
 
-#define MIDA_PAQUET 1024
+// Inclusión de librerías de red y sockets
+#include <unistd.h>     // Para funciones del sistema como close(), read(), write()
+#include <sys/socket.h> // Para creación y manipulación de sockets
+#include <arpa/inet.h>  // Para funciones de red como inet_addr(), htons()
+
+// Inclusión de librerías personalizadas
+#include "funcions_servidor.h" // Archivo de cabecera con funciones específicas para el servidor
+
+// Definición de constantes
+#define MIDA_PAQUET 1024 // Tamaño del paquete de datos para la comunicación
 
 int main(int argc, char **argv) {
     if (argc != 2) {
