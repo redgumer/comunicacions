@@ -1,6 +1,6 @@
 # ================== CONFIGURACIÓN ==================
 CC = gcc
-CFLAGS = -Wall -Wextra -g -Iinclude
+CFLAGS = -Wall -Wextra -g -Iinclude -DCLIENT
 
 # Carpetas del proyecto
 BIN_DIR = bin
@@ -14,12 +14,12 @@ CLIENT_EXEC = $(BIN_DIR)/client
 SERVER_EXEC = $(BIN_DIR)/server
 
 # Archivos fuente
-CLIENT_SRC = $(SRC_DIR)/client.c $(SRC_DIR)/funcions_client.c $(SRC_DIR)/fun_afegir_amic.c $(SRC_DIR)/notificacions.c
 SERVER_SRC = $(SRC_DIR)/server.c $(SRC_DIR)/funcions_servidor.c $(SRC_DIR)/fun_afegir_amic.c $(SRC_DIR)/notificacions.c
+CLIENT_SRC = $(SRC_DIR)/client.c $(SRC_DIR)/funcions_client.c $(SRC_DIR)/fun_afegir_amic.c $(SRC_DIR)/notificacions.c 
 
 # Archivos objeto
-CLIENT_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(CLIENT_SRC))
 SERVER_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SERVER_SRC))
+CLIENT_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(CLIENT_SRC))
 
 # Variables para IP y Puerto
 PORT = 10000

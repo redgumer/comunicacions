@@ -182,3 +182,107 @@ Descripció: "
 [2024-11-10 12:46:27] [SERVER] Peticio processada per a 127.0.0.1:37743
 [2024-11-10 12:46:40] [CLIENT] Paquet rebut de 127.0.0.1:37743 - Notificació enviada
 [2024-11-10 12:46:40] [SERVER] Peticio processada per a 127.0.0.1:37743
+[2024-11-10 15:47:40] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 15:47:54] [CLIENT] Paquet rebut de 127.0.0.1:45555 - 1 Xavi 1234
+[2024-11-10 15:47:54] [SERVER] Peticio processada per a 127.0.0.1:45555
+[2024-11-10 15:47:54] [Inici de sessió] Xavi
+[2024-11-10 15:48:02] [CLIENT] Paquet rebut de 127.0.0.1:45555 - 3 1 Xavi
+[2024-11-10 15:48:02] [INFO] Usuari Xavi ha consultat el seu perfil.
+[2024-11-10 15:48:02] [SERVER] Resposta enviada al client 127.0.0.1:45555 - 
+
+Perfil de l'usuari: 
+Nom: Xavi
+Sexe: Home
+Estat civil: Solter
+Edat: 43
+Ciutat: Cambrils
+Descripci�
+[2024-11-10 15:48:02] [SERVER] Peticio processada per a 127.0.0.1:45555
+[2024-11-10 15:48:03] [CLIENT] Paquet rebut de 127.0.0.1:45555 - 3 2 Xavi
+[2024-11-10 15:48:03] [INFO] Usuari Xavi ha consultat la seva llista d'amics.
+[2024-11-10 15:48:03] [SERVER] Resposta enviada al client 127.0.0.1:45555 - 
+
+Amics de l'usuari: 
+Nom: Arlet
+Sexe: Dona
+Estat civil: Soltera
+Edat: 8
+Ciutat: Reus
+Descripció: "
+[2024-11-10 15:48:03] [SERVER] Peticio processada per a 127.0.0.1:45555
+[2024-11-10 15:48:21] [CLIENT] Paquet rebut de 127.0.0.1:45555 - 4 Xavi CONSULTAR_NOTIFICACIONS
+[2024-11-10 15:48:21] [SERVER] Peticio processada per a 127.0.0.1:45555
+[2024-11-10 15:48:38] [CLIENT] Paquet rebut de 127.0.0.1:45555 - 4 Xavi ENVIAR_NOTIFICACIO Anna Hola annna
+[2024-11-10 15:48:38] [SERVER] Peticio processada per a 127.0.0.1:45555
+[2024-11-10 15:48:49] [Tancant sessió] Xavi
+[2024-11-10 15:48:49] [Sessió finalitzada] ��w�
+[2024-11-10 15:49:14] [CLIENT] Paquet rebut de 127.0.0.1:47790 - 1 Anna 1234
+[2024-11-10 15:49:14] [SERVER] Peticio processada per a 127.0.0.1:47790
+[2024-11-10 15:49:14] [Inici de sessió] Anna
+[2024-11-10 15:49:23] [CLIENT] Paquet rebut de 127.0.0.1:47790 - 3 1 Anna
+[2024-11-10 15:49:23] [INFO] Usuari Anna ha consultat el seu perfil.
+[2024-11-10 15:49:23] [SERVER] Resposta enviada al client 127.0.0.1:47790 - 
+
+Perfil de l'usuari: 
+Nom: Anna
+Sexe: Dona
+Estat civil: Casat
+Edat: 42
+Ciutat: Reus
+Descripció: "S
+[2024-11-10 15:49:23] [SERVER] Peticio processada per a 127.0.0.1:47790
+[2024-11-10 15:49:25] [CLIENT] Paquet rebut de 127.0.0.1:47790 - 3 2 Anna
+[2024-11-10 15:49:25] [INFO] Usuari Anna ha consultat la seva llista d'amics.
+[2024-11-10 15:49:25] [SERVER] Resposta enviada al client 127.0.0.1:47790 - 
+
+Amics de l'usuari: 
+Nom: Xavi
+Sexe: Home
+Estat civil: Solter
+Edat: 43
+Ciutat: Cambrils
+Descripció
+[2024-11-10 15:49:25] [SERVER] Peticio processada per a 127.0.0.1:47790
+[2024-11-10 15:49:34] [CLIENT] Paquet rebut de 127.0.0.1:47790 - 4 Anna CONSULTAR_NOTIFICACIONS
+[2024-11-10 15:49:34] [SERVER] Peticio processada per a 127.0.0.1:47790
+[2024-11-10 15:50:12] [CLIENT] Paquet rebut de 127.0.0.1:47790 - 4 Anna ELIMINAR_NOTIFICACIONS
+[2024-11-10 15:50:12] [SERVER] Peticio processada per a 127.0.0.1:47790
+[2024-11-10 15:50:18] [CLIENT] Paquet rebut de 127.0.0.1:47790 - 4 Anna CONSULTAR_NOTIFICACIONS
+[2024-11-10 15:50:18] [SERVER] Peticio processada per a 127.0.0.1:47790
+[2024-11-10 16:42:26] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 16:42:38] [CLIENT] Paquet rebut de 127.0.0.1:60855 - 1 Xavi 1234
+[2024-11-10 16:42:38] [Inici de sessió] Xavi
+[2024-11-10 16:42:38] [SERVER] Peticio processada per a 127.0.0.1:60855
+[2024-11-10 16:42:41] [CLIENT] Paquet rebut de 127.0.0.1:60855 - 3 1 Xavi
+[2024-11-10 16:42:41] [INFO] Usuari Xavi ha consultat el seu perfil.
+[2024-11-10 16:42:41] [SERVER] Resposta enviada al client 127.0.0.1:60855 - 
+
+Perfil de l'usuari: 
+Nom: Xavi
+Sexe: Home
+Estat civil: Solter
+Edat: 43
+Ciutat: Cambrils
+Descripci�
+[2024-11-10 16:42:41] [SERVER] Peticio processada per a 127.0.0.1:60855
+[2024-11-10 16:42:43] [CLIENT] Paquet rebut de 127.0.0.1:60855 - 3 2 Xavi
+[2024-11-10 16:42:43] [INFO] Usuari Xavi ha consultat la seva llista d'amics.
+[2024-11-10 16:42:43] [SERVER] Resposta enviada al client 127.0.0.1:60855 - 
+
+Amics de l'usuari: 
+Nom: Arlet
+Sexe: Dona
+Estat civil: Soltera
+Edat: 8
+Ciutat: Reus
+Descripció: "
+[2024-11-10 16:42:43] [SERVER] Peticio processada per a 127.0.0.1:60855
+[2024-11-10 16:42:49] [Afegint amic] Anna
+[2024-11-10 16:42:49] [CLIENT] Paquet rebut de 127.0.0.1:60855 - 3 3 Xavi Anna
+[2024-11-10 16:42:49] [INFO] Usuari Xavi ha afegit Anna com a nou amic.
+[2024-11-10 16:42:49] [SERVER] Resposta enviada al client 127.0.0.1:60855 - 
+
+Xavi i Anna ara són amics
+[2024-11-10 16:42:49] [SERVER] Peticio processada per a 127.0.0.1:60855
+[2024-11-10 16:43:00] [CLIENT] Paquet rebut de 127.0.0.1:60855 - 4 Xavi ELIMINAR_NOTIFICACIONS
+[2024-11-10 16:43:00] [SERVER] Peticio processada per a 127.0.0.1:60855

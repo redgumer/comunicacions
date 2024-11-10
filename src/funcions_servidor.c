@@ -34,9 +34,10 @@
 #define FILE_USUARIS "data/usuaris.txt"   // Archivo con datos de usuarios
 #define FILE_AMISTATS "data/amistats.txt" // Archivo con datos de amistades
 
-Usuari_t usuaris[MAX_USUARIS];
-int num_usuaris = 0;
-int id_max = 0;
+//variables globales
+extern Usuari_t usuaris[MAX_USUARIS];
+extern int num_usuaris;
+extern int id_max;
 
 void carregar_usuaris(const char *nom_fitxer)
 {

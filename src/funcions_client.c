@@ -22,6 +22,8 @@
 
 // Inclusión de librerías personalizadas
 #include "funcions_client.h" // Archivo de cabecera con funciones específicas del cliente
+#include "notificacions.h"   // Archivo de cabecera con funciones de notificaciones
+#include "tipus.h"
 
 // Definición de constantes
 #define LOG_FILE "data/registre.log" // Ruta del archivo de registro de eventos
@@ -37,10 +39,10 @@ void mostra_menu(){
     printf("Selecciona una opció: ");
 }
 
-void not_menu()
+void not_menu(char *nom)
 {
     printf("\n--- MENÚ DE NOTIFICACIONS ---\n");
-    printf("1. Consultar notificacions\n");
+    printf("1. Consultar notificacions [%d]\n", tens_notificacions(nom));
     printf("2. Eliminar notificacions\n");
     printf("3. Envia notificaio\n");
     printf("4. Tornar al menú principal\n");
@@ -300,7 +302,7 @@ int notificacions_menu(char *destinatari, char *missatge)
 {
 
     int opcio;
-    not_menu();
+    not_menu(destinatari);
     scanf("%d", &opcio);
     getchar(); // Consumir el salt de línia
 

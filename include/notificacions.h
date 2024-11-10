@@ -18,7 +18,7 @@ void afegir_notificacio(Usuari_t *usuari, const char *emissor, const char *missa
 void emmagatzema_notificacions(Usuari_t *usuari);
 void carrega_notificacions(Usuari_t *usuari);
 void consultar_notificacions(Usuari_t *usuari);
-int tens_notificacions(Usuari_t *usuari);
+int tens_notificacions(char *nom);
 void elimina_notificacions(Usuari_t *usuari);
 void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in contacte_client, int contacte_client_mida, Usuari_t *usuaris);
 

@@ -9,21 +9,46 @@
 */
 
 // Inclusión de librerías estándar
-#include <stdio.h>                                      // Para operaciones de entrada/salida
-#include <string.h>                                     // Para manipulación de cadenas de texto
+#include <stdio.h>  // Para operaciones de entrada/salida
+#include <string.h> // Para manipulación de cadenas de texto
 
 // Inclusión de librerías personalizadas
-#include "funcions_servidor.h"                          // Archivo de cabecera con funciones específicas para el servidor
+#include "funcions_servidor.h" // Archivo de cabecera con funciones específicas para el servidor
+#include "notificacions.h"     // Archivo de cabecera con funciones de notificaciones
+#include "tipus.h"             // Archivo de cabecera con definiciones de tipos de datos
 
 // Definición de constantes
-#define MAX_MISSATGE 256                                // Tamaño máximo para un mensaje de notificación
-#define MAX_NOTIFICACIONS 10                            // Número máximo de notificaciones almacenadas por usuario
-#define FITXER_NOTIFICACIONS "data/notificacions.txt"   // Ruta del archivo de notificaciones
-#define MAX_USUARI 50                                   // Número máximo de caracteres para un nombre de usuario
+#define MAX_MISSATGE 256                              // Tamaño máximo para un mensaje de notificación
+#define MAX_NOTIFICACIONS 10                          // Número máximo de notificaciones almacenadas por usuario
+#define FITXER_NOTIFICACIONS "data/notificacions.txt" // Ruta del archivo de notificaciones
+#define MAX_USUARIS 50                                // Número máximo de usuarios permitidos
+
+#ifndef CLIENT
+extern Usuari_t usuaris[MAX_USUARI];
+extern int num_usuaris;
+#endif
+
+int tens_notificacions(char *nom) {
+#ifndef CLIENT
+    for (int i = 0; i < num_usuaris; i++) {
+        if (strcmp(usuaris[i].nom, nom) == 0) {
+            return usuaris[i].num_notificacions > 0;
+        }
+    }
+#else
+    (void)nom; // Indica que no s'utilitza el paràmetre en mode client
+#endif
+    return 0;
+}
 
 
-void afegir_notificacio(Usuari_t *usuari, const char *emissor, const char *missatge) {
-    if (usuari->num_notificacions >= MAX_NOTIFICACIONS) {
+extern Usuari_t usuaris[MAX_USUARIS];
+extern int num_usuaris;
+
+void afegir_notificacio(Usuari_t *usuari, const char *emissor, const char *missatge)
+{
+    if (usuari->num_notificacions >= MAX_NOTIFICACIONS)
+    {
         printf("No es poden afegir més notificacions. Bandeja plena!\n");
         return;
     }
@@ -33,13 +58,16 @@ void afegir_notificacio(Usuari_t *usuari, const char *emissor, const char *missa
     usuari->num_notificacions++;
 }
 
-void emmagatzema_notificacions(Usuari_t *usuari) {
+void emmagatzema_notificacions(Usuari_t *usuari)
+{
     FILE *fitxer = fopen(FITXER_NOTIFICACIONS, "w");
-    if (!fitxer) {
+    if (!fitxer)
+    {
         perror("Error obrint el fitxer de notificacions");
         return;
     }
-    for (int i = 0; i < usuari->num_notificacions; i++) {
+    for (int i = 0; i < usuari->num_notificacions; i++)
+    {
         fprintf(fitxer, "%s;%s;%s\n",
                 usuari->notificacions[i].emissor,
                 usuari->notificacions[i].receptor,
@@ -48,16 +76,19 @@ void emmagatzema_notificacions(Usuari_t *usuari) {
     fclose(fitxer);
 }
 
-void carrega_notificacions(Usuari_t *usuari) {
+void carrega_notificacions(Usuari_t *usuari)
+{
     FILE *fitxer = fopen(FITXER_NOTIFICACIONS, "r");
-    if (!fitxer) {
+    if (!fitxer)
+    {
         perror("Error obrint el fitxer de notificacions");
         return;
     }
     char linia[MAX_MISSATGE + MAX_USUARI * 2];
     usuari->num_notificacions = 0;
-    while (fgets(linia, sizeof(linia), fitxer) && usuari->num_notificacions < MAX_NOTIFICACIONS) {
-        sscanf(linia, "%[^;];%[^;];%[^\n]", 
+    while (fgets(linia, sizeof(linia), fitxer) && usuari->num_notificacions < MAX_NOTIFICACIONS)
+    {
+        sscanf(linia, "%[^;];%[^;];%[^\n]",
                usuari->notificacions[usuari->num_notificacions].emissor,
                usuari->notificacions[usuari->num_notificacions].receptor,
                usuari->notificacions[usuari->num_notificacions].missatge);
@@ -66,36 +97,38 @@ void carrega_notificacions(Usuari_t *usuari) {
     fclose(fitxer);
 }
 
-void consultar_notificacions(Usuari_t *usuari) {
-    if (usuari->num_notificacions == 0) {
+void consultar_notificacions(Usuari_t *usuari)
+{
+    if (usuari->num_notificacions == 0)
+    {
         printf("No tens notificacions pendents.\n");
         return;
     }
-    for (int i = 0; i < usuari->num_notificacions; i++) {
+    for (int i = 0; i < usuari->num_notificacions; i++)
+    {
         printf("De: %s - Missatge: %s\n",
                usuari->notificacions[i].emissor,
                usuari->notificacions[i].missatge);
     }
 }
 
-int tens_notificacions(Usuari_t *usuari) {
-    return usuari->num_notificacions > 0;
-}
-
-void elimina_notificacions(Usuari_t *usuari) {
+void elimina_notificacions(Usuari_t *usuari)
+{
     // Esborrar les notificacions de l'usuari
     usuari->num_notificacions = 0;
     memset(usuari->notificacions, 0, sizeof(usuari->notificacions));
 
     // Desa els canvis a l'arxiu (igual que a emmagatzema_notificacions)
     FILE *fitxer = fopen("notificacions.dat", "wb");
-    if (fitxer == NULL) {
+    if (fitxer == NULL)
+    {
         perror("Error obrint fitxer de notificacions");
         return;
     }
 
     // Escriure l'usuari actualitzat al fitxer
-    if (fwrite(usuari, sizeof(Usuari_t), 1, fitxer) != 1) {
+    if (fwrite(usuari, sizeof(Usuari_t), 1, fitxer) != 1)
+    {
         perror("Error esborrant notificacions al fitxer");
     }
 
@@ -127,7 +160,7 @@ void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in con
     {
         // Eliminar notificacions i desar els canvis
         usuaris[0].num_notificacions = 0;
-        emmagatzema_notificacions(&usuaris[0]);
+        elimina_notificacions(&usuaris[0]);
         sendto(s, "Notificacions eliminades", 24, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
     }
     else if (strcmp(accio, "ENVIAR_NOTIFICACIO") == 0)
@@ -149,4 +182,3 @@ void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in con
         printf("Acció de notificacions desconeguda: %s\n", accio);
     }
 }
-

@@ -36,4 +36,8 @@ typedef struct
     int num_notificacions;
 } Usuari_t;
 
+// Declaracions externes
+extern Usuari_t usuaris[MAX_USUARI];
+extern int num_usuaris;
+
 #endif
