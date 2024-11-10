@@ -39,39 +39,6 @@ extern Usuari_t usuaris[MAX_USUARIS];
 extern int num_usuaris;
 extern int id_max;
 
-void carregar_usuaris(const char *nom_fitxer)
-{
-    FILE *fitxer = fopen(nom_fitxer, "r");
-    if (!fitxer)
-    {
-        printf("Error: No s'ha pogut obrir el fitxer d'usuaris.\n");
-        return;
-    }
-
-    while (fscanf(fitxer, "%d %s %s %s %s %d %s %[^\n]s",
-                  &usuaris[num_usuaris].id,
-                  usuaris[num_usuaris].nom,
-                  usuaris[num_usuaris].contrasenya,
-                  usuaris[num_usuaris].sexe,
-                  usuaris[num_usuaris].estat_civil,
-                  &usuaris[num_usuaris].edat,
-                  usuaris[num_usuaris].ciutat,
-                  usuaris[num_usuaris].descripcio) == 8)
-    {
-        if (usuaris[num_usuaris].id > id_max)
-            id_max = usuaris[num_usuaris].id;
-
-        num_usuaris++;
-        if (num_usuaris >= MAX_USUARIS)
-        {
-            printf("Error: Màxim nombre d'usuaris assolit.\n");
-            break;
-        }
-    }
-    fclose(fitxer);
-    printf("Usuaris carregats: %d\n", num_usuaris);
-}
-
 int verifica_usuari(const char *nom, const char *contrasenya)
 {
     FILE *fitxer;

@@ -19,10 +19,66 @@
 
 // Inclusión de librerías personalizadas
 #include "funcions_servidor.h" // Archivo de cabecera con funciones específicas para el servidor
+#include "notificacions.h"     // Archivo de cabecera con funciones de notificaciones
 
 // Definición de constantes
 #define MIDA_PAQUET 1024 // Tamaño del paquete de datos para la comunicación
 #define FILE_USUARIS "data/usuaris.txt"   // Archivo con datos de usuarios
+
+void carregar_usuaris(const char *nom_fitxer) {
+    // Obrim el fitxer en mode lectura
+    FILE *fitxer = fopen(nom_fitxer, "r");
+    if (fitxer == NULL) {
+        printf("No s'ha pogut obrir el fitxer: %s\n", nom_fitxer);
+        return;
+    }
+
+    // Inicialitzem el nombre d'usuaris carregats
+    num_usuaris = 0;
+    char linia[512];
+
+    // Llegim el fitxer línia per línia
+    while (fgets(linia, sizeof(linia), fitxer) != NULL) {
+        // Comprovem que no superem el límit màxim d'usuaris
+        if (num_usuaris >= MAX_USUARI) {
+            printf("Nombre màxim d'usuaris (%d) assolit. No es carregaran més usuaris.\n", MAX_USUARI);
+            break;
+        }
+
+        // Parsejar la línia del fitxer
+        Usuari_t usuari;
+        char ciutat[50], descripcio[100];
+
+        int camps_llegits = sscanf(linia, "%d %49s %49s %9s %19s %d %49s \"%99[^\"]\"",
+                                   &usuari.id,
+                                   usuari.nom,
+                                   usuari.contrasenya,
+                                   usuari.sexe,
+                                   usuari.estat_civil,
+                                   &usuari.edat,
+                                   ciutat,
+                                   descripcio);
+
+        // Comprovem si la línia s'ha llegit correctament
+        if (camps_llegits == 8) {
+            // Omplim els camps de l'estructura
+            strncpy(usuari.ciutat, ciutat, sizeof(usuari.ciutat) - 1);
+            strncpy(usuari.descripcio, descripcio, sizeof(usuari.descripcio) - 1);
+            usuari.num_notificacions = 0;
+
+            // Afegim l'usuari a l'array global
+            usuaris[num_usuaris] = usuari;
+            num_usuaris++;
+        } else {
+            printf("Error al llegir la línia: %s\n", linia);
+        }
+    }
+
+    // Tanquem el fitxer
+    fclose(fitxer);
+
+    printf("S'han carregat %d usuaris del fitxer %s\n", num_usuaris, nom_fitxer);
+}
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -47,29 +103,21 @@ int main(int argc, char **argv) {
     printf("Servidor UDP configurat correctament al port %d.\n", atoi(argv[1]));
     registra_activitat("INFO", "Servidor UDP configurat correctament.");
     carregar_usuaris(FILE_USUARIS);
-    carrega_notificacions(usuaris);
-    printf("Processant opció de menú: %d %s %s %s %s %d %s %s %d\n",
-           usuaris[0].id,
-           usuaris[0].nom,
-           usuaris[0].contrasenya,
-           usuaris[0].sexe,        // Això és correcte com a %c
-           usuaris[0].estat_civil, // Canvia `%c` a `%s`
-           usuaris[0].edat,
-           usuaris[0].ciutat,
-           usuaris[0].descripcio,
-           usuaris[0].num_notificacions);
-
-    printf("Processant opció de menú: %d %s %s %s %s %d %s %s %d\n",
-           usuaris[1].id,
-           usuaris[1].nom,
-           usuaris[1].contrasenya,
-           usuaris[1].sexe,        // Això és correcte com a %c
-           usuaris[1].estat_civil, // Canvia `%c` a `%s`
-           usuaris[1].edat,
-           usuaris[1].ciutat,
-           usuaris[1].descripcio,
-           usuaris[1].num_notificacions);
-
+    carrega_notificacions(usuaris, num_usuaris);
+    printf("Usuaris carregats:\n");
+    for(int i = 0; i < num_usuaris; i++) {
+        printf("Usuari %d: %d %s %s %s %s %d %s %s %d\n",
+               i,
+               usuaris[i].id,
+               usuaris[i].nom,
+               usuaris[i].contrasenya,
+               usuaris[i].sexe,
+               usuaris[i].estat_civil,
+               usuaris[i].edat,
+               usuaris[i].ciutat,
+               usuaris[i].descripcio,
+               usuaris[i].num_notificacions);
+    }
     while (1) {
         int bytes_rebuts = recvfrom(s, paquet, MIDA_PAQUET, 0, (struct sockaddr *)&contacte_client, &contacte_client_mida);
         if (bytes_rebuts < 0) {

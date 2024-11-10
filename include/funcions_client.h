@@ -11,10 +11,12 @@
 #ifndef FUNCIONS_CLIENT_H
 #define FUNCIONS_CLIENT_H
 
+#include <stdbool.h>
+
 #include <arpa/inet.h>
 
 void mostra_menu();
-void not_menu();
+void not_menu(char *nom);
 int envia_paquet(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, const char *paquet);
 int rep_paquet(int s, char *paquet, struct sockaddr_in *contacte_servidor, socklen_t *contacte_servidor_mida);
 int inicia_sessio(int s, struct sockaddr_in *contacte_servidor, socklen_t contacte_servidor_mida, char *nom);

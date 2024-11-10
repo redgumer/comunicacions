@@ -1,6 +1,6 @@
 # ================== CONFIGURACIÓN ==================
 CC = gcc
-CFLAGS = -Wall -Wextra -g -Iinclude
+CFLAGS = -Wall -Wextra -g -Iinclude -Werror
 
 # Carpetas del proyecto
 BIN_DIR = bin

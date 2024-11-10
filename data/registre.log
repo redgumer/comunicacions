@@ -693,3 +693,43 @@ Descripció: "So
 [2024-11-10 21:06:53] [SERVER] Peticio processada per a 127.0.0.1:33199
 [2024-11-10 21:07:10] [Tancant sessió] Xavi
 [2024-11-10 21:07:10] [Sessió finalitzada] Xavi
+[2024-11-10 21:29:20] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 21:30:08] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 21:31:12] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 21:34:30] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 21:34:49] [CLIENT] Paquet rebut de 127.0.0.1:54727 - 1 Xavi 1234
+[2024-11-10 21:34:49] [SERVER] Peticio processada per a 127.0.0.1:54727
+[2024-11-10 21:34:49] [Inici de sessió] Xavi
+[2024-11-10 21:35:02] [CLIENT] Paquet rebut de 127.0.0.1:54727 - 4 Xavi CONSULTAR_NOTIFICACIONS
+[2024-11-10 21:35:02] [SERVER] Peticio processada per a 127.0.0.1:54727
+[2024-11-10 21:35:11] [Tancant sessió] Xavi
+[2024-11-10 21:35:11] [Sessió finalitzada] Xavi
+[2024-11-10 21:35:20] [CLIENT] Paquet rebut de 127.0.0.1:47302 - 1 Angela 1234
+[2024-11-10 21:35:20] [SERVER] Peticio processada per a 127.0.0.1:47302
+[2024-11-10 21:35:20] [Inici de sessió] Angela
+[2024-11-10 21:51:52] [CLIENT] Paquet rebut de 127.0.0.1:47302 - 4 Angela CONSULTAR_NOTIFICACIONS
+[2024-11-10 21:51:52] [SERVER] Peticio processada per a 127.0.0.1:47302
+[2024-11-10 21:52:56] [CLIENT] Paquet rebut de 127.0.0.1:47302 - 3 1 Angela
+[2024-11-10 21:52:56] [INFO] Usuari Angela ha consultat el seu perfil.
+[2024-11-10 21:52:56] [SERVER] Resposta enviada al client 127.0.0.1:47302 - 
+
+Perfil de l'usuari: 
+Nom: Angela
+Sexe: Dona
+Estat civil: Casada
+Edat: 74
+Ciutat: Cambrils
+Descripc
+[2024-11-10 21:52:56] [SERVER] Peticio processada per a 127.0.0.1:47302
+[2024-11-10 22:04:17] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 22:17:59] [INFO] Servidor UDP configurat correctament.
+[2024-11-10 22:18:21] [CLIENT] Paquet rebut de 127.0.0.1:50325 - 1 Xavi 1234
+[2024-11-10 22:18:21] [SERVER] Peticio processada per a 127.0.0.1:50325
+[2024-11-10 22:18:21] [Inici de sessió] Xavi
+[2024-11-10 22:18:55] [CLIENT] Paquet rebut de 127.0.0.1:50325 - 4 Xavi CONSULTAR_NOTIFICACIONS
+[2024-11-10 22:18:55] [SERVER] Peticio processada per a 127.0.0.1:50325
+[2024-11-10 22:19:26] [Surt de notificacions] Xavi
+[2024-11-10 22:19:26] [CLIENT] Paquet rebut de 127.0.0.1:50325 - 4 Xavi SURT_DE_NOTIFICAIONS
+[2024-11-10 22:19:26] [SERVER] Peticio processada per a 127.0.0.1:50325
+[2024-11-10 22:19:27] [Tancant sessió] Xavi
+[2024-11-10 22:19:27] [Sessió finalitzada] Xavi

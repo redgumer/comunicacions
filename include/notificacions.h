@@ -13,7 +13,7 @@
 
 #include "tipus.h"
 #include <arpa/inet.h>
-void carrega_notificacions(Usuari_t *usuari);
+void carrega_notificacions(Usuari_t *usuaris, int num_usuaris);
 char *consultar_notificacions(char *nom);
 void afegir_notificacio(const char *nom, const char *emissor, const char *missatge);
 void elimina_notificacions(char *nom);

@@ -304,7 +304,8 @@ int gestionar_notificacions_client(char *nom, char *paquet, size_t mida_paquet)
 
 int notificacions_menu(char *destinatari, char *missatge, char *nom)
 {
-
+    
+    printf("Notificacions de %s\n", nom);
     int opcio;
     not_menu(nom);
     scanf("%d", &opcio);
