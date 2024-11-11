@@ -1,7 +1,7 @@
 /*
  ================================ PROJECTE XARXES ================================
  | Fitxer     : src/funcions_client.c                                            |
- | Autors     : Xavi, Jadi, Ivette                                               |
+ | Autors     : Xavi,                                                            |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
  | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
@@ -169,7 +169,6 @@ void processar_opcio(int s, struct sockaddr_in *contacte_servidor, socklen_t con
             fgets(nom_amic, sizeof(nom_amic), stdin);
             nom_amic[strcspn(nom_amic, "\n")] = '\0';
             snprintf(paquet, sizeof(paquet), "3 %d %s %s", opcio, nom, nom_amic);
-            printf("paquet: %s\n", paquet);
             registra_activitat("Afegint amic", nom_amic);
         }
         else if (opcio == 4)

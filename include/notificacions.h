@@ -1,7 +1,7 @@
 /*
  ================================ PROJECTE XARXES ================================
  | Fitxer     : include/notificacions.h                                          |
- | Autors     : Xavi, Jadi, Ivette                                               |
+ | Autors     : Xavi,                                                            |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
  | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |

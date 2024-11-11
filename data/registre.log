@@ -854,3 +854,156 @@ Xavi i Anna ara són amics
 [2024-11-11 00:59:51] [SERVER] Peticio processada per a 127.0.0.1:49336
 [2024-11-11 01:00:10] [CLIENT] Paquet rebut de 127.0.0.1:49336 - 4 Xavi ENVIAR_NOTIFICACIO Anna Hola com estas
 [2024-11-11 01:00:10] [SERVER] Peticio processada per a 127.0.0.1:49336
+[2024-11-11 02:07:04] [INFO] Servidor UDP configurat correctament.
+[2024-11-11 02:07:23] [CLIENT] Paquet rebut de 127.0.0.1:59533 - 1 Carlos 1234
+[2024-11-11 02:07:23] [Inici de sessió] Carlos
+[2024-11-11 02:07:23] [SERVER] Peticio processada per a 127.0.0.1:59533
+[2024-11-11 02:07:23] [Usuari no trobat] Carlos
+[2024-11-11 02:07:55] [CLIENT] Paquet rebut de 127.0.0.1:59533 - 2 Carlos 1234 Home Solter 20 Miami "Me gustan las motos"
+[2024-11-11 02:07:55] [SERVER] Peticio processada per a 127.0.0.1:59533
+[2024-11-11 02:07:55] [Usuari registrat] Carlos
+[2024-11-11 02:07:55] [Sessió finalitzada] Carlos
+[2024-11-11 02:08:13] [CLIENT] Paquet rebut de 127.0.0.1:40846 - 1 Carlos 1234
+[2024-11-11 02:08:13] [SERVER] Peticio processada per a 127.0.0.1:40846
+[2024-11-11 02:08:13] [Inici de sessió] Carlos
+[2024-11-11 02:08:13] [Usuari no trobat] Carlos
+[2024-11-11 02:08:55] [CLIENT] Paquet rebut de 127.0.0.1:40846 - 2 Carlos 1234 home casat 20 reus "me gustan las motos"
+[2024-11-11 02:08:55] [SERVER] Peticio processada per a 127.0.0.1:40846
+[2024-11-11 02:08:55] [Usuari registrat] Carlos
+[2024-11-11 02:08:55] [Sessió finalitzada] Carlos
+[2024-11-11 02:09:51] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 1 Carlos 1234
+[2024-11-11 02:09:51] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:09:51] [Inici de sessió] Carlos
+[2024-11-11 02:09:54] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 3 1 Carlos
+[2024-11-11 02:09:54] [INFO] Usuari Carlos ha consultat el seu perfil.
+[2024-11-11 02:09:54] [SERVER] Resposta enviada al client 127.0.0.1:36057 - 
+
+Perfil de l'usuari: 
+Nom: Carlos
+Sexe: home
+Estat civil: casat
+Edat: 20
+Ciutat: reus
+Descripció: 
+[2024-11-11 02:09:54] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:09:58] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 3 2 Carlos
+[2024-11-11 02:09:58] [INFO] Usuari Carlos ha consultat la seva llista d'amics.
+[2024-11-11 02:09:58] [SERVER] Resposta enviada al client 127.0.0.1:36057 - 
+
+Amics de l'usuari: 
+Nom: Josep
+Sexe: Home
+Estat civil: Solter
+Edat: 30
+Ciutat: Mursia
+Descripció:
+[2024-11-11 02:09:58] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:10:32] [Afegint amic] Anna
+[2024-11-11 02:10:32] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 3 3 Carlos Anna
+[2024-11-11 02:10:32] [INFO] Usuari Carlos ha afegit Anna com a nou amic.
+[2024-11-11 02:10:32] [SERVER] Resposta enviada al client 127.0.0.1:36057 - 
+
+Carlos i Anna ara són amics
+[2024-11-11 02:10:32] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:10:37] [Afegint amic] Angela
+[2024-11-11 02:10:37] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 3 3 Carlos Angela
+[2024-11-11 02:10:37] [INFO] Usuari Carlos ha afegit Angela com a nou amic.
+[2024-11-11 02:10:37] [SERVER] Resposta enviada al client 127.0.0.1:36057 - 
+
+Carlos i Angela ara són amics
+[2024-11-11 02:10:37] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:13:43] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 4 Carlos ENVIAR_NOTIFICACIO Angela Hola Angela molt de gust
+[2024-11-11 02:13:43] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:14:05] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 4 Carlos ENVIAR_NOTIFICACIO Xavi Hola Xavi ja soc aquí
+[2024-11-11 02:14:05] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:14:32] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 4 Carlos ENVIAR_NOTIFICACIO Arlet Tinc moltes ganes de dibuixar junts
+[2024-11-11 02:14:32] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:16:17] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 4 Carlos ENVIAR_NOTIFICACIO Antonio El texto aleatorio, conocido como 'Lorem Ipsum', se utiliza en d
+[2024-11-11 02:16:17] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:16:58] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 4 Carlos ENVIAR_NOTIFICACIO Pepe El texto aleatorio, conocido como 'Lorem Ipsum', se utiliza en dise
+[2024-11-11 02:16:58] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:16:58] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 4 Carlos ENVIAR_NOTIFICACIO  simular contenido real y visualizar el diseño f inal.
+[2024-11-11 02:16:58] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:17:24] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 4 Carlos CONSULTAR_NOTIFICACIONS
+[2024-11-11 02:17:24] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:17:35] [ERROR] Error en el bind del servidor.
+[2024-11-11 02:18:16] [CLIENT] Paquet rebut de 127.0.0.1:48333 - 1 Anna 1234
+[2024-11-11 02:18:16] [Inici de sessió] Anna
+[2024-11-11 02:18:16] [SERVER] Peticio processada per a 127.0.0.1:48333
+[2024-11-11 02:18:28] [CLIENT] Paquet rebut de 127.0.0.1:48333 - 3 1 Anna
+[2024-11-11 02:18:28] [INFO] Usuari Anna ha consultat el seu perfil.
+[2024-11-11 02:18:28] [SERVER] Resposta enviada al client 127.0.0.1:48333 - 
+
+Perfil de l'usuari: 
+Nom: Anna
+Sexe: Dona
+Estat civil: Casat
+Edat: 42
+Ciutat: Reus
+Descripció: "S
+[2024-11-11 02:18:28] [SERVER] Peticio processada per a 127.0.0.1:48333
+[2024-11-11 02:18:30] [CLIENT] Paquet rebut de 127.0.0.1:48333 - 3 2 Anna
+[2024-11-11 02:18:30] [INFO] Usuari Anna ha consultat la seva llista d'amics.
+[2024-11-11 02:18:30] [SERVER] Resposta enviada al client 127.0.0.1:48333 - 
+
+Amics de l'usuari: 
+Nom: Xavi
+Sexe: Home
+Estat civil: Solter
+Edat: 43
+Ciutat: Cambrils
+Descripció
+[2024-11-11 02:18:30] [SERVER] Peticio processada per a 127.0.0.1:48333
+[2024-11-11 02:19:01] [Afegint amic] Alguer
+[2024-11-11 02:19:01] [CLIENT] Paquet rebut de 127.0.0.1:48333 - 3 3 Anna Alguer
+[2024-11-11 02:19:01] [INFO] Usuari Anna ha afegit Alguer com a nou amic.
+[2024-11-11 02:19:01] [SERVER] Resposta enviada al client 127.0.0.1:48333 - 
+
+Anna i Alguer ara són amics
+[2024-11-11 02:19:01] [SERVER] Peticio processada per a 127.0.0.1:48333
+[2024-11-11 02:19:11] [Afegint amic] Manolo
+[2024-11-11 02:19:11] [CLIENT] Paquet rebut de 127.0.0.1:48333 - 3 3 Anna Manolo
+[2024-11-11 02:19:11] [ERROR] Error: No s'ha pogut afegir Manolo com a amic de Anna.
+[2024-11-11 02:19:11] [SERVER] Resposta enviada al client 127.0.0.1:48333 - Error: No s'ha pogut afegir Manolo com a amic de Anna.
+[2024-11-11 02:19:11] [SERVER] Peticio processada per a 127.0.0.1:48333
+[2024-11-11 02:19:29] [CLIENT] Paquet rebut de 127.0.0.1:48333 - 4 Anna CONSULTAR_NOTIFICACIONS
+[2024-11-11 02:19:29] [SERVER] Peticio processada per a 127.0.0.1:48333
+[2024-11-11 02:19:52] [CLIENT] Paquet rebut de 127.0.0.1:48333 - 4 Anna ELIMINAR_NOTIFICACIONS
+[2024-11-11 02:19:52] [SERVER] Peticio processada per a 127.0.0.1:48333
+[2024-11-11 02:20:03] [CLIENT] Paquet rebut de 127.0.0.1:48333 - 4 Anna CONSULTAR_NOTIFICACIONS
+[2024-11-11 02:20:03] [SERVER] Peticio processada per a 127.0.0.1:48333
+[2024-11-11 02:20:16] [CLIENT] Paquet rebut de 127.0.0.1:36057 - 3 1 Carlos
+[2024-11-11 02:20:16] [INFO] Usuari Carlos ha consultat el seu perfil.
+[2024-11-11 02:20:16] [SERVER] Resposta enviada al client 127.0.0.1:36057 - 
+
+Perfil de l'usuari: 
+Nom: Carlos
+Sexe: home
+Estat civil: casat
+Edat: 20
+Ciutat: reus
+Descripció: 
+[2024-11-11 02:20:16] [SERVER] Peticio processada per a 127.0.0.1:36057
+[2024-11-11 02:20:59] [INFO] Servidor UDP configurat correctament.
+[2024-11-11 02:21:18] [CLIENT] Paquet rebut de 127.0.0.1:58258 - 1 Xavi 1234
+[2024-11-11 02:21:18] [Inici de sessió] Xavi
+[2024-11-11 02:21:18] [SERVER] Peticio processada per a 127.0.0.1:58258
+[2024-11-11 02:21:32] [CLIENT] Paquet rebut de 127.0.0.1:58258 - 4 Xavi CONSULTAR_NOTIFICACIONS
+[2024-11-11 02:21:32] [SERVER] Peticio processada per a 127.0.0.1:58258
+[2024-11-11 02:25:03] [INFO] Servidor UDP configurat correctament.
+[2024-11-11 02:25:42] [CLIENT] Paquet rebut de 127.0.0.1:47373 - 1 Xavi 1234
+[2024-11-11 02:25:42] [SERVER] Peticio processada per a 127.0.0.1:47373
+[2024-11-11 02:25:42] [Inici de sessió] Xavi
+[2024-11-11 02:25:46] [CLIENT] Paquet rebut de 127.0.0.1:47373 - 4 Xavi CONSULTAR_NOTIFICACIONS
+[2024-11-11 02:25:46] [SERVER] Peticio processada per a 127.0.0.1:47373
+[2024-11-11 02:31:07] [INFO] Servidor UDP configurat correctament.
+[2024-11-11 02:31:24] [CLIENT] Paquet rebut de 127.0.0.1:53129 - 1 Xavi 1234
+[2024-11-11 02:31:24] [SERVER] Peticio processada per a 127.0.0.1:53129
+[2024-11-11 02:31:24] [Inici de sessió] Xavi
+[2024-11-11 02:31:44] [CLIENT] Paquet rebut de 127.0.0.1:53129 - 4 Xavi CONSULTAR_NOTIFICACIONS
+[2024-11-11 02:31:44] [SERVER] Peticio processada per a 127.0.0.1:53129
+[2024-11-11 02:33:23] [CLIENT] Paquet rebut de 127.0.0.1:46661 - 1 Angela 1234
+[2024-11-11 02:33:23] [SERVER] Peticio processada per a 127.0.0.1:46661
+[2024-11-11 02:33:23] [Inici de sessió] Angela
+[2024-11-11 02:33:27] [CLIENT] Paquet rebut de 127.0.0.1:46661 - 4 Angela CONSULTAR_NOTIFICACIONS
+[2024-11-11 02:33:27] [SERVER] Peticio processada per a 127.0.0.1:46661

@@ -1,7 +1,7 @@
 /*
  ================================ PROJECTE XARXES ================================
  | Fitxer     : src/notificacions.c                                              |
- | Autors     : Xavi, Jadi, Ivette                                               |
+ | Autors     : Xavi,                                                            |
  | Assignatura: Xarxes (Segon curs, Enginyeria Informàtica)                      |
  | Universitat: Universitat Rovira i Virgili                                     |
  | Descripció : Pràctica Xarxes Segon de GEI, Comunicacions Servidor&Client      |
@@ -131,7 +131,7 @@ char *consultar_notificacions(char *nom)
             for (int j = 0; j < usuaris[i].num_notificacions; j++)
             {
                 char notificacio[512]; // Incrementem la mida del buffer per evitar truncació
-                snprintf(notificacio, sizeof(notificacio), "Emissor: %.50s, Missatge: %.200s\n",
+                snprintf(notificacio, sizeof(notificacio), "\nEmissor: %.50s, Missatge: %.200s\n",
                          usuaris[i].notificacions[j].emissor,
                          usuaris[i].notificacions[j].missatge);
 
@@ -235,7 +235,6 @@ int tens_notificacions(char *nom)
     return -1;
 }
 
-
 void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in contacte_client, int contacte_client_mida, Usuari_t *usuaris)
 {
     char accio[20], receptor[50], missatge[MAX_MISSATGE], nom[MAX_USUARI];
@@ -256,7 +255,7 @@ void gestiona_notificacions_servidor(char *paquet, int s, struct sockaddr_in con
         char *paquet = consultar_notificacions(nom);
         printf("Notificacions: %s\n", paquet);
         printf("Enviat a %s\n", nom);
-        sendto(s, paquet, sizeof(paquet), 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
+        sendto(s, paquet, strlen(paquet) + 1, 0, (struct sockaddr *)&contacte_client, contacte_client_mida);
         printf("Notificacions enviades: %s\n", paquet);
     }
     else if (strcmp(accio, "ELIMINAR_NOTIFICACIONS") == 0)
