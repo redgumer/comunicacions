@@ -29,7 +29,7 @@
 
 void mostra_menu()
 {
-    printf("\n--- MENÚ D'OPCIONS ---\n");
+    printf("\n--- MENÚ CONNEXA ---\n");
     printf("1. Veure perfil\n");
     printf("2. Veure amics\n");
     printf("3. Afegir nous amics\n");
@@ -40,7 +40,7 @@ void mostra_menu()
 
 void not_menu()
 {
-    printf("\n--- MENÚ DE NOTIFICACIONS ---\n");
+    printf("\n--- CONNEXA NOTIFICACIONS ---\n");
     printf("1. Consultar notificacions\n");
     printf("2. Eliminar notificacions\n");
     printf("3. Envia notificaio\n");
